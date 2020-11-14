@@ -4,3 +4,5 @@
 .env
 .env.tests
 /coverage/
+
+*.DS_Store
