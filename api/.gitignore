@@ -1,0 +1,6 @@
+*.swp
+/node_modules/
+/build/
+.env
+.env.tests
+/coverage/

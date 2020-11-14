@@ -1,0 +1,33 @@
+.title, .title:hover {
+  color: rgb(130, 25, 25) !important;
+	font-size: 1.5em;
+}
+
+.link, .link:hover {
+  color: black;
+}
+
+.container {
+  display: flex;
+  padding-bottom: 1em;
+}
+
+.titleContainer {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+}
+
+.loginContainer {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.bar {
+  width: 100%;
+  border: thin solid rgb(140, 55, 55);
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
