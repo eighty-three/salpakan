@@ -25,7 +25,9 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "pg-promise": "^10.6.2",
-    "shortid": "^2.2.16"
+    "redis": "^3.0.2",
+    "shortid": "^2.2.16",
+    "tslog": "^2.11.1"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0",
@@ -35,6 +37,7 @@
     "@types/jest": "^26.0.14",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/node": "^14.11.5",
+    "@types/redis": "^2.8.28",
     "@types/shortid": "0.0.29",
     "@types/supertest": "^2.0.10",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
@@ -43,6 +46,7 @@
     "eslint": "^7.10.0",
     "eslint-plugin-jest": "^24.1.0",
     "jest": "^26.5.2",
+    "nodemon": "^2.0.6",
     "supertest": "^5.0.0",
     "ts-jest": "^26.4.1",
     "ts-node-dev": "^1.0.0-pre.63",
