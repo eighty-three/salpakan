@@ -6,7 +6,7 @@ describe('check username', () => {
     const user = await account.checkUsername('dummy');
     expect(user).toStrictEqual(null);
   });
-  
+
   test('should work', async () => {
     await createAccount('dummy', '123');
 
@@ -21,7 +21,7 @@ describe('check password', () => {
     const user = await account.checkPassword('dummy4');
     expect(user).toStrictEqual(null);
   });
-  
+
   test('should work', async () => {
     const user = await account.checkPassword('dummy');
     expect(user).toStrictEqual({ password: '123' });

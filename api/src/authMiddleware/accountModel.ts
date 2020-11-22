@@ -1,4 +1,4 @@
-import db from '@utils/db';
+import { db } from '@utils/db';
 import { PreparedStatement as PS } from 'pg-promise';
 
 export const checkUsername = async (

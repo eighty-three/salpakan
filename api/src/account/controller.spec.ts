@@ -16,7 +16,7 @@ describe('function calls with authentication', () => {
   const agent = request.agent(server);
   let cookie;
 
-  beforeAll(() => 
+  beforeAll(() =>
     agent
       .post(`${url}/signup`)
       .send({
