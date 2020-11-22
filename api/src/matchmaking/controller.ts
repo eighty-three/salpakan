@@ -1,8 +1,26 @@
 import { RequestHandler } from 'express';
 import shortid from 'shortid';
-import * as content from './model';
+import * as match from './model';
+import * as errors from 'utils/error';
 
-export const findPublicLobby: RequestHandler = async (req, res) => {
+
+export const addToPool: RequestHandler = async (req, res, next) => {
+  //TODO: get socket id from params, and pass that instead of username
+  const playerAdded = await match.addToPlayerPool('replace_me_with_socket_id');
+  if (!playerAdded) {
+    console.log('Internal server error occurred: adding to player pool');
+    res.status(500).json({error: 'Internal server error'});
+    return;
+  }
+
+  next();
+  return;
+};
+
+export const findGame: RequestHandler = async (req, res, next) => {
   const url = shortid.generate().substr(0, 10);
-  res.json(url);
+  const playerList = await match.getPlayerPooList();
+  if (playerList.type === errors.ERROR) {
+
+  }
 };
