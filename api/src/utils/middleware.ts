@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import logger from './logger';
+import { getLoggerInstance }from '../utils/logger';
 
+const logger = getLoggerInstance();
 const requestLogger = (request: Request, response: Response, next: NextFunction): void => {
   logger.info('Method:', request.method);
   logger.info('Path:  ', request.path);

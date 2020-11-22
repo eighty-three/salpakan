@@ -3,9 +3,14 @@ import express from 'express';
 import cors from 'cors';
 const app = express();
 
+
 //Middleware
 import middleware from '@utils/middleware';
-import logger from '@utils/logger';
+
+//utils
+import {getLoggerInstance} from '@utils/logger';
+
+const logger = getLoggerInstance();
 logger.info('connecting to', config.DB_CONNECTION);
 
 app.use(cors());

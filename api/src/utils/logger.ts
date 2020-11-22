@@ -1,10 +1,12 @@
-const info = (...params: any): void => {
-  console.log(...params);
-};
+import { Logger } from "tslog";
 
-const error = (...params: any): void => {
-  console.log(...params);
-};
 
-export default { info, error };
+let logger: Logger;
 
+export function getLoggerInstance() {
+  if (!logger) {
+    logger = new Logger({ name: "APILogger" });
+  }
+
+  return logger;
+}
