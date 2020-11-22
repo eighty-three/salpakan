@@ -9,9 +9,10 @@ import * as MMSchema from './schema';
 
 
 router.post('/find',
-  validator(MMSchema.findPublicLobby, 'body'),
+  validator(MMSchema.findGame, 'body'),
   authToken.verifyToken,
-  MM.findPublicLobby
+  MM.addToPool,
+  MM.findGame,
 );
 
 export default router;
