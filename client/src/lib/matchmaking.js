@@ -1,19 +1,20 @@
 import Router from 'next/router';
-import ky from 'ky-universal';
-import HOST from '@/lib/host';
-const api = `${HOST}/api/match`;
+import ws from 'ws';
+const WS = global.WebSocket || ws;
 
-export const find = async (username) => {
-  try {
-    const req = await ky.post(`${api}/find`, { json: { username }, throwHttpErrors: false });
-    const response = await req.json();
-          
-    if (response.error) {
-      return response;
-    } else {
-      Router.replace(`/game/${response}`);
-    }
-  } catch (err) {
-    return { error: 'Something went wrong' };
-  }
+export const findMatch = (button) => {
+  let socket = new WS('ws://localhost:8500/matchmaking');
+
+  socket.onopen = () => {
+    button({ disabled: true, text: 'Finding...' });
+  };
+
+  socket.onmessage = (message) => {
+    const data = message.data;
+    Router.push(`/game/${data}`);
+  };
+
+  socket.onerror = () => {
+    button({ disabled: true , text: 'Please try again' });
+  };
 };
