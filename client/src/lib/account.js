@@ -7,7 +7,7 @@ export const signup = async (data) => {
   try {
     const req = await ky.post(`${api}/signup`, { json: {...data}, throwHttpErrors: false });
     const response = await req.json();
-    
+
     if (response.error) {
       return response;
     } else {
@@ -31,7 +31,7 @@ export const login = async (prevPath, data) => {
   try {
     const req = await ky.post(`${api}/login`, { json: {...data}, throwHttpErrors: false });
     const response = await req.json();
-    
+
     if (response.error) {
       return response;
     } else {
@@ -44,5 +44,5 @@ export const login = async (prevPath, data) => {
 
 export const logout = async () => {
   await ky.post(`${api}/logout`, { json: { 'message': 'Log out' } });
-  Router.push('/');
+  Router.reload();
 };
