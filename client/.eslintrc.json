@@ -42,7 +42,8 @@
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "no-trailing-spaces": ["error"]
     },
     "settings": {
       "react": {

@@ -11,14 +11,14 @@ import userEvent from '@testing-library/user-event';
 
 import CustomAuthForms from './index';
 
-describe('different contexts', () => { 
+describe('different contexts', () => {
   // Different contexts but it's all the same since it's the submitFunction that actually matters
 
   describe('login', () => {
     const mockFn = jest.fn().mockResolvedValue({ message: 'submitted' });
     const mockRouter = { pathname: 'pathname' };
     // Redirects with router.query isn't tested in the component
-    
+
     const data = {
       forms: ['username', 'password'],
       title: 'Log in',
@@ -105,7 +105,7 @@ describe('different contexts', () => {
   describe('settings', () => {
     const mockFn = jest.fn().mockResolvedValue({ message: 'submitted' });
     const mockRouter = { pathname: 'pathname' };
-    
+
     const data = {
       forms: ['newUsername', 'password'],
       title: 'Log in',

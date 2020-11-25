@@ -5,7 +5,7 @@ const withAuthServerSideProps = (getServerSidePropsFunc) => {
     const username = await authCheck(ctx);
     if (getServerSidePropsFunc) {
       return {
-        props: 
+        props:
           {
             username,
             data: await getServerSidePropsFunc(ctx, username)
@@ -14,12 +14,12 @@ const withAuthServerSideProps = (getServerSidePropsFunc) => {
     }
 
     return {
-      props: 
+      props:
         {
           username,
-          data: 
+          data:
             {
-              props: 
+              props:
                 {
                   username
                 }

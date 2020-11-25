@@ -36,7 +36,7 @@ const Layout = (props) => {
           content={siteTitle}
         />
       </Head>
-      
+
       {/* Contents */}
       <main>
         <NavbarComponent loggedIn={loggedIn} redirect={redirect} />

@@ -17,9 +17,9 @@ const LoginPage = () => {
         <title>{siteTitle}</title>
       </Head>
       <section className={utilStyles.headingMd}>
-        <CustomAuthForms 
-          forms={['username', 'password']} 
-          title={'Log in'} 
+        <CustomAuthForms
+          forms={['username', 'password']}
+          title={'Log in'}
           submitFunction={login}
           context={'login'}
         />

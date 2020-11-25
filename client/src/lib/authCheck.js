@@ -22,7 +22,7 @@ export const authCheck = async (ctx) => {
   const headers = ctx.req.headers;
   const customPost = ky.create({ headers });
 
-  try {  
+  try {
     const req = await customPost.post(`${api}/verify`, { json: { username }, throwHttpErrors: false });
     const response = await req.json();
 

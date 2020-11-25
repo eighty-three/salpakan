@@ -17,7 +17,7 @@ const SignupPage = () => {
         <title>{siteTitle}</title>
       </Head>
       <section className={utilStyles.headingMd}>
-        <CustomAuthForms 
+        <CustomAuthForms
           forms={['username', 'password']}
           title={'Sign up'}
           submitFunction={signup}
