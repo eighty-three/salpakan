@@ -1,6 +1,7 @@
 .title, .title:hover {
   color: rgb(130, 25, 25) !important;
 	font-size: 1.5em;
+  font-weight: bold;
 }
 
 .link, .link:hover {

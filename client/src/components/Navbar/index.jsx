@@ -31,15 +31,13 @@ const NavbarComponent = (props) => {
         <Navbar.Text>
           <Link href="/" passHref>
             <a className={`${styles.title}`}>
-              <strong>
-                {siteTitle}
-              </strong>
+              {siteTitle}
             </a>
           </Link>
         </Navbar.Text>
 
-        <Nav className={`${styles.loginContainer}`}> 
-          { loggedIn 
+        <Nav className={`${styles.loginContainer}`}>
+          { loggedIn
             ? (
               <Nav.Link onClick={logout}>Logout</Nav.Link>
             ) : (
@@ -47,7 +45,7 @@ const NavbarComponent = (props) => {
                 <Link href={redirectLink} passHref>
                   <Nav.Link>Login</Nav.Link>
                 </Link>
-          
+
                 <Link href="/signup" passHref>
                   <Nav.Link>Signup</Nav.Link>
                 </Link>
