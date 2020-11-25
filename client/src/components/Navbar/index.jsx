@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 import PropTypes from 'prop-types';
 
 import styles from './index.module.css';
@@ -29,11 +28,9 @@ const NavbarComponent = (props) => {
     <>
       <Navbar>
         <Navbar.Text>
-          <Link href="/" passHref>
-            <a className={`${styles.title}`}>
-              {siteTitle}
-            </a>
-          </Link>
+          <a href="/" className={`${styles.title}`}>
+            {siteTitle}
+          </a>
         </Navbar.Text>
 
         <Nav className={`${styles.loginContainer}`}>
@@ -42,13 +39,8 @@ const NavbarComponent = (props) => {
               <Nav.Link onClick={logout}>Logout</Nav.Link>
             ) : (
               <>
-                <Link href={redirectLink} passHref>
-                  <Nav.Link>Login</Nav.Link>
-                </Link>
-
-                <Link href="/signup" passHref>
-                  <Nav.Link>Signup</Nav.Link>
-                </Link>
+                <Nav.Link href={redirectLink} >Login</Nav.Link>
+                <Nav.Link href="/signup">Signup</Nav.Link>
               </>
             )
           }
