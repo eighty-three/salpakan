@@ -10,7 +10,4 @@ router.post('/verify', authToken.verifyToken, authAccount.verifyUser);
 import accountRouter from './account/router';
 router.use('/account', accountRouter);
 
-import MMRouter from './matchmaking/router';
-router.use('/match', MMRouter);
-
 export default router;
