@@ -25,7 +25,8 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "pg-promise": "^10.6.2",
-    "shortid": "^2.2.16"
+    "shortid": "^2.2.16",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v18.8.0"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0",
