@@ -51,3 +51,20 @@ export const verifyExistingToken: RequestHandler = async (req, res, next) => {
 
   res.status(400).json({ error: 'Already logged in' });
 };
+
+export const getUsername = async (reqCookie: string|null): Promise<string|void> => {
+  if (!reqCookie) return;
+
+  let username: string | undefined;
+  const cookies = cookie.parse(reqCookie);
+
+  verify(cookies.auth, config.SECRET_JWT, async function (err, decoded: IPayload|undefined) {
+    if (err && !decoded) {
+      return;
+    } else if (decoded) {
+      username = decoded.username as string;
+    }
+  });
+
+  return username;
+};
