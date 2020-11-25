@@ -23,7 +23,7 @@ const Home = (props) => {
         <title>{siteTitle}</title>
       </Head>
       <section>
-        <MatchmakingComponent username={username} />
+        <MatchmakingComponent />
       </section>
     </Layout>
   );
@@ -33,7 +33,7 @@ export const getServerSideProps = async (ctx) => {
   const username = await lightAuthCheck(ctx);
 
   return {
-    props: 
+    props:
       {
         username
       }
