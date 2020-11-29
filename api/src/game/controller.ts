@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import * as game from './model';
 
 export const getGame: RequestHandler = async (req, res) => {
-  const roomName = req.query.id as string;
+  const roomName = req.params.name as string;
   const gameState: any = await game.getGame(roomName);
 
   if (gameState?.ongoing) {
