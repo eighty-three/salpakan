@@ -62,4 +62,33 @@ wsApp.ws('/matchmaking', {
   },
 });
 
+wsApp.ws('/game/:id', {
+  compression: 1,
+  maxPayloadLength: 1024,
+  upgrade: async (res, req, context) => {
+    const upgradeAborted = {aborted: false};
+    const username = await getUsername(req.getHeader('cookie'));
+    const ipAddress = decode(res.getRemoteAddressAsText());
+    const cn = username || ipAddress;
+    const url = req.getParameter(0);
+
+    if (req.getHeader('origin') === config.CLIENT_HOST) {
+      res.upgrade(
+        { cn, url },
+        req.getHeader('sec-websocket-key'),
+        req.getHeader('sec-websocket-protocol'),
+        req.getHeader('sec-websocket-extensions'),
+        context
+      );
+    } else {
+      res.onAborted(() => { upgradeAborted.aborted = true; });
+      res.writeStatus('400 Bad Request');
+      res.end();
+    }
+  },
+  open: (socket) => {
+    socket.subscribe(socket.url);
+  },
+});
+
 export default wsApp;
