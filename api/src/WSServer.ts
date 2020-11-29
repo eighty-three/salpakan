@@ -3,6 +3,8 @@ import shortid from 'shortid';
 import { getUsername } from '@authMiddleware/authToken';
 import config from '@utils/config';
 
+import { startGame } from './game/model';
+
 import { StringDecoder } from 'string_decoder';
 const decoder = new StringDecoder('utf8');
 const decode = (buf: ArrayBuffer) => decoder.write(Buffer.from(buf));
@@ -46,9 +48,7 @@ wsApp.ws('/matchmaking', {
     if (connections.length > 1) {
       socket.publish(`${roomName}_mm`, roomName);
 
-      gameStates[roomName] = {
-        playerList: connections.slice(),
-      };
+      startGame(gameStates, roomName, connections);
 
       connections.length = 0;
       roomName = shortid.generate();
