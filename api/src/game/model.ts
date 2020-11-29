@@ -41,3 +41,18 @@ export const getGame = async (
   query.values = [ roomName ];
   return await db.oneOrNone(query);
 };
+
+export const storeGame = async (
+  roomName: string,
+  player1_state: string, // Stringified JSON
+  player2_state: string
+): Promise<void> => {
+  const query = new PS({ name: 'store-game', text: '\
+    UPDATE games SET \
+      ongoing=$4, player1_state=$2, player2_state=$3, \
+    WHERE name=$1'
+  });
+
+  query.values = [ roomName, player1_state, player2_state, false ];
+  await db.none(query);
+};
