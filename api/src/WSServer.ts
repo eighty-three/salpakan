@@ -1,5 +1,5 @@
 import uWS from 'uWebSockets.js';
-import shortid from 'shortid';
+import { nanoid } from 'nanoid';
 import { getUsername } from '@authMiddleware/authToken';
 import config from '@utils/config';
 
@@ -11,7 +11,7 @@ const decode = (buf: ArrayBuffer) => decoder.write(Buffer.from(buf));
 
 const wsApp = uWS.App();
 
-let roomName = shortid.generate();
+let roomName = nanoid(10);
 const connections: string[] = [];
 const gameStates: any = {};
 
@@ -51,7 +51,7 @@ wsApp.ws('/matchmaking', {
       await startGame(gameStates, roomName, connections);
 
       connections.length = 0;
-      roomName = shortid.generate();
+      roomName = nanoid(10);
     }
   },
   close: () => {
