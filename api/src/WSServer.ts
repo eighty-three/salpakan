@@ -46,10 +46,9 @@ wsApp.ws('/matchmaking', {
     socket.subscribe(`${roomName}_mm`);
 
     if (connections.length > 1) {
-      socket.publish(`${roomName}_mm`, roomName);
-
       await startGame(gameStates, roomName, connections);
 
+      socket.publish(`${roomName}_mm`, roomName);
       connections.length = 0;
       roomName = nanoid(10);
     }
