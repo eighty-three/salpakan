@@ -11,7 +11,8 @@ export const getGame: RequestHandler = async (req, res) => {
     res.json({ ongoing: true });
   } else {
     res.json({
-      state: gameState.state,
+      player1_state: gameState.player1_state,
+      player2_state: gameState.player2_state,
       player1: gameState.player1,
       player2: gameState.player2
     });
