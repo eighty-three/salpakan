@@ -1,11 +1,11 @@
 import db from '@utils/db';
 import { PreparedStatement as PS } from 'pg-promise';
 
-export const startGame = (
+export const startGame = async (
   gameStates: any,
   roomName: string,
   connections: string[]
-): void => {
+): Promise<void> => {
   const arr = connections.slice();
 
   gameStates[roomName] = {
@@ -23,8 +23,12 @@ export const startGame = (
     time: null
   };
 
-  //const data = [ roomName, arr ];
-  //sendToDatabase(data);
+  const query = new PS({ name: 'start-game', text: '\
+    SELECT FROM games WHERE name=$1'
+  });
+
+  query.values= [ roomName, ...arr ];
+  await db.none(query);
 };
 
 export const getGame = async (

@@ -41,14 +41,14 @@ wsApp.ws('/matchmaking', {
       res.end();
     }
   },
-  open: (socket) => {
+  open: async (socket) => {
     connections.push(socket.cn);
     socket.subscribe(`${roomName}_mm`);
 
     if (connections.length > 1) {
       socket.publish(`${roomName}_mm`, roomName);
 
-      startGame(gameStates, roomName, connections);
+      await startGame(gameStates, roomName, connections);
 
       connections.length = 0;
       roomName = shortid.generate();
