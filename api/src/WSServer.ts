@@ -1,6 +1,7 @@
 import uWS from 'uWebSockets.js';
 import shortid from 'shortid';
 import { getUsername } from '@authMiddleware/authToken';
+import config from '@utils/config';
 
 import { StringDecoder } from 'string_decoder';
 const decoder = new StringDecoder('utf8');
@@ -14,14 +15,17 @@ const gameStates: any = {};
 
 wsApp.ws('/matchmaking', {
   compression: 1,
-  maxPayloadLength: 2 * 1024,
+  maxPayloadLength: 1024,
   upgrade: async (res, req, context) => {
     const upgradeAborted = {aborted: false};
     const username = await getUsername(req.getHeader('cookie'));
     const ipAddress = decode(res.getRemoteAddressAsText());
     const cn = username || ipAddress;
 
-    if (!connections.includes(cn)) {
+    if (
+      !connections.includes(cn)
+      && req.getHeader('origin') === config.CLIENT_HOST
+    ) {
       res.upgrade(
         { cn },
         req.getHeader('sec-websocket-key'),
@@ -41,6 +45,7 @@ wsApp.ws('/matchmaking', {
 
     if (connections.length > 1) {
       socket.publish(`${roomName}_mm`, roomName);
+
 
       gameStates[roomName] = {
         playerList: connections,
