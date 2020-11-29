@@ -24,7 +24,7 @@ export const startGame = async (
   };
 
   const query = new PS({ name: 'start-game', text: '\
-    SELECT FROM games WHERE name=$1'
+    INSERT INTO games (name, player1, player2) VALUES ($1, $2, $3)'
   });
 
   query.values= [ roomName, ...arr ];
