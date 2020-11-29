@@ -46,9 +46,8 @@ wsApp.ws('/matchmaking', {
     if (connections.length > 1) {
       socket.publish(`${roomName}_mm`, roomName);
 
-
       gameStates[roomName] = {
-        playerList: connections,
+        playerList: connections.slice(),
       };
 
       connections.length = 0;
