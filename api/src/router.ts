@@ -10,4 +10,7 @@ router.post('/verify', authToken.verifyToken, authAccount.verifyUser);
 import accountRouter from './account/router';
 router.use('/account', accountRouter);
 
+import gameRouter from './game/router';
+router.use('/game', gameRouter);
+
 export default router;
