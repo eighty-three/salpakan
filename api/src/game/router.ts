@@ -5,7 +5,7 @@ const router = express.Router();
 import * as game from './controller';
 import * as gameSchema from './schema';
 
-router.get('/:name',
+router.get('/:id',
   validator(gameSchema.getGame, 'params'),
   game.getGame
 );

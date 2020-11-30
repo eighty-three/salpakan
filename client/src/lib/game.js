@@ -5,8 +5,8 @@ const api = `${HOST}/api/game`;
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 
-export const connectToGame = (url) => { // Fix this
-  let socket = new WS(`ws://localhost:8500/game/${url}`);
+export const connectToGame = (id) => { // Fix this
+  let socket = new WS(`ws://localhost:8500/game/${id}`);
 
   socket.onopen = () => {
     console.log('hello');
@@ -22,9 +22,9 @@ export const connectToGame = (url) => { // Fix this
   };
 };
 
-export const getGame = async (url) => {
+export const getGame = async (id) => {
   try {
-    const req = ky.get(`${api}/${url}`);
+    const req = ky.get(`${api}/${id}`);
     const response = await req.json();
     return response;
   } catch (err) {
