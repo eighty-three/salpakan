@@ -3,17 +3,22 @@ import PropTypes from 'prop-types';
 import Head from 'next/head';
 
 import Layout, { siteTitle } from '@/components/Layout';
+import Board from '@/components/Board';
+
 import { lightAuthCheck } from '@/lib/authCheck';
+import { getGame } from '@/lib/game';
 
 const propTypes = {
   username: PropTypes.string,
-  id: PropTypes.string
+  id: PropTypes.string,
+  state: PropTypes.object
 };
 
 const GamePage = (props) => {
   const {
     username,
-    id
+    id,
+    state
   } = props;
 
   return (
@@ -22,8 +27,10 @@ const GamePage = (props) => {
         <title>{siteTitle}</title>
       </Head>
       <section>
-        <h1>{username}</h1>
-        <h1>{id}</h1>
+        { !state.error
+          ? (<Board id={id} state={state} />)
+          : (<h1>Game not found</h1>)
+        }
       </section>
     </Layout>
   );
@@ -32,12 +39,14 @@ const GamePage = (props) => {
 export const getServerSideProps = async (ctx) => {
   const username = await lightAuthCheck(ctx);
   const id = ctx.params.id;
+  const state = await getGame(id);
 
   return {
     props:
       {
         username,
-        id
+        id,
+        state
       }
   };
 };

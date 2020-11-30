@@ -8,7 +8,8 @@ const config = {
   DB_PASSWORD: process.env.DB_PASSWORD,
   DB_PROJNAME: process.env.DB_PROJNAME,
   DB_PORT: process.env.DB_PORT,
-  SECRET_JWT: process.env.SECRET_JWT as string
+  SECRET_JWT: process.env.SECRET_JWT as string,
+  CLIENT_HOST: process.env.CLIENT_HOST as string
 };
 
 export default config;
