@@ -5,7 +5,7 @@ const api = `${HOST}/api/game`;
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 
-export const connectToGame = (id) => { // Fix this
+export const connectToGame = (id, setBoard) => {
   let socket = new WS(`ws://localhost:8500/game/${id}`);
 
   socket.onopen = () => {
@@ -14,7 +14,7 @@ export const connectToGame = (id) => { // Fix this
 
   socket.onmessage = (message) => {
     const data = message.data;
-    console.log(data);
+    setBoard(data);
   };
 
   socket.onerror = () => {

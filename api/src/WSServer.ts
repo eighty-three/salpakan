@@ -87,6 +87,7 @@ wsApp.ws('/game/:id', {
   },
   open: (socket) => {
     socket.subscribe(socket.url);
+    socket.send('example state');
   },
 });
 
