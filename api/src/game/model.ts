@@ -37,7 +37,7 @@ export const getGame = async (
   roomName: string
 ): Promise<any|null> => {
   const query = new PS({ name: 'get-game', text: '\
-    SELECT FROM games WHERE name=$1 AND expiry > $2'
+    SELECT * FROM games WHERE name=$1 AND expiry > $2'
   });
 
   const currentTime = Math.floor(Date.now() / 1000);
