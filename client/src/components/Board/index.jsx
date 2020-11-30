@@ -21,7 +21,7 @@ const Board = (props) =>{
     } else {
       setBoard(state);
     }
-  });
+  }, [props]);
 
   return (
     <>
