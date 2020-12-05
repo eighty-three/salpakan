@@ -1,0 +1,18 @@
+CREATE EXTENSION citext;
+
+CREATE TABLE accounts (
+  user_id SERIAL PRIMARY KEY,
+  username CITEXT NOT NULL,
+  password TEXT NOT NULL
+);
+
+CREATE TABLE games (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  player1_state TEXT,
+  player2_state TEXT,
+  player1 TEXT NOT NULL,
+  player2 TEXT NOT NULL,
+  ongoing BOOLEAN DEFAULT TRUE,
+  expiry INT NOT NULL
+);
