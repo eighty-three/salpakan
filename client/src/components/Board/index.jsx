@@ -41,7 +41,7 @@ const Board = (props) =>{
   return (
     <>
       <GameInfoContext.Provider value={gameInfo}>
-        {(gameInfo.turn !== undefined)
+        {(gameInfo?.turn !== undefined)
           ? (<Panel />)
           : (<Countdown time={time} counter={countDown} />)
         }
