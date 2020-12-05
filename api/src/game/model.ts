@@ -8,19 +8,29 @@ export const startGame = async (
 ): Promise<void> => {
   const arr = connections.slice();
 
+  const testData = {
+    A1: { value: 1, name: 'private' },
+    A2: { value: 1, name: 'private' },
+    A3: { value: 1, name: 'private' },
+    A4: { value: 1, name: 'private' },
+    A5: { value: 1, name: 'private p1' }
+  };
+
   gameStates[roomName] = {
     playerList: arr,
     p1: {
       name: arr[0],
-      board: null
+      board: testData,
+      time: 600
     },
     p2: {
       name: arr[1],
-      board: null
+      board: testData,
+      time: 600
     },
     turn: arr[0],
     start: false,
-    time: null
+    time: Math.floor(Date.now() / 1000) + 60
   };
 
   const expiry = Math.floor(Date.now() / 1000) + 7200;

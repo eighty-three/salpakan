@@ -71,7 +71,10 @@ wsApp.ws('/game/:id', {
     const cn = username || ipAddress;
     const url = req.getParameter(0);
 
-    if (req.getHeader('origin') === config.CLIENT_HOST) {
+    if (
+      gameStates[url]?.playerList.includes(cn)
+      && req.getHeader('origin') === config.CLIENT_HOST
+    ) {
       res.upgrade(
         { cn, url },
         req.getHeader('sec-websocket-key'),
@@ -87,8 +90,34 @@ wsApp.ws('/game/:id', {
   },
   open: (socket) => {
     socket.subscribe(socket.url);
-    socket.send('example state');
+    const player = (socket.cn === gameStates[socket.url].p1.name)
+      ? 'p1'
+      : 'p2';
+
+    const gameData = (gameStates[socket.url].start)
+      ? {
+        gameState: gameStates[socket.url][`${player}`].board,
+        turn: gameStates[socket.url].turn,
+        p1: {
+          name: gameStates[socket.url].p1.name,
+          time: gameStates[socket.url].p1.time
+        },
+        p2: {
+          name: gameStates[socket.url].p2.name,
+          time: gameStates[socket.url].p2.time
+        }
+      }
+      : {
+        gameState: gameStates[socket.url][`${player}`].board,
+        time: gameStates[socket.url].time
+      };
+
+    socket.send(JSON.stringify({ type: 'init', data: gameData }));
   },
+  message: (socket, message) => {
+    console.log(socket);
+    console.log(decode(message));
+  }
 });
 
 export default wsApp;

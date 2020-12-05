@@ -1,0 +1,19 @@
+.container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.player_info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.player_text {
+  text-align: center;
+  font-size: 1em;
+}
+
+.fade {
+  color: gray;
+}
