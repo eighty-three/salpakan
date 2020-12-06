@@ -18,7 +18,7 @@ export const connectToGame = (id, setBoard, setGameInfo, setTime) => {
       case 'init':
         setBoard(res.data.gameState);
         setGameInfo(res.data);
-        setTime(res.data.time);
+        setTime(res.data.time - Math.floor(Date.now()/1000));
         break;
     }
   };
