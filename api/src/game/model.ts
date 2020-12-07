@@ -67,7 +67,7 @@ export const storeGame = async (
 ): Promise<void> => {
   const query = new PS({ name: 'store-game', text: '\
     UPDATE games SET \
-      ongoing=$4, player1_state=$2, player2_state=$3, \
+      player1_state=$2, player2_state=$3, ongoing=$4 \
     WHERE name=$1'
   });
 
