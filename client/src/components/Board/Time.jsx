@@ -10,17 +10,25 @@ const fixString = (time) => {
 
 const propTypes = {
   minutes: PropTypes.number,
-  seconds: PropTypes.number
+  seconds: PropTypes.number,
+  deci: PropTypes.number
 };
 
 const Time = (props) => {
   const {
     minutes,
-    seconds
+    seconds,
+    deci
   } = props;
 
+  const str = (seconds > 10)
+    ? `${fixString(minutes)}:${fixString(seconds)}`
+    : `${fixString(minutes)}:${fixString(seconds)}.${deci}`;
+
   return (
-    <p>{fixString(minutes)}:{fixString(seconds)}</p>
+    <>
+      <p>{str}</p>
+    </>
   );
 };
 

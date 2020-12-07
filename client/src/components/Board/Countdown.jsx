@@ -12,21 +12,19 @@ const propTypes = {
 const Countdown = ({ counter, time }) => {
   const timeOut = useRef(null);
   useEffect(() => {
-    timeOut.current = workerTimers.setTimeout(counter, 1000);
-
+    timeOut.current = workerTimers.setTimeout(counter, 100);
     return () => workerTimers.clearTimeout(timeOut.current);
   }, [time]);
 
-  const currentTime = new Date(time * 1000);
+  const currentTime = new Date(time * 100);
   const seconds = currentTime.getSeconds();
-
-  const remainingSecondsForMinutes = time % (60*60);
-  const minutes = Math.floor(remainingSecondsForMinutes / 60);
+  const minutes = currentTime.getMinutes();
+  const deci = currentTime.getMilliseconds() / 100;
 
   return (
     <>
-      {time &&
-        <Time minutes={minutes} seconds={seconds} />
+      {time > 0 &&
+        <Time minutes={minutes} seconds={seconds} deci={deci} />
       }
     </>
   );

@@ -21,17 +21,18 @@ export const startGame = async (
     p1: {
       name: arr[0],
       board: testData,
-      time: 600
+      time: 6000
     },
     p2: {
       name: arr[1],
       board: testData,
-      time: 600
+      time: 6000
     },
     turn: arr[0],
     start: false,
-    time: Math.floor(Date.now() / 1000) + 60
+    time: Math.floor(Date.now() / 100) + 600
   };
+  // deciseconds used for all time values in gameStates
 
   const expiry = Math.floor(Date.now() / 1000) + 7200;
 
