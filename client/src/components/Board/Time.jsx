@@ -21,7 +21,7 @@ const Time = (props) => {
     deci
   } = props;
 
-  const str = (seconds > 10)
+  const str = (minutes || seconds > 9)
     ? `${fixString(minutes)}:${fixString(seconds)}`
     : `${fixString(minutes)}:${fixString(seconds)}.${deci}`;
 
