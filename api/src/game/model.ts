@@ -16,23 +16,26 @@ export const startGame = async (
     A5: { value: 1, name: 'private p1' }
   };
 
+  // deciseconds used for all time values in gameStates
   gameStates[roomName] = {
     playerList: arr,
     p1: {
       name: arr[0],
       board: testData,
-      time: 6000
+      time: 6000,
+      start: false
     },
     p2: {
       name: arr[1],
       board: testData,
-      time: 6000
+      time: 6000,
+      start: false
     },
+    board: testData,
     turn: arr[0],
     start: false,
     time: Math.floor(Date.now() / 100) + 600
   };
-  // deciseconds used for all time values in gameStates
 
   const expiry = Math.floor(Date.now() / 1000) + 7200;
 
@@ -80,5 +83,16 @@ export const deleteGames = async (): Promise<void> => {
   const currentTime = Math.floor(Date.now() / 1000);
 
   query.values = [ currentTime ];
+  await db.none(query);
+};
+
+export const deleteGame = async (
+  roomName: string
+): Promise<void> => {
+  const query = new PS({ name: 'delete-game', text: '\
+    DELETE FROM games WHERE name=$1'
+  });
+
+  query.values = [ roomName ];
   await db.none(query);
 };

@@ -5,7 +5,7 @@ const api = `${HOST}/api/game`;
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 
-export const connectToGame = (id, setBoard, setGameInfo, setTime) => {
+export const connectToGame = (id, setBoard, setGameInfo) => {
   let socket = new WS(`ws://localhost:8500/game/${id}`);
 
   socket.onopen = () => {
@@ -18,10 +18,16 @@ export const connectToGame = (id, setBoard, setGameInfo, setTime) => {
       case 'init':
         setBoard(res.data.gameState);
         setGameInfo(res.data);
-        setTime(res.data.time - Math.floor(Date.now() / 100));
-        // Data from server is deciseconds so deduct in deciseconds
+        break;
+      case 'start':
+        setGameInfo(res.data);
         break;
     }
+  };
+
+  socket.onclose = () => {
+    setGameInfo(null);
+    setBoard(null);
   };
 
   socket.onerror = () => {

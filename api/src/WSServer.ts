@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import { getUsername } from '@authMiddleware/authToken';
 import config from '@utils/config';
 
-import { startGame } from './game/model';
+import { startGame, deleteGame } from './game/model';
 
 import { StringDecoder } from 'string_decoder';
 const decoder = new StringDecoder('utf8');
@@ -88,7 +88,7 @@ wsApp.ws('/game/:id', {
       res.end();
     }
   },
-  open: (socket) => {
+  open: async (socket) => {
     socket.subscribe(socket.url);
     const player = (socket.cn === gameStates[socket.url].p1.name)
       ? 'p1'
@@ -114,9 +114,47 @@ wsApp.ws('/game/:id', {
 
     socket.send(JSON.stringify({ type: 'init', data: gameData }));
   },
-  message: (socket, message) => {
-    console.log(socket);
-    console.log(decode(message));
+  message: async (socket, message) => {
+    const data = JSON.parse(decode(message));
+
+    switch (data.type) {
+      case 'ready': {
+        const player = (socket.cn === gameStates[socket.url].p1.name)
+          ? 'p1'
+          : 'p2';
+
+        const gameData = {
+          gameState: gameStates[socket.url].board,
+          turn: gameStates[socket.url].turn,
+          p1: {
+            name: gameStates[socket.url].p1.name,
+            time: gameStates[socket.url].p1.time
+          },
+          p2: {
+            name: gameStates[socket.url].p2.name,
+            time: gameStates[socket.url].p2.time
+          }
+        };
+
+        gameStates[socket.url][`${player}`].start = true;
+
+        if (
+          gameStates[socket.url].p1.start
+          && gameStates[socket.url].p2.start
+        ) {
+          gameStates[socket.url].start = true;
+          socket.publish(socket.url, JSON.stringify({ type: 'start', data: gameData }));
+        }
+        break;
+      }
+
+      case 'afk':
+        socket.unsubscribeAll();
+        socket.close();
+        delete gameStates[socket.url];
+        await deleteGame(socket.url);
+        break;
+    }
   }
 });
 

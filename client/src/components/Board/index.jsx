@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import styles from './index.module.css';
 import Panel from './Panel';
-import Countdown from './Countdown';
+import SetupPanel from './SetupPanel';
 
 import SocketContext from '@/lib/SocketContext';
 import GameInfoContext from '@/lib/GameInfoContext';
@@ -19,20 +19,14 @@ const Board = (props) =>{
     id,
     state
   } = props;
-  const [ board, setBoard ] = useState(null);
-  const [ socket, setSocket] = useState(null);
-  const [ gameInfo, setGameInfo ] = useState(null);
-  const [ time, setTime ] = useState(0);
 
-  const countDown = async () => {
-    if (time > 0) {
-      setTime(time - 1);
-    }
-  };
+  const [ socket, setSocket] = useState(null);
+  const [ board, setBoard ] = useState(null);
+  const [ gameInfo, setGameInfo ] = useState(null);
 
   useEffect(() => {
     if (state.ongoing) {
-      setSocket(connectToGame(id, setBoard, setGameInfo, setTime));
+      setSocket(connectToGame(id, setBoard, setGameInfo));
     } else {
       setBoard(state);
     }
@@ -41,13 +35,14 @@ const Board = (props) =>{
   return (
     <>
       <GameInfoContext.Provider value={gameInfo}>
-        {(gameInfo?.turn !== undefined)
-          ? (<Panel />)
-          : (<Countdown time={time} counter={countDown} />)
-        }
         <SocketContext.Provider value={socket}>
-          <div className={`${styles.board}`}>
-            { board &&
+          {(gameInfo?.turn !== undefined)
+            ? (<Panel />)
+            : (<SetupPanel />)
+          }
+
+          { board &&
+            <div className={`${styles.board}`}>
               <>
                 {Object.keys(board).map((key) => (
                   <div key={key} className={board[`${key}`].name}>
@@ -55,8 +50,8 @@ const Board = (props) =>{
                   </div>
                 ))}
               </>
-            }
-          </div>
+            </div>
+          }
         </SocketContext.Provider>
       </GameInfoContext.Provider>
     </>
