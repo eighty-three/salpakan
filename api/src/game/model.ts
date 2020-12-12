@@ -34,6 +34,8 @@ export const startGame = async (
     board: testData,
     turn: arr[0],
     start: false,
+    lastMove: 0,
+    lastClosed: 0,
     time: Math.floor(Date.now() / 100) + 600
   };
 

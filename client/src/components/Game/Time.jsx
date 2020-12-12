@@ -1,5 +1,4 @@
 import React from 'react';
-
 import PropTypes from 'prop-types';
 
 const fixString = (time) => {
@@ -26,9 +25,7 @@ const Time = (props) => {
     : `${fixString(minutes)}:${fixString(seconds)}.${deci}`;
 
   return (
-    <>
-      <p>{str}</p>
-    </>
+    <p>{str}</p>
   );
 };
 

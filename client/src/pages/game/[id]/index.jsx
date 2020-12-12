@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Head from 'next/head';
 
 import Layout, { siteTitle } from '@/components/Layout';
-import Board from '@/components/Board';
+import Game from '@/components/Game';
 
 import { lightAuthCheck } from '@/lib/authCheck';
 import { getGame } from '@/lib/game';
@@ -28,7 +28,7 @@ const GamePage = (props) => {
       </Head>
       <section>
         { !state.error
-          ? (<Board id={id} state={state} />)
+          ? (<Game id={id} state={state} />)
           : (<h1>Game not found</h1>)
         }
       </section>

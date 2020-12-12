@@ -8,8 +8,7 @@ import SocketContext from '@/lib/SocketContext';
 const SetupPanel = () => {
   const socket = useContext(SocketContext);
   const gameInfo = useContext(GameInfoContext);
-
-  const [ time, setTime ] = useState(99999);
+  const [ time, setTime ] = useState(6000);
   const [ afk, setAfk ] = useState(false);
   const [ disabled, setDisabled ] = useState(false);
 
@@ -37,7 +36,7 @@ const SetupPanel = () => {
       { gameInfo &&
         <>
           <Countdown time={time} counter={countDown} />
-          <button onClick={onClickFn} disabled={disabled} >Submit board</button>
+          <button onClick={onClickFn} disabled={disabled}>Submit board</button>
         </>
       }
 

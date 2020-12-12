@@ -1,8 +1,9 @@
 import uWS from 'uWebSockets.js';
 import { nanoid } from 'nanoid';
-import { getUsername } from '@authMiddleware/authToken';
+import { performance } from 'perf_hooks';
 import config from '@utils/config';
 
+import { getUsername } from '@authMiddleware/authToken';
 import { startGame, deleteGame } from './game/model';
 
 import { StringDecoder } from 'string_decoder';
@@ -64,6 +65,7 @@ wsApp.ws('/matchmaking', {
 wsApp.ws('/game/:id', {
   compression: 1,
   maxPayloadLength: 1024,
+  idleTimeout: 0,
   upgrade: async (res, req, context) => {
     const upgradeAborted = {aborted: false};
     const username = await getUsername(req.getHeader('cookie'));
@@ -90,61 +92,87 @@ wsApp.ws('/game/:id', {
   },
   open: async (socket) => {
     socket.subscribe(socket.url);
-    const player = (socket.cn === gameStates[socket.url].p1.name)
-      ? 'p1'
-      : 'p2';
 
-    const gameData = (gameStates[socket.url].start)
+    const room = gameStates[socket.url];
+    const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
+
+    if (room.start) {
+      const turn = (room.turn === room.p1.name) ? 'p1' : 'p2';
+      const currentTime = performance.now() / 100;
+      const elapsedTime = currentTime - room.lastClosed;
+      room[`${turn}`].time = room[`${turn}`].time - elapsedTime;
+      room.lastClosed = performance.now() / 100;
+    }
+
+    const gameData = (room.start)
       ? {
-        gameState: gameStates[socket.url][`${player}`].board,
-        turn: gameStates[socket.url].turn,
+        gameState: room[`${player}`].board,
+        turn: room.turn,
         p1: {
-          name: gameStates[socket.url].p1.name,
-          time: gameStates[socket.url].p1.time
+          name: room.p1.name,
+          time: room.p1.time
         },
         p2: {
-          name: gameStates[socket.url].p2.name,
-          time: gameStates[socket.url].p2.time
+          name: room.p2.name,
+          time: room.p2.time
         }
       }
       : {
-        gameState: gameStates[socket.url][`${player}`].board,
-        time: gameStates[socket.url].time
+        gameState: room[`${player}`].board,
+        time: room.time
       };
 
-    socket.send(JSON.stringify({ type: 'init', data: gameData }));
+    socket.send(JSON.stringify({
+      type: 'init',
+      data: gameData,
+      user: socket.cn
+    }));
+  },
+  close: (socket) => {
+    const room = gameStates[socket.url];
+    if (room.start) {
+      const turn = (room.turn === room.p1.name) ? 'p1' : 'p2';
+      const currentTime = performance.now() / 100;
+      const elapsedTime = currentTime - room.lastMove;
+      room[`${turn}`].time = room[`${turn}`].time - elapsedTime;
+      room.lastMove = performance.now() / 100;
+      room.lastClosed = performance.now() / 100;
+    }
   },
   message: async (socket, message) => {
     const data = JSON.parse(decode(message));
 
+    const room = gameStates[socket.url];
+    const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
+    const opponent = (socket.cn === room.p1.name) ? 'p2' : 'p1';
+
     switch (data.type) {
       case 'ready': {
-        const player = (socket.cn === gameStates[socket.url].p1.name)
-          ? 'p1'
-          : 'p2';
-
-        const gameData = {
-          gameState: gameStates[socket.url].board,
-          turn: gameStates[socket.url].turn,
-          p1: {
-            name: gameStates[socket.url].p1.name,
-            time: gameStates[socket.url].p1.time
-          },
-          p2: {
-            name: gameStates[socket.url].p2.name,
-            time: gameStates[socket.url].p2.time
-          }
-        };
-
-        gameStates[socket.url][`${player}`].start = true;
+        room[`${player}`].start = true;
 
         if (
-          gameStates[socket.url].p1.start
-          && gameStates[socket.url].p2.start
+          room.p1.start
+          && room.p2.start
         ) {
-          gameStates[socket.url].start = true;
+          const gameData = {
+            gameState: room.board,
+            turn: room.turn,
+            p1: {
+              name: room.p1.name,
+              time: room.p1.time
+            },
+            p2: {
+              name: room.p2.name,
+              time: room.p2.time
+            }
+          };
+
+          room.start = true;
+          room.lastMove = performance.now() / 100;
+
           socket.publish(socket.url, JSON.stringify({ type: 'start', data: gameData }));
         }
+
         break;
       }
 
@@ -154,6 +182,34 @@ wsApp.ws('/game/:id', {
         delete gameStates[socket.url];
         await deleteGame(socket.url);
         break;
+
+      case 'move': {
+        if (socket.cn === room.turn) {
+          const currentTime = performance.now() / 100;
+          const elapsedTime = currentTime - room.lastMove;
+          room[`${player}`].time = room[`${player}`].time - elapsedTime;
+
+          room.turn = room[`${opponent}`].name;
+          room.lastMove = performance.now() / 100;
+
+          const gameData = {
+            gameState: room.board,
+            turn: room.turn,
+            p1: {
+              name: room.p1.name,
+              time: room.p1.time
+            },
+            p2: {
+              name: room.p2.name,
+              time: room.p2.time
+            }
+          };
+
+          socket.publish(socket.url, JSON.stringify({ type: 'move', data: gameData }));
+        }
+
+        break;
+      }
     }
   }
 });
