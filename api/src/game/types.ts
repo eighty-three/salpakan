@@ -1,19 +1,19 @@
-export interface IRoom {
+export type TPlayer = 'p1' | 'p2';
+type TPlayers = { [K in TPlayer]: IPlayer };
+
+export interface IRoom extends TPlayers {
   playerList: string[];
-  p1: IPlayer;
-  p2: IPlayer;
   board: IBoard;
   turn: string;
   start: boolean;
   lastMove: number;
-  lastClosed: number;
   time: number;
 }
 
 export interface IPlayer {
+  time: number;
   name: string;
   board: IBoard;
-  time: number;
   start: boolean;
 }
 

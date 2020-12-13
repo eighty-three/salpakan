@@ -2,7 +2,7 @@ import http from 'http';
 import config from './utils/config';
 import logger from './utils/logger';
 import app from './app';
-import wsApp from './WSServer';
+import wsApp from './ws';
 
 const server = http.createServer();
 
