@@ -130,7 +130,7 @@ wsApp.ws('/game/:id', {
   },
   close: (socket) => {
     const room = gameStates[socket.url];
-    if (room.start) {
+    if (room?.start) {
       const turn = (room.turn === room.p1.name) ? 'p1' : 'p2';
       const currentTime = performance.now() / 100;
       const elapsedTime = currentTime - room.lastMove;
@@ -143,6 +143,11 @@ wsApp.ws('/game/:id', {
     const data = JSON.parse(decode(message));
 
     const room = gameStates[socket.url];
+    if (!room) {
+      socket.close();
+      return;
+    }
+
     const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
     const opponent = (socket.cn === room.p1.name) ? 'p2' : 'p1';
 
