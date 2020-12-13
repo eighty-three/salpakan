@@ -99,9 +99,9 @@ wsApp.ws('/game/:id', {
     if (room.start) {
       const turn = (room.turn === room.p1.name) ? 'p1' : 'p2';
       const currentTime = performance.now() / 100;
-      const elapsedTime = currentTime - room.lastClosed;
+      const elapsedTime = currentTime - room.lastMove;
       room[`${turn}`].time = room[`${turn}`].time - elapsedTime;
-      room.lastClosed = performance.now() / 100;
+      room.lastMove = performance.now() / 100;
     }
 
     const gameData = (room.start)
@@ -136,7 +136,6 @@ wsApp.ws('/game/:id', {
       const elapsedTime = currentTime - room.lastMove;
       room[`${turn}`].time = room[`${turn}`].time - elapsedTime;
       room.lastMove = performance.now() / 100;
-      room.lastClosed = performance.now() / 100;
     }
   },
   message: async (socket, message) => {
