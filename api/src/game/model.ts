@@ -1,8 +1,9 @@
 import db from '@utils/db';
 import { PreparedStatement as PS } from 'pg-promise';
+import { IGameStates, IGame } from './types';
 
 export const startGame = async (
-  gameStates: any,
+  gameStates: IGameStates,
   roomName: string,
   connections: string[]
 ): Promise<void> => {
@@ -51,9 +52,9 @@ export const startGame = async (
 
 export const getGame = async (
   roomName: string
-): Promise<any|null> => {
+): Promise<IGame|null> => {
   const query = new PS({ name: 'get-game', text: '\
-    SELECT * FROM games WHERE name=$1 AND expiry > $2'
+    SELECT player1_state, player2_state, player1, player2, ongoing FROM games WHERE name=$1 AND expiry > $2'
   });
 
   const currentTime = Math.floor(Date.now() / 1000);

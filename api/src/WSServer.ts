@@ -5,6 +5,7 @@ import config from '@utils/config';
 
 import { getUsername } from '@authMiddleware/authToken';
 import { startGame, deleteGame } from './game/model';
+import { IGameStates } from './game/types';
 
 import { StringDecoder } from 'string_decoder';
 const decoder = new StringDecoder('utf8');
@@ -14,7 +15,7 @@ const wsApp = uWS.App();
 
 let roomName = nanoid(10);
 const connections: string[] = [];
-const gameStates: any = {};
+const gameStates: IGameStates = {};
 
 wsApp.ws('/matchmaking', {
   compression: 1,
@@ -100,13 +101,13 @@ wsApp.ws('/game/:id', {
       const turn = (room.turn === room.p1.name) ? 'p1' : 'p2';
       const currentTime = performance.now() / 100;
       const elapsedTime = currentTime - room.lastClosed;
-      room[`${turn}`].time = room[`${turn}`].time - elapsedTime;
+      room[turn].time = room[turn].time - elapsedTime;
       room.lastClosed = performance.now() / 100;
     }
 
     const gameData = (room.start)
       ? {
-        gameState: room[`${player}`].board,
+        gameState: room[player].board,
         turn: room.turn,
         p1: {
           name: room.p1.name,
@@ -118,7 +119,7 @@ wsApp.ws('/game/:id', {
         }
       }
       : {
-        gameState: room[`${player}`].board,
+        gameState: room[player].board,
         time: room.time
       };
 
@@ -134,7 +135,7 @@ wsApp.ws('/game/:id', {
       const turn = (room.turn === room.p1.name) ? 'p1' : 'p2';
       const currentTime = performance.now() / 100;
       const elapsedTime = currentTime - room.lastMove;
-      room[`${turn}`].time = room[`${turn}`].time - elapsedTime;
+      room[turn].time = room[turn].time - elapsedTime;
       room.lastMove = performance.now() / 100;
       room.lastClosed = performance.now() / 100;
     }
@@ -153,7 +154,7 @@ wsApp.ws('/game/:id', {
 
     switch (data.type) {
       case 'ready': {
-        room[`${player}`].start = true;
+        room[player].start = true;
 
         if (
           room.p1.start
@@ -192,9 +193,9 @@ wsApp.ws('/game/:id', {
         if (socket.cn === room.turn) {
           const currentTime = performance.now() / 100;
           const elapsedTime = currentTime - room.lastMove;
-          room[`${player}`].time = room[`${player}`].time - elapsedTime;
+          room[player].time = room[player].time - elapsedTime;
 
-          room.turn = room[`${opponent}`].name;
+          room.turn = room[opponent].name;
           room.lastMove = performance.now() / 100;
 
           const gameData = {
