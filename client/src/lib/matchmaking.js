@@ -11,6 +11,7 @@ export const findMatch = (button) => {
 
   socket.onmessage = (message) => {
     const data = message.data;
+    socket.close();
     Router.push(`/game/${data}`);
   };
 
