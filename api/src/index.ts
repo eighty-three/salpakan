@@ -8,12 +8,12 @@ const server = http.createServer();
 
 server.on('request', app);
 
-server.listen(process.env.PORT, function() {
-  logger.info(`http/ws server listening on ${config.PORT}`);
+server.listen(config.PORT, () => {
+  logger.info(`http server listening on PORT ${config.PORT}`);
 });
 
-wsApp.listen(8500, (listenSocket) => {
+wsApp.listen(config.WS_PORT, (listenSocket) => {
   if (listenSocket) {
-    console.log('Listening to port 3000');
+    logger.info(`ws server listening on PORT ${config.WS_PORT}`);
   }
 });
