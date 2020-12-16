@@ -2,10 +2,18 @@ import uWS from 'uWebSockets.js';
 import { IGameStates } from '../game/types';
 import * as mm from './matchmaking';
 import * as game from './game';
+import config from '@utils/config';
 
-const wsApp = uWS.App();
+const options = {
+  key_file_name: '../../misc/privkey.pem',
+  cert_file_name: '../../misc/cert.pem'
+};
 
-wsApp.ws('/matchmaking', {
+const wsApp = (config.NODE_ENV === 'production')
+  ? uWS.SSLApp(options)
+  : uWS.App();
+
+wsApp.ws('/ws/matchmaking', {
   compression: 1,
   maxPayloadLength: 1024,
   upgrade: mm.upgrade,
@@ -13,7 +21,7 @@ wsApp.ws('/matchmaking', {
   close: mm.close
 });
 
-wsApp.ws('/game/:id', {
+wsApp.ws('/ws/game/:id', {
   compression: 1,
   maxPayloadLength: 1024,
   idleTimeout: 0,
