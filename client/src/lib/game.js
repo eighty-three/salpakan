@@ -1,12 +1,12 @@
 import ky from 'ky-universal';
-import HOST from '@/lib/host';
+import { HOST, WS_HOST } from '@/lib/host';
 const api = `${HOST}/api/game`;
 
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 
 export const connectToGame = (id, setGameInfo, setUser) => {
-  let socket = new WS(`ws://localhost:8500/game/${id}`);
+  let socket = new WS(`${WS_HOST}/ws/game/${id}`);
 
   socket.onopen = () => {
     console.log('hello');

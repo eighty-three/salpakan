@@ -22,7 +22,7 @@ nextApp.prepare().then(() => {
   if (config.NODE_ENV !== 'production') {
     app.use('/api', createProxyMiddleware({ target: config.API_HOST, changeOrigin: true }));
   }
-  
+
   // Middleware
   app.use(cors());
   app.use(express.json());
