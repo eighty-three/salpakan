@@ -4,7 +4,7 @@ import { verify } from 'jsonwebtoken';
 
 import Router from 'next/router';
 
-import HOST from '@/lib/host';
+import { HOST } from '@/lib/host';
 
 const api = `${HOST}/api`;
 
