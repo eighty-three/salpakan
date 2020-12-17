@@ -6,13 +6,10 @@ const WS = global.WebSocket || ws;
 export const findMatch = (button) => {
   let socket = new WS(`${WS_HOST}/ws/matchmaking`);
 
-  socket.onopen = () => {
-    button({ disabled: true, text: 'Finding...' });
-  };
-
   socket.onmessage = (message) => {
     const data = message.data;
     socket.close();
+    button({ disabled: true, text: 'Match found!' });
     Router.push(`/game/${data}`);
   };
 
