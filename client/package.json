@@ -12,7 +12,8 @@
     "lint:fix": "eslint src --ext .js,.jsx --fix",
     "build": "next build",
     "start": "npm run build && node server/index.js",
-    "start:fast": "node server/index.js"
+    "start:fast": "node server/index.js",
+    "start:prod": "next start -p 3001"
   },
   "keywords": [],
   "author": "",
