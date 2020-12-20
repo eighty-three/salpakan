@@ -1,6 +1,4 @@
-const withPreact = require('next-plugin-preact');
-
-module.exports = withPreact({
+module.exports = {
   env: {
     HOST: process.env.HOST,
     PORT: process.env.PORT,
@@ -8,4 +6,4 @@ module.exports = withPreact({
     SECRET: process.env.SECRET
   },
   trailingSlash: true
-});
+};
