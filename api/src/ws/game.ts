@@ -14,6 +14,11 @@ const refreshTime = (room: IRoom, player: TPlayer) => {
   const elapsedTime = currentTime - room.lastMove;
   room[player].time = room[player].time - elapsedTime;
   room.lastMove = performance.now() / 100;
+
+  if (room[player].time <= 0) {
+    const opponent = (player === 'p1') ? 'p2' : 'p1';
+    room.winner = room[opponent].name;
+  }
 };
 
 const getGameInfo = (room: IRoom) => {
@@ -27,7 +32,8 @@ const getGameInfo = (room: IRoom) => {
     p2: {
       name: room.p2.name,
       time: room.p2.time
-    }
+    },
+    winner: room.winner
   };
 };
 
@@ -132,6 +138,14 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
       }
 
       break;
+    }
+
+    case 'time': {
+      refreshTime(room, data.message);
+
+      const gameInfo = getGameInfo(room);
+      socket.publish(socket.url, JSON.stringify({ type: 'move', data: gameInfo }));
+      // Delete in memory, store in database
     }
   }
 };
