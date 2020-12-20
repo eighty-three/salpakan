@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 
-import Countdown from './Countdown';
+import styles from './Setup.module.css';
+import Countdown from './MatchClock/Countdown';
 
 import GameInfoContext from '@/lib/GameInfoContext';
 import SocketContext from '@/lib/SocketContext';
 
-const SetupPanel = () => {
+const Setup = () => {
   const socket = useContext(SocketContext);
   const gameInfo = useContext(GameInfoContext);
   const [ time, setTime ] = useState(6000);
@@ -32,19 +33,25 @@ const SetupPanel = () => {
   };
 
   return (
-    <>
+    <div className={styles.container}>
       { gameInfo &&
         <>
-          <Countdown time={time} counter={countDown} />
-          <button onClick={onClickFn} disabled={disabled}>Submit board</button>
+          <button className={styles.button} onClick={onClickFn} disabled={disabled}>
+            Submit board
+          </button>
+          <div className={styles.clock}>
+            <Countdown time={time} counter={countDown} />
+          </div>
         </>
       }
 
       { afk &&
-        <p>Your opponent was AFK. Find another match</p>
+        <div className={styles.afk}>
+          Your opponent was AFK, find another match
+        </div>
       }
-    </>
+    </div>
   );
 };
 
-export default SetupPanel;
+export default Setup;

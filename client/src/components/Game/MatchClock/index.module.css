@@ -1,11 +1,6 @@
 .container {
+  height: 100%;
   display: flex;
-  justify-content: space-evenly;
-}
-
-.time {
-  display: flex;
-  flex-direction: column;
   justify-content: space-evenly;
 }
 

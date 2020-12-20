@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import styles from './Time.module.css';
+
 const fixString = (time) => {
   return (time < 10)
     ? `0${time}`
@@ -25,7 +27,7 @@ const Time = (props) => {
     : `${fixString(minutes)}:${fixString(seconds)}.${deci}`;
 
   return (
-    <p>{str}</p>
+    <div className={styles.time}>{str}</div>
   );
 };
 

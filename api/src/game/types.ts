@@ -8,6 +8,7 @@ export interface IRoom extends TPlayers {
   start: boolean;
   lastMove: number;
   time: number;
+  winner: string | null;
 }
 
 export interface IPlayer {
@@ -34,4 +35,5 @@ export interface IGame {
   player1: string;
   player2: string;
   ongoing: boolean;
+  winner: string;
 }

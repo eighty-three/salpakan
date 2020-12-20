@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 
-import styles from './Board.module.css';
+import styles from './index.module.css';
 import Piece from './Piece';
 
 import GameInfoContext from '@/lib/GameInfoContext';
@@ -26,19 +26,21 @@ const Board = () => {
 
   return (
     <>
-      { board &&
-        <div className={`${styles.board}`}>
-          <button onClick={moveFn}>Emulate Move</button>
+      <div className={`${styles.board}`}>
+        { board &&
           <>
-            {Object.keys(board).map((key) => (
-              <Piece
-                key={key}
-                name={board[`${key}`].name}
-              />
-            ))}
+            <button onClick={moveFn}>Emulate Move</button>
+            <>
+              {Object.keys(board).map((key) => (
+                <Piece
+                  key={key}
+                  name={board[`${key}`].name}
+                />
+              ))}
+            </>
           </>
-        </div>
-      }
+        }
+      </div>
     </>
   );
 };

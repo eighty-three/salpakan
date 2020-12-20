@@ -1,0 +1,18 @@
+.container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 75% 25%;
+  grid-template-rows: 100%;
+  grid-template-areas:
+    "info result"
+}
+
+.info {
+  grid-area: info;
+}
+
+.result {
+  grid-area: result;
+}
+
+@media (min-width: 576px) { .info { font-size: 1.5em; } }
