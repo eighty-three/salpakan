@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import Panel from './Panel';
-import SetupPanel from './SetupPanel';
+import styles from './index.module.css';
+import Player from './Player';
+import Setup from './Setup';
 import Board from './Board';
 
 import SocketContext from '@/lib/SocketContext';
@@ -38,11 +39,22 @@ const Game = (props) =>{
       <UserContext.Provider value={user}>
         <GameInfoContext.Provider value={gameInfo}>
           <SocketContext.Provider value={socket}>
-            {(gameInfo?.turn !== undefined)
-              ? (<Panel />)
-              : (<SetupPanel />)
-            }
-            <Board />
+            <div className={styles.container}>
+              <div className={styles.p1}>
+                {(gameInfo?.turn === undefined || gameInfo?.winner)
+                  ? (<Setup/>)
+                  : (<Player playerNum={'p1'} />)
+                }
+              </div>
+
+              <div className={styles.board}>
+                <Board />
+              </div>
+
+              <div className={styles.p2}>
+                <Player playerNum={'p2'} />
+              </div>
+            </div>
           </SocketContext.Provider>
         </GameInfoContext.Provider>
       </UserContext.Provider>
