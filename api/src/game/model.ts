@@ -36,6 +36,7 @@ export const startGame = async (
     turn: arr[0],
     start: false,
     lastMove: 0,
+    winner: null,
     time: Math.floor(Date.now() / 100) + 600
   };
 
@@ -53,7 +54,7 @@ export const getGame = async (
   roomName: string
 ): Promise<IGame|null> => {
   const query = new PS({ name: 'get-game', text: '\
-    SELECT player1_state, player2_state, player1, player2, ongoing FROM games WHERE name=$1 AND expiry > $2'
+    SELECT player1_state, player2_state, player1, player2, ongoing, winner FROM games WHERE name=$1 AND expiry > $2'
   });
 
   const currentTime = Math.floor(Date.now() / 1000);

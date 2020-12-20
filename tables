@@ -14,5 +14,6 @@ CREATE TABLE games (
   player1 TEXT NOT NULL,
   player2 TEXT NOT NULL,
   ongoing BOOLEAN DEFAULT TRUE,
+  winner TEXT,
   expiry INT NOT NULL
 );

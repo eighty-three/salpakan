@@ -16,7 +16,8 @@ export const getGame: RequestHandler = async (req, res) => {
           player2_state: gameState.player2_state,
         }, // Should be merged
         p1: { name: gameState.player1 },
-        p2: { name: gameState.player2 }
+        p2: { name: gameState.player2 },
+        winner: gameState.winner
       });
     }
   } else {
