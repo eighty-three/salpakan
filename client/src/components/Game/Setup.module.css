@@ -1,0 +1,44 @@
+.container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 30% 40% 20% 10%;
+  grid-template-rows: 100%;
+  grid-template-areas:
+    ". button clock ."
+}
+
+.button {
+  grid-area: button;
+  font-size: 0.8em;
+  margin: 5px auto;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+}
+
+.clock {
+  grid-area: clock;
+}
+
+.afk {
+  grid-column: 1/-1;
+  font-size: 0.8em;
+  text-align: center;
+
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+}
+
+@media (min-width: 360px) {
+  .afk {font-size: 1em; }
+}
+
+@media (min-width: 576px) { 
+  .afk { font-size: 1.5em; }
+  .button { font-size: 1.2em; }
+}
