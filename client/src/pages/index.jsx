@@ -23,7 +23,7 @@ const Home = (props) => {
         <title>{siteTitle}</title>
       </Head>
       <section>
-        <MatchmakingComponent />
+        <MatchmakingComponent username={username} />
       </section>
     </Layout>
   );
