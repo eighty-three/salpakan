@@ -41,7 +41,7 @@ const Game = (props) =>{
           <SocketContext.Provider value={socket}>
             <div className={styles.container}>
               <div className={styles.p1}>
-                {(gameInfo?.turn === undefined || gameInfo?.winner)
+                {(gameInfo?.turn === undefined || !gameInfo?.winner)
                   ? (<Setup/>)
                   : (<Player playerNum={'p1'} />)
                 }
