@@ -73,7 +73,10 @@ export const open: IOpen<Promise<void>> = async (socket) => {
 
   const gameInfo = (room.start)
     ? getGameInfo(room)
-    : { gameState: room[player].board, time: room.time };
+    : {
+      gameState: room[player].board,
+      time: room.time - Math.floor(Date.now() / 100)
+    };
 
   socket.send(JSON.stringify({
     type: 'init',

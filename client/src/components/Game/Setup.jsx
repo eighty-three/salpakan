@@ -9,13 +9,12 @@ import SocketContext from '@/lib/SocketContext';
 const Setup = () => {
   const socket = useContext(SocketContext);
   const gameInfo = useContext(GameInfoContext);
-  const [ time, setTime ] = useState(6000);
+  const [ time, setTime ] = useState(gameInfo?.time);
   const [ afk, setAfk ] = useState(false);
   const [ disabled, setDisabled ] = useState(false);
 
   useEffect(() => {
-    setTime(gameInfo?.time - Math.floor(Date.now() / 100));
-    // Data from server is deciseconds so deduct in deciseconds
+    setTime(gameInfo?.time);
   }, [gameInfo?.time]);
 
   const countDown = async () => {
