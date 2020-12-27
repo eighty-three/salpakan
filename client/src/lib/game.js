@@ -50,3 +50,50 @@ export const getGame = async (id) => {
     return { error: 'Something went wrong' };
   }
 };
+
+export const checkIfLegal = (board, origin, destination) => {
+  try {
+    const originRow = origin.charCodeAt(0);
+    const destRow = destination.charCodeAt(0);
+    const originCol = Number(origin[1]);
+    const destCol = Number(destination[1]);
+
+    /* If not within bounds then return false. Coordinates are from
+     * A1 to I8, 'A'.charCodeAt() is 65, 'I'.charCodeAt() is 73,
+     * so adding both origin and destination should always be within
+     * 130-146 range, as is the case with the number part, with 2-16.
+     * It can go through if the client somehow sends something like
+     * 'A15' to 'A1' but it will be taken into account in the next
+     * conditional statements, where it counts how many steps it took
+     * from origin to destination
+     */
+    if (
+      !((originRow + destRow >= 130 && originRow + destRow <= 146)
+      && (originCol + destCol >= 2 && originCol + destCol <= 16))
+    ) return false;
+
+    /* If row changed just one step and if column stayed in place,
+     * or vice versa, then return true. A piece can only move vertically
+     * or horizontally one step at a time, e.g., A1 to B1, or A1 to A2.
+     * Going from A1 to A3 or A1 to C1 is impossible
+     */
+    if (
+      ((Math.abs(originRow - destRow) === 1) && (originCol - destCol === 0))
+      || ((originRow - destRow === 0) && (Math.abs(originCol - destCol) === 1))
+    ) {
+
+      /* If move is legal, check if `origin` is a piece owned by the player,
+       * and if `destination` is not occupied by a piece owned by the player.
+       * The checks are done like so because in the client-side, if the player
+       * knows the name of a piece, he owns it (because he knows its value)
+       */
+      if (board[origin].name && !board[destination]?.name) {
+        return true;
+      }
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
+};
