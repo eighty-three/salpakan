@@ -147,7 +147,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
       refreshTime(room, data.message);
 
       const gameInfo = getGameInfo(room);
-      socket.publish(socket.url, JSON.stringify({ type: 'move', data: gameInfo }));
+      socket.publish(socket.url, JSON.stringify({ type: 'time', data: gameInfo }));
       // Delete in memory, store in database
     }
   }

@@ -27,6 +27,10 @@ export const connectToGame = (id, setGameInfo, setUser) => {
       case 'move':
         setGameInfo(res.data);
         break;
+
+      case 'time':
+        setGameInfo(res.data);
+        break;
     }
   };
 
