@@ -34,12 +34,24 @@ const Game = (props) =>{
     }
   }, []);
 
+  const moveFn = () => {
+    // Temporary to simulate moves. It should be attached to the Piece components
+    if (
+      user === gameInfo?.turn
+      && !gameInfo?.winner
+    ) {
+      socket.send(JSON.stringify({ type: 'move' }));
+    }
+  };
+
   return (
     <>
       <UserContext.Provider value={user}>
         <GameInfoContext.Provider value={gameInfo}>
           <SocketContext.Provider value={socket}>
             <div className={styles.container}>
+              <button onClick={moveFn}>Emulate Move</button>
+
               <div className={styles.p1}>
                 {(gameInfo?.turn === undefined && !gameInfo?.winner)
                   ? (<Setup/>)
