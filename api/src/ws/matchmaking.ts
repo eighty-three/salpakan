@@ -29,7 +29,9 @@ export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
       context
     );
   } else {
-    res.onAborted(() => { upgradeAborted.aborted = true; });
+    res.onAborted(() => {
+      upgradeAborted.aborted = true;
+    });
     res.writeStatus('400 Bad Request');
     res.end();
   }
