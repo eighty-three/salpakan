@@ -1,6 +1,6 @@
-FROM node:14-alpine AS BUILD_IMAGE
+FROM node:14-buster-slim AS BUILD_IMAGE
 
-RUN apk update && apk add bash && apk add curl && apk add git
+RUN apt-get update && apt-get install -y git && apt-get install -y curl
 
 RUN curl -sfL https://install.goreleaser.com/github.com/tj/node-prune.sh | bash -s -- -b /usr/local/bin
 
@@ -9,12 +9,12 @@ WORKDIR /src
 COPY . .
 
 # remove development dependencies
-RUN npm install --production && npm run build
+RUN npm install && npm prune --production && npm run build
 
 # run node prune
 RUN /usr/local/bin/node-prune
 
-FROM node:14-alpine
+FROM node:14-buster-slim
 
 WORKDIR /src
 
@@ -25,11 +25,7 @@ COPY --from=BUILD_IMAGE /src/tsconfig.prod.json ./tsconfig.prod.json
 COPY --from=BUILD_IMAGE /src/node_modules ./node_modules
 COPY --from=BUILD_IMAGE /src/package.json ./package.json
 
-RUN ls -a
-RUN ls ./build/utils
-
-
- CMD ["npm","run","startfast"]
+CMD ["npm","run","startfast"]
 
 # Ignore this
 
