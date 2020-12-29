@@ -20,12 +20,17 @@
   	],
     "ignorePatterns": ["build", "src/utils"],
     "rules": {
+        "brace-style": [
+          "error"
+        ],
+        "no-mixed-spaces-and-tabs": [
+          "error"
+        ],
         "indent": [
           "error", 2, {
             "SwitchCase": 1
           }
         ],
-
         "linebreak-style": [
             "error",
             "unix"
