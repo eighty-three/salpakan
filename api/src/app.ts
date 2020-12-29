@@ -1,3 +1,4 @@
+require('module-alias/register');
 import config from '@utils/config';
 import express from 'express';
 import cors from 'cors';
