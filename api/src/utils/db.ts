@@ -14,10 +14,10 @@ const db = pg(cn);
     dbConnection = await db.connect();
     logger.info(`successfully connected to postgres database ${config.DB_PROJNAME}.
     server version: ${dbConnection.client.serverVersion}
-    port: ${config.PORT} host: ${config.DB_HOSTNAME}.`);  }
-    catch (err) {
+    port: ${config.PORT} host: ${config.DB_HOSTNAME}.`);
+  } catch (err) {
       logger.error(`error connecting to postgres database ${config.DB_PROJNAME} error: ${err}`)
-    } finally {
+  } finally {
     if (dbConnection) {
       dbConnection.done();
     }
