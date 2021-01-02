@@ -21,7 +21,7 @@ export interface IPlayer {
 export interface IBoard {
   [key: string]: {
     value: number;
-    name: string;
+    name?: string;
   }
 }
 
