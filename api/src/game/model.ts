@@ -1,6 +1,7 @@
 import db from '@utils/db';
 import { PreparedStatement as PS } from 'pg-promise';
 import { IGameStates, IGame } from './types';
+import { getInitialBoardState } from './utils';
 
 export const startGame = async (
   gameStates: IGameStates,
@@ -9,30 +10,22 @@ export const startGame = async (
 ): Promise<void> => {
   const arr = connections.slice();
 
-  const testData = {
-    A1: { value: 1, name: 'private' },
-    A2: { value: 1, name: 'private' },
-    A3: { value: 1, name: 'private' },
-    A4: { value: 1, name: 'private' },
-    A5: { value: 1, name: 'private p1' }
-  };
-
   // deciseconds used for all time values in gameStates
   gameStates[roomName] = {
     playerList: arr,
     p1: {
       name: arr[0],
-      board: testData,
+      board: getInitialBoardState('p1'),
       time: 6000,
       start: false
     },
     p2: {
       name: arr[1],
-      board: testData,
+      board: getInitialBoardState('p2'),
       time: 6000,
       start: false
     },
-    board: testData,
+    board: {},
     turn: arr[0],
     start: false,
     lastMove: 0,
