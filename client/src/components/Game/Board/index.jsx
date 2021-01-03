@@ -22,6 +22,7 @@ const Board = () => {
               <Piece
                 key={key}
                 name={board[`${key}`].name}
+                coordinate={key}
               />
             ))}
           </>
