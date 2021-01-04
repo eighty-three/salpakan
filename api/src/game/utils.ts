@@ -62,3 +62,9 @@ export const hidePieceValues = (b1: IBoard, b2: IBoard): IBoard => {
   for (const y in b2) { combined[y] = { name: 'unknown' }; }
   return combined;
 };
+
+export const cleanPlayerBoard = (playerBoard: IBoard, opponentBoard: IBoard): IBoard => {
+  const combined: IBoard = {...playerBoard};
+  for (const x in opponentBoard) { combined[x] = { name: 'unknown' }; }
+  return combined;
+};
