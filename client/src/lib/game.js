@@ -20,9 +20,18 @@ export const connectToGame = (id, setGameInfo, setUser) => {
         setUser(res.user);
         break;
 
-      case 'start':
-        setGameInfo(res.data);
+      case 'start': {
+        setGameInfo((prev) => {
+          return {
+            ...res.data,
+            gameState: {
+              ...res.data.gameState,
+              ...prev.gameState
+            }
+          };
+        });
         break;
+      }
 
       case 'move':
         setGameInfo(res.data);

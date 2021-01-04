@@ -55,3 +55,10 @@ export const getInitialBoardState = (player: TPlayer): IBoard => {
     return player2Board;
   }
 };
+
+export const hidePieceValues = (b1: IBoard, b2: IBoard): IBoard => {
+  const combined: IBoard = {};
+  for (const x in b1) { combined[x] = { name: 'unknown' }; }
+  for (const y in b2) { combined[y] = { name: 'unknown' }; }
+  return combined;
+};

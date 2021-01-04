@@ -6,6 +6,7 @@ import { decode } from './utils';
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame } from '../game/model';
 import { IRoom, TPlayer } from '../game/types';
+import { hidePieceValues } from '../game/utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
 
@@ -109,15 +110,17 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
   switch (data.type) {
     case 'ready': {
       room[player].start = true;
+      room[player].board = data.message;
 
       if (
         room.p1.start
         && room.p2.start
       ) {
-        const gameInfo = getGameInfo(room);
         room.start = true;
         room.lastMove = performance.now() / 100;
+        room.board = hidePieceValues(room.p1.board, room.p2.board);
 
+        const gameInfo = getGameInfo(room);
         socket.publish(socket.url, JSON.stringify({ type: 'start', data: gameInfo }));
       }
 
