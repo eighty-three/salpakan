@@ -5,8 +5,8 @@ import { performance } from 'perf_hooks';
 import { decode } from './utils';
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame } from '../game/model';
-import { IRoom, TPlayer } from '../game/types';
-import { hidePieceValues } from '../game/utils';
+import { IRoom, IBoard, TPlayer } from '../game/types';
+import { hidePieceValues, cleanPlayerBoard } from '../game/utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
 
@@ -22,9 +22,9 @@ const refreshTime = (room: IRoom, player: TPlayer) => {
   }
 };
 
-const getGameInfo = (room: IRoom) => {
+const getGameInfo = (room: IRoom, board: IBoard) => {
   return {
-    gameState: room.board,
+    gameState: board,
     turn: room.turn,
     p1: {
       name: room.p1.name,
@@ -73,7 +73,7 @@ export const open: IOpen<Promise<void>> = async (socket) => {
   if (room.start) refreshTime(room, turn);
 
   const gameInfo = (room.start)
-    ? getGameInfo(room)
+    ? getGameInfo(room, room[player].board)
     : {
       gameState: room[player].board,
       time: room.time - Math.floor(Date.now() / 100)
@@ -119,8 +119,10 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         room.start = true;
         room.lastMove = performance.now() / 100;
         room.board = hidePieceValues(room.p1.board, room.p2.board);
+        room.p1.board = cleanPlayerBoard(room.p1.board, room.p2.board);
+        room.p2.board = cleanPlayerBoard(room.p2.board, room.p1.board);
 
-        const gameInfo = getGameInfo(room);
+        const gameInfo = getGameInfo(room, room.board);
         socket.publish(socket.url, JSON.stringify({ type: 'start', data: gameInfo }));
       }
 
@@ -139,7 +141,8 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         refreshTime(room, player);
         room.turn = room[opponent].name;
 
-        const gameInfo = getGameInfo(room);
+        // should be output of checkMove instead of room.board
+        const gameInfo = getGameInfo(room, room.board);
         socket.publish(socket.url, JSON.stringify({ type: 'move', data: gameInfo }));
       }
 
@@ -149,7 +152,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
     case 'time': {
       refreshTime(room, data.message);
 
-      const gameInfo = getGameInfo(room);
+      const gameInfo = getGameInfo(room, room.board);
       socket.publish(socket.url, JSON.stringify({ type: 'time', data: gameInfo }));
       // Delete in memory, store in database
     }
