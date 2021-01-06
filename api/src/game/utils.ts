@@ -107,22 +107,22 @@ export const checkMove = (
   const flag = gameStates[roomName].flagOnLastRow;
   const lastRow = (player === 'p1') ? 1 : 8;
   const opponent = (player === 'p1') ? 'p2' : 'p1';
+  const playerBoard = gameStates[roomName][player].board;
+  const opponentBoard = gameStates[roomName][opponent].board;
 
-  const playerInfo = gameStates[roomName][player];
-  const opponentInfo = gameStates[roomName][opponent];
-
-  const o = playerInfo.board[origin].value;
+  const o = playerBoard[origin].value;
 
   // if destination isn't on opponent's board, it's empty (so 0)
-  const d = opponentInfo.board[destination]?.value || 0;
+  const d = opponentBoard[destination]?.value || 0;
 
-  // if destination is on player's board, the move shouldn't be possible because you can't attack your own pieces
-  const dCheck = playerInfo.board[destination]?.value;
+  const dCheck = playerBoard[destination]?.value;
 
   // 1 for success, 2 for fail, 3 for draw
   let result = 1;
 
-  // check if possible
+  /* if destination is on player's board, the move shouldn't be possible
+   * because you can't attack your own pieces
+   */
   if (!o || dCheck) return 0;
 
   // Flow should be fixed to get expected response
