@@ -6,7 +6,7 @@ import { decode } from './utils';
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame } from '../game/model';
 import { IRoom, TPlayer } from '../game/types';
-import { hidePieceValues, cleanPlayerBoard, checkMove } from '../game/utils';
+import { cleanBoards, checkMove } from '../game/utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
 
@@ -115,13 +115,11 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
       ) {
         room.start = true;
         room.lastMove = performance.now() / 100;
-        room.board = hidePieceValues(room.p1.board, room.p2.board);
 
-        const cleanP1 = cleanPlayerBoard(room.p1.board, room.p2.board);
-        const cleanP2 = cleanPlayerBoard(room.p2.board, room.p1.board);
-
-        room.p1.board = cleanP1;
-        room.p2.board = cleanP2;
+        const { board1, board2, bothBoards } = cleanBoards(room.p1.board, room.p2.board);
+        room.board = bothBoards;
+        room.p1.board = board1;
+        room.p2.board = board2;
 
         const gameInfo = getGameInfo(room);
         socket.publish(socket.url, JSON.stringify({
