@@ -109,8 +109,8 @@ export const checkMove = (
   const opponent = (player === 'p1') ? 'p2' : 'p1';
 
   const o = gameStates[roomName][player].board[origin].value;
-  const d = gameStates[roomName][opponent].board?.[destination].value || 0; // if destination isn't on opponent's board, it's empty (so 0)
-  const dCheck = gameStates[roomName][player].board[destination].value; // if destination is on player's board, the move shouldn't be possible because you can't attack your own pieces
+  const d = gameStates[roomName][opponent].board[destination]?.value || 0; // if destination isn't on opponent's board, it's empty (so 0)
+  const dCheck = gameStates[roomName][player].board[destination]?.value; // if destination is on player's board, the move shouldn't be possible because you can't attack your own pieces
 
   // 1 for success, 2 for fail, 3 for draw
   let result = 1;
