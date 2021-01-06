@@ -24,7 +24,7 @@ const refreshTime = (room: IRoom, player: TPlayer) => {
 
 const getGameInfo = (room: IRoom, board: IBoard) => {
   return {
-    gameState: board,
+    board,
     turn: room.turn,
     p1: {
       name: room.p1.name,
@@ -75,7 +75,7 @@ export const open: IOpen<Promise<void>> = async (socket) => {
   const gameInfo = (room.start)
     ? getGameInfo(room, room[player].board)
     : {
-      gameState: room[player].board,
+      board: room[player].board,
       time: room.time - Math.floor(Date.now() / 100)
     };
 

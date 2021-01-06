@@ -24,9 +24,9 @@ export const connectToGame = (id, setGameInfo, setUser) => {
         setGameInfo((prev) => {
           return {
             ...res.data,
-            gameState: {
-              ...res.data.gameState,
-              ...prev.gameState
+            board: {
+              ...res.data.board,
+              ...prev.board
             }
           };
         });
@@ -35,18 +35,18 @@ export const connectToGame = (id, setGameInfo, setUser) => {
 
       case 'move':
         setGameInfo((prev) => {
-          const fixedGameState = {...prev.gameState};
-          delete fixedGameState[res.data.origin];
+          const fixedBoard = {...prev.board};
+          delete fixedBoard[res.data.origin];
 
           if (res.result === 1) {
-            fixedGameState[res.data.destination] = prev.gameState[origin];
+            fixedBoard[res.data.destination] = prev.board[origin];
           } else if (res.result === 3) {
-            delete fixedGameState[res.data.destination];
+            delete fixedBoard[res.data.destination];
           }
 
           return {
             ...res.data,
-            gameState: {...fixedGameState}
+            board: {...fixedBoard}
           };
         });
 
