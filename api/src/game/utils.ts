@@ -117,13 +117,13 @@ export const checkMove = (
 
   const dCheck = playerBoard[destination]?.value;
 
-  // 1 for success, 2 for fail, 3 for draw
-  let result = 1;
-
   /* if destination is on player's board, the move shouldn't be possible
    * because you can't attack your own pieces
    */
   if (!o || dCheck) return 0;
+
+  // 1 for success, 2 for fail, 3 for draw
+  let result = 1;
 
   // Flow should be fixed to get expected response
   if (o === 99) { // If attacker is Spy
