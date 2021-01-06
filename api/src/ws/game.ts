@@ -5,7 +5,7 @@ import { performance } from 'perf_hooks';
 import { decode } from './utils';
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame } from '../game/model';
-import { IRoom, IBoard, TPlayer } from '../game/types';
+import { IRoom, TPlayer } from '../game/types';
 import { hidePieceValues, cleanPlayerBoard, checkMove } from '../game/utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
@@ -22,9 +22,8 @@ const refreshTime = (room: IRoom, player: TPlayer) => {
   }
 };
 
-const getGameInfo = (room: IRoom, board: IBoard) => {
+const getGameInfo = (room: IRoom) => {
   return {
-    board,
     turn: room.turn,
     p1: {
       name: room.p1.name,
@@ -73,15 +72,13 @@ export const open: IOpen<Promise<void>> = async (socket) => {
   if (room.start) refreshTime(room, turn);
 
   const gameInfo = (room.start)
-    ? getGameInfo(room, room[player].board)
-    : {
-      board: room[player].board,
-      time: room.time - Math.floor(Date.now() / 100)
-    };
+    ? getGameInfo(room)
+    : { time: room.time - Math.floor(Date.now() / 100) };
 
   socket.send(JSON.stringify({
     type: 'init',
     data: gameInfo,
+    board: room[player].board,
     user: socket.cn
   }));
 };
@@ -119,11 +116,16 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         room.start = true;
         room.lastMove = performance.now() / 100;
         room.board = hidePieceValues(room.p1.board, room.p2.board);
+
         room.p1.board = cleanPlayerBoard(room.p1.board, room.p2.board);
         room.p2.board = cleanPlayerBoard(room.p2.board, room.p1.board);
 
-        const gameInfo = getGameInfo(room, room.board);
-        socket.publish(socket.url, JSON.stringify({ type: 'start', data: gameInfo }));
+        const gameInfo = getGameInfo(room);
+        socket.publish(socket.url, JSON.stringify({
+          type: 'start',
+          data: gameInfo,
+          board: room.board
+        }));
       }
 
       break;
@@ -141,8 +143,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         refreshTime(room, player);
         room.turn = room[opponent].name;
 
-        const moveData = {
-          // should getGameInfo be fixed instead? separate the 'metadata' of the game
+        const coordinates = {
           origin: data.message.o,
           destination: data.message.d
         };
@@ -150,9 +151,13 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         const result = checkMove(gameStates, socket.url, player, data.message.o, data.message.d);
         if (result === 0) socket.send(JSON.stringify({ type: 'fail' }));
 
-        // currently, moveData doesn't fit the interface IBoard
-        const gameInfo = getGameInfo(room, moveData);
-        socket.publish(socket.url, JSON.stringify({ type: 'move', data: gameInfo, result }));
+        const gameInfo = getGameInfo(room);
+        socket.publish(socket.url, JSON.stringify({
+          type: 'move',
+          data: gameInfo,
+          board: coordinates,
+          result
+        }));
       }
 
       break;
@@ -161,8 +166,12 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
     case 'time': {
       refreshTime(room, data.message);
 
-      const gameInfo = getGameInfo(room, room.board);
-      socket.publish(socket.url, JSON.stringify({ type: 'time', data: gameInfo }));
+      const gameInfo = getGameInfo(room);
+      socket.publish(socket.url, JSON.stringify({
+        type: 'time',
+        data: gameInfo,
+        board: room.board
+      }));
       // Delete in memory, store in database
     }
   }

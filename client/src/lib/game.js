@@ -16,7 +16,7 @@ export const connectToGame = (id, setGameInfo, setUser) => {
     const res = JSON.parse(message.data);
     switch (res.type) {
       case 'init':
-        setGameInfo(res.data);
+        setGameInfo({ ...res.data, board: res.board });
         setUser(res.user);
         break;
 
@@ -25,7 +25,7 @@ export const connectToGame = (id, setGameInfo, setUser) => {
           return {
             ...res.data,
             board: {
-              ...res.data.board,
+              ...res.board,
               ...prev.board
             }
           };
@@ -36,12 +36,15 @@ export const connectToGame = (id, setGameInfo, setUser) => {
       case 'move':
         setGameInfo((prev) => {
           const fixedBoard = {...prev.board};
-          delete fixedBoard[res.data.origin];
+          delete fixedBoard[res.board.origin];
 
+          /* Implicit case where res.result === 2 where the action is
+           * just `delete fixedBoard[res.board.origin];`
+           */
           if (res.result === 1) {
-            fixedBoard[res.data.destination] = prev.board[origin];
+            fixedBoard[res.board.destination] = prev.board[res.board.origin];
           } else if (res.result === 3) {
-            delete fixedBoard[res.data.destination];
+            delete fixedBoard[res.board.destination];
           }
 
           return {
@@ -53,7 +56,7 @@ export const connectToGame = (id, setGameInfo, setUser) => {
         break;
 
       case 'time':
-        setGameInfo(res.data);
+        setGameInfo({ ...res.data, board: res.board });
         break;
     }
   };
