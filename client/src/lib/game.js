@@ -58,6 +58,15 @@ export const connectToGame = (id, setGameInfo, setUser) => {
       case 'time':
         setGameInfo({ ...res.data, board: res.board });
         break;
+
+      case 'fail':
+        setGameInfo((prev) => {
+          return {
+            ...res.data,
+            board: prev.board
+          };
+        });
+        break;
     }
   };
 
