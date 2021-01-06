@@ -10,8 +10,8 @@ const Board = () => {
   const [ board, setBoard ] = useState({});
 
   useEffect(() => {
-    setBoard(gameInfo?.gameState);
-  }, [gameInfo?.gameState]);
+    setBoard(gameInfo?.board);
+  }, [gameInfo?.board]);
 
   return (
     <>

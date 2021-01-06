@@ -28,7 +28,7 @@ const Setup = () => {
 
   const onClickFn = () => {
     setDisabled(true);
-    socket.send(JSON.stringify({ type: 'ready', message: gameInfo.gameState }));
+    socket.send(JSON.stringify({ type: 'ready', message: gameInfo.board }));
   };
 
   return (
