@@ -6,7 +6,7 @@ import { decode } from './utils';
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame } from '../game/model';
 import { IRoom, IBoard, TPlayer } from '../game/types';
-import { hidePieceValues, cleanPlayerBoard } from '../game/utils';
+import { hidePieceValues, cleanPlayerBoard, checkMove } from '../game/utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
 
@@ -141,9 +141,18 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         refreshTime(room, player);
         room.turn = room[opponent].name;
 
-        // should be output of checkMove instead of room.board
-        const gameInfo = getGameInfo(room, room.board);
-        socket.publish(socket.url, JSON.stringify({ type: 'move', data: gameInfo }));
+        const moveData = {
+          // should getGameInfo be fixed instead? separate the 'metadata' of the game
+          origin: data.message.o,
+          destination: data.message.d
+        };
+
+        const result = checkMove(gameStates, socket.url, player, data.message.o, data.message.d);
+        if (result === 0) socket.send(JSON.stringify({ type: 'fail' }));
+
+        // currently, moveData doesn't fit the interface IBoard
+        const gameInfo = getGameInfo(room, moveData);
+        socket.publish(socket.url, JSON.stringify({ type: 'move', data: gameInfo, result }));
       }
 
       break;
