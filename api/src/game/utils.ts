@@ -53,7 +53,7 @@ export const getInitialBoardState = (player: TPlayer): IBoard => {
 };
 
 /**
- * Receives the players' boards and 'cleans' them, that is, removing
+ * Receives the players' boards and `cleans` them, that is, removing
  * the values of the opponent's pieces in order for the data to be
  * published or sent to the player (because otherwise, the player
  * would then know the values of the opponent's pieces which would
@@ -86,16 +86,16 @@ export const cleanBoards = (
 };
 
 /**
- * checks two coordinates, e.g., 'A1' and 'B1', to know if
+ * checks two coordinates, e.g., `A1` and `B1`, to know if
  * movement between them is possible. It should be legal and the
  * pieces should be in the possession of the correct player
  *
- * @param {IGameStates} gameState -
- * @param {string} roomName - id/url of the room
- * @param {TPlayer} player - who sent the move ('p1' or 'p2')
- * @param {keyof IBoard} origin - coordinate where the move comes from
- * @param {keyof IBoard} destination - coordinate where the move is going to
- * @returns {number} result - impossible (0), a success (1), a failure (2), or a draw (3)
+ * @param {IGameStates} gameState The object containing all rooms and their data
+ * @param {string} roomName id/url of the room
+ * @param {TPlayer} player The player who sent the move ('p1' or 'p2')
+ * @param {keyof IBoard} origin The coordinate where the move comes from
+ * @param {keyof IBoard} destination The coordinate where the move is going to
+ * @returns {number} impossible (0), success (1), failure (2), or draw (3)
  */
 export const checkMove = (
   gameStates: IGameStates,
