@@ -14,6 +14,7 @@ export const connectToGame = (id, setGameInfo, setUser) => {
 
   socket.onmessage = (message) => {
     const res = JSON.parse(message.data);
+
     switch (res.type) {
       case 'init':
         setGameInfo({ ...res.data, board: res.board });
@@ -30,6 +31,7 @@ export const connectToGame = (id, setGameInfo, setUser) => {
             }
           };
         });
+
         break;
       }
 
@@ -66,6 +68,7 @@ export const connectToGame = (id, setGameInfo, setUser) => {
             board: prev.board
           };
         });
+
         break;
     }
   };
