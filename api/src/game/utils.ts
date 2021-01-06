@@ -52,17 +52,37 @@ export const getInitialBoardState = (player: TPlayer): IBoard => {
   return (player === 'p1') ? player1Board : player2Board;
 };
 
-export const hidePieceValues = (b1: IBoard, b2: IBoard): IBoard => {
-  const combined: IBoard = {};
-  for (const x in b1) { combined[x] = { name: 'unknown' }; }
-  for (const y in b2) { combined[y] = { name: 'unknown' }; }
-  return combined;
-};
+/**
+ * Receives the players' boards and 'cleans' them, that is, removing
+ * the values of the opponent's pieces in order for the data to be
+ * published or sent to the player (because otherwise, the player
+ * would then know the values of the opponent's pieces which would
+ * make the game pointless)
+ *
+ * @param {IBoard} b1 First board (from player 1)
+ * @param {IBoard} b2 Second board (from player 2)
+ * @returns {Object} An object with `b1` and `b2` (no values) combined, an object with `b1` (no values) and `b2` combined, and an object that contains `b1` and `b2` with both having no values
+ */
+export const cleanBoards = (
+  b1: IBoard,
+  b2: IBoard
+): { board1: IBoard, board2: IBoard, bothBoards: IBoard } => {
+  const cleanB1: IBoard = {...b1};
+  const cleanB2: IBoard = {...b2};
+  const bothBoards: IBoard = {};
 
-export const cleanPlayerBoard = (playerBoard: IBoard, opponentBoard: IBoard): IBoard => {
-  const cleaned: IBoard = {...playerBoard};
-  for (const x in opponentBoard) { cleaned[x] = { name: 'unknown' }; }
-  return cleaned;
+  for (const x in b1) {
+    bothBoards[x] = { name: 'unknown' };
+    cleanB2[x] = { name: 'unknown' };
+  }
+
+  for (const x in b2) {
+    bothBoards[x] = { name: 'unknown' };
+    cleanB1[x] = { name: 'unknown' };
+  }
+
+  for (const x in b2) { cleanB1[x] = { name: 'unknown' }; }
+  return { board1: cleanB1, board2: cleanB2, bothBoards };
 };
 
 /**
