@@ -1,4 +1,4 @@
-import { IBoard, TPlayer } from './types';
+import { IBoard, IGameStates, TPlayer } from './types';
 
 export const getInitialBoardState = (player: TPlayer): IBoard => {
   const player1Board = {
@@ -67,4 +67,55 @@ export const cleanPlayerBoard = (playerBoard: IBoard, opponentBoard: IBoard): IB
   const combined: IBoard = {...playerBoard};
   for (const x in opponentBoard) { combined[x] = { name: 'unknown' }; }
   return combined;
+};
+
+/**
+ * checks two coordinates, e.g., 'A1' and 'B1', to know if
+ * movement between them is possible. It should be legal and the
+ * pieces should be in the possession of the correct player
+ *
+ * @param {IGameStates} gameState -
+ * @param {string} roomName - id/url of the room
+ * @param {TPlayer} player - who sent the move ('p1' or 'p2')
+ * @param {keyof IBoard} origin - coordinate where the move comes from
+ * @param {keyof IBoard} destination - coordinate where the move is going to
+ * @returns {number} result - impossible (0), a success (1), a failure (2), or a draw (3)
+ */
+export const checkMove = (
+  gameStates: IGameStates,
+  roomName: string,
+  player: TPlayer,
+  origin: keyof IBoard,
+  destination: keyof IBoard
+): number => {
+  const flag = gameStates[roomName].flagOnLastRow;
+  const lastRow = (player === 'p1') ? 1 : 8;
+  const opponent = (player === 'p1') ? 'p2' : 'p1';
+
+  const o = gameStates[roomName][player].board[origin].value;
+  const d = gameStates[roomName][opponent].board?.[destination].value || 0; // if destination isn't on opponent's board, it's empty (so 0)
+  const dCheck = gameStates[roomName][player].board[destination].value; // if destination is on player's board, the move shouldn't be possible because you can't attack your own pieces
+
+  // 1 for success, 2 for fail, 3 for draw
+  let result = 1;
+
+  // check if possible
+  if (!o || dCheck) return 0;
+
+  // Flow should be fixed to get expected response
+  if (o === 99) { // If attacker is Spy
+  } else if (o === 2) { // If attacker is Private
+  } else if (o > d) { // If attacker is stronger than target
+  } else if (d > o) { // If target is stronger than attacker
+    result = 2;
+  } else if (d === o) { // If draw
+    result = 3;
+  } else if (d === 1) { // If target is flag
+  } else if (o === 1 && d !== 1) { // If attacker is flag and target is not flag
+  } else if (o === 1 && Number(String(destination)[1]) === lastRow) { // If attacker is flag and destination is on last row
+    gameStates[roomName].flagOnLastRow = String(destination);
+  } else if (flag && destination !== flag) { // If there is a flag on last row and the destination isn't on that flag's position
+  }
+
+  return result;
 };
