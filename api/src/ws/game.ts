@@ -117,8 +117,11 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         room.lastMove = performance.now() / 100;
         room.board = hidePieceValues(room.p1.board, room.p2.board);
 
-        room.p1.board = cleanPlayerBoard(room.p1.board, room.p2.board);
-        room.p2.board = cleanPlayerBoard(room.p2.board, room.p1.board);
+        const cleanP1 = cleanPlayerBoard(room.p1.board, room.p2.board);
+        const cleanP2 = cleanPlayerBoard(room.p2.board, room.p1.board);
+
+        room.p1.board = cleanP1;
+        room.p2.board = cleanP2;
 
         const gameInfo = getGameInfo(room);
         socket.publish(socket.url, JSON.stringify({
