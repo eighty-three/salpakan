@@ -141,8 +141,6 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
 
     case 'move': {
       if (socket.cn === room.turn) {
-        refreshTime(room, player);
-        room.turn = room[opponent].name;
 
         const coordinates = {
           origin: data.message.o,
@@ -150,15 +148,22 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         };
 
         const result = checkMove(gameStates, socket.url, player, data.message.o, data.message.d);
-        if (result === 0) socket.send(JSON.stringify({ type: 'fail' }));
 
-        const gameInfo = getGameInfo(room);
-        socket.publish(socket.url, JSON.stringify({
-          type: 'move',
-          data: gameInfo,
-          board: coordinates,
-          result
-        }));
+        if (result === 0) {
+          const gameInfo = getGameInfo(room);
+          socket.send(JSON.stringify({ type: 'fail', data: gameInfo }));
+        } else {
+          refreshTime(room, player);
+          room.turn = room[opponent].name;
+
+          const gameInfo = getGameInfo(room);
+          socket.publish(socket.url, JSON.stringify({
+            type: 'move',
+            data: gameInfo,
+            board: coordinates,
+            result
+          }));
+        }
       }
 
       break;
