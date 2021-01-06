@@ -98,9 +98,10 @@ export const checkIfLegal = (board, origin, destination) => {
       /* If move is legal, check if `origin` is a piece owned by the player,
        * and if `destination` is not occupied by a piece owned by the player.
        * The checks are done like so because in the client-side, if the player
-       * knows the name of a piece, he owns it (because he knows its value)
+       * knows the value of a piece, he owns it. Otherwise, it should only show
+       * `{ name: 'unknown' }`
        */
-      if (board[origin].name && !board[destination]?.name) {
+      if (board[origin].value && !board[destination]?.value) {
         return true;
       }
     }
