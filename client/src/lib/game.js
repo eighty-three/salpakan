@@ -34,7 +34,22 @@ export const connectToGame = (id, setGameInfo, setUser) => {
       }
 
       case 'move':
-        setGameInfo(res.data);
+        setGameInfo((prev) => {
+          const fixedGameState = {...prev.gameState};
+          delete fixedGameState[res.data.origin];
+
+          if (res.result === 1) {
+            fixedGameState[res.data.destination] = prev.gameState[origin];
+          } else if (res.result === 3) {
+            delete fixedGameState[res.data.destination];
+          }
+
+          return {
+            ...res.data,
+            gameState: {...fixedGameState}
+          };
+        });
+
         break;
 
       case 'time':
