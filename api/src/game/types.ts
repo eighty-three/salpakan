@@ -22,7 +22,7 @@ export interface IPlayer {
 export interface IBoard {
   [key: string]: {
     name: string;
-    value?: number;
+    value?: number; // Value is optional because when the board is "cleaned", only the name remains (i.e., 'unknown') because you shouldn't know the value of your opponent's pieces
   }
 }
 
