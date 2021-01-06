@@ -49,11 +49,7 @@ export const getInitialBoardState = (player: TPlayer): IBoard => {
     G5: { name: '5star', value: 14 }
   };
 
-  if (player === 'p1') {
-    return player1Board;
-  } else {
-    return player2Board;
-  }
+  return (player === 'p1') ? player1Board : player2Board;
 };
 
 export const hidePieceValues = (b1: IBoard, b2: IBoard): IBoard => {
