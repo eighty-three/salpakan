@@ -2,40 +2,12 @@ import { gameStates } from './index';
 import config from '@utils/config';
 import { performance } from 'perf_hooks';
 
-import { decode } from './utils';
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame } from '../game/model';
-import { IRoom, TPlayer } from '../game/types';
 import { cleanBoards, checkMove } from '../game/utils';
+import { decode, refreshTime, getGameInfo } from './utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
-
-const refreshTime = (room: IRoom, player: TPlayer) => {
-  const currentTime = performance.now() / 100;
-  const elapsedTime = currentTime - room.lastMove;
-  room[player].time = room[player].time - elapsedTime;
-  room.lastMove = performance.now() / 100;
-
-  if (room[player].time <= 0) {
-    const opponent = (player === 'p1') ? 'p2' : 'p1';
-    room.winner = room[opponent].name;
-  }
-};
-
-const getGameInfo = (room: IRoom) => {
-  return {
-    turn: room.turn,
-    p1: {
-      name: room.p1.name,
-      time: room.p1.time
-    },
-    p2: {
-      name: room.p2.name,
-      time: room.p2.time
-    },
-    winner: room.winner
-  };
-};
 
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
   const upgradeAborted = {aborted: false};
