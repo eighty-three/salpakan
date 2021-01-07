@@ -104,11 +104,12 @@ export const checkMove = (
   origin: keyof IBoard,
   destination: keyof IBoard
 ): number => {
-  const flag = gameStates[roomName].flagOnLastRow;
+  const room = gameStates[roomName];
+  const flag = room.flagOnLastRow;
   const lastRow = (player === 'p1') ? 1 : 8;
   const opponent = (player === 'p1') ? 'p2' : 'p1';
-  const playerBoard = gameStates[roomName][player].board;
-  const opponentBoard = gameStates[roomName][opponent].board;
+  const playerBoard = room[player].board;
+  const opponentBoard = room[opponent].board;
 
   const o = playerBoard[origin].value;
 
@@ -122,23 +123,40 @@ export const checkMove = (
    */
   if (!o || dCheck) return 0;
 
-  // 1 for success, 2 for fail, 3 for draw
-  let result = 1;
 
-  // Flow should be fixed to get expected response
-  if (o === 99) { // If attacker is Spy
-  } else if (o === 2) { // If attacker is Private
-  } else if (o > d) { // If attacker is stronger than target
-  } else if (d > o) { // If target is stronger than attacker
-    result = 2;
-  } else if (d === o) { // If draw
-    result = 3;
-  } else if (d === 1) { // If target is flag
-  } else if (o === 1 && d !== 1) { // If attacker is flag and target is not flag
-  } else if (o === 1 && Number(String(destination)[1]) === lastRow) { // If attacker is flag and destination is on last row
-    gameStates[roomName].flagOnLastRow = String(destination);
-  } else if (flag && destination !== flag) { // If there is a flag on last row and the destination isn't on that flag's position
+  if (flag && destination !== flag) {
+    // If there is a flag on last row and the destination isn't on that flag's position
+    room.winner = room[opponent].name;
   }
 
-  return result;
+  if (d === 1) {
+    // If target is flag
+    room.winner = room[player].name;
+
+  } else if (o === 1 && Number(String(destination)[1]) === lastRow) {
+    // If attacker is flag and destination is on last row
+    room.flagOnLastRow = String(destination);
+    return 1;
+
+  } else if (o === 99) {
+    // If attacker is a spy
+
+  } else if (o === 2) {
+    // If attacker is a private
+
+  } else if (o > d) {
+    // If attacker is stronger than target
+    return 1;
+
+  } else if (o < d) {
+    // If target is stronger than attacker
+    return 2;
+
+  } else if (o === d) {
+    // If attacker is same piece as target
+    return 3;
+
+  }
+
+  return 0;
 };
