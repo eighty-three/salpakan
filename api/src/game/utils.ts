@@ -81,7 +81,6 @@ export const cleanBoards = (
     cleanB1[x] = { name: 'unknown' };
   }
 
-  for (const x in b2) { cleanB1[x] = { name: 'unknown' }; }
   return { board1: cleanB1, board2: cleanB2, bothBoards };
 };
 
