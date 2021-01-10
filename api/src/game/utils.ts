@@ -1,4 +1,4 @@
-import { IBoard, IGameStates, TPlayer } from './types';
+import { IBoard, IGameStates, TPlayer, TCoordinate } from './types';
 
 export const getInitialBoardState = (player: TPlayer): IBoard => {
   const player1Board = {
@@ -71,14 +71,14 @@ export const cleanBoards = (
   const cleanB2: IBoard = {...b2};
   const bothBoards: IBoard = {};
 
-  for (const x in b1) {
-    bothBoards[x] = { name: 'unknown' };
-    cleanB2[x] = { name: 'unknown' };
+  for (const key in b1) {
+    bothBoards[key as TCoordinate] = { name: 'unknown' };
+    cleanB2[key as TCoordinate] = { name: 'unknown' };
   }
 
-  for (const x in b2) {
-    bothBoards[x] = { name: 'unknown' };
-    cleanB1[x] = { name: 'unknown' };
+  for (const key in b2) {
+    bothBoards[key as TCoordinate] = { name: 'unknown' };
+    cleanB1[key as TCoordinate] = { name: 'unknown' };
   }
 
   return { board1: cleanB1, board2: cleanB2, bothBoards };
@@ -92,25 +92,25 @@ export const cleanBoards = (
  * @param {IGameStates} gameState The object containing all rooms and their data
  * @param {string} roomName id/url of the room
  * @param {TPlayer} player The player who sent the move ('p1' or 'p2')
- * @param {keyof IBoard} origin The coordinate where the move comes from
- * @param {keyof IBoard} destination The coordinate where the move is going to
+ * @param {TCoordinate} origin The coordinate where the move comes from
+ * @param {TCoordinate} destination The coordinate where the move is going to
  * @returns {number} impossible (0), success (1), failure (2), or draw (3)
  */
 export const checkMove = (
   gameStates: IGameStates,
   roomName: string,
   player: TPlayer,
-  origin: keyof IBoard,
-  destination: keyof IBoard
+  origin: TCoordinate,
+  destination: TCoordinate
 ): number => {
   const room = gameStates[roomName];
   const flag = room.flagOnLastRow;
-  const lastRow = (player === 'p1') ? 1 : 8;
+  const lastRow = (player === 'p1') ? '1' : '8';
   const opponent = (player === 'p1') ? 'p2' : 'p1';
   const playerBoard = room[player].board;
   const opponentBoard = room[opponent].board;
 
-  const o = playerBoard[origin].value;
+  const o = playerBoard[origin]?.value;
 
   // if destination isn't on opponent's board, it's empty (so 0)
   const d = opponentBoard[destination]?.value || 0;
@@ -122,7 +122,6 @@ export const checkMove = (
    */
   if (!o || dCheck) return 0;
 
-
   if (flag && destination !== flag) {
     // If there is a flag on last row and the destination isn't on that flag's position
     room.winner = room[opponent].name;
@@ -132,9 +131,9 @@ export const checkMove = (
     // If target is flag
     room.winner = room[player].name;
 
-  } else if (o === 1 && Number(String(destination)[1]) === lastRow) {
+  } else if (o === 1 && destination[1] === lastRow) {
     // If attacker is flag and destination is on last row
-    room.flagOnLastRow = String(destination);
+    room.flagOnLastRow = destination;
     return 1;
 
   } else if (o === 99) {
