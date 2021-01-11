@@ -117,10 +117,34 @@ export const checkMove = (
 
   const dCheck = playerBoard[destination]?.value;
 
-  /* if destination is on player's board, the move shouldn't be possible
+  /* Check if origin piece is owned by the player. Also, if
+   * destination is on player's board, the move shouldn't be possible
    * because you can't attack your own pieces
    */
   if (!o || dCheck) return 0;
+
+  // Determine result between attacker and target
+  let result = 0;
+
+  if (o === d) {
+    // If attacker is same piece as target
+    result = 3;
+  } else if (o === 99) {
+    // If attacker is a spy, check if target is private
+    result = (d === 2) ? 2 : 1;
+  } else if (o === 2) {
+    // If attacker is a private, check if target is spy
+    result = (d === 99) ? 1 : 2;
+  } else if (o > d) {
+    // If attacker is stronger than target
+    result = 1;
+  } else if (o < d) {
+    // If target is stronger than attacker
+    result = 2;
+  }
+
+
+  // Apply 'side-effects' to game data
 
   if (flag && destination !== flag) {
     // If there is a flag on last row and the destination isn't on that flag's position
@@ -130,31 +154,43 @@ export const checkMove = (
   if (d === 1) {
     // If target is flag
     room.winner = room[player].name;
-
-  } else if (o === 1 && destination[1] === lastRow) {
-    // If attacker is flag and destination is on last row
-    room.flagOnLastRow = destination;
-    return 1;
-
-  } else if (o === 99) {
-    // If attacker is a spy
-
-  } else if (o === 2) {
-    // If attacker is a private
-
-  } else if (o > d) {
-    // If attacker is stronger than target
-    return 1;
-
-  } else if (o < d) {
-    // If target is stronger than attacker
-    return 2;
-
-  } else if (o === d) {
-    // If attacker is same piece as target
-    return 3;
-
   }
 
-  return 0;
+  if (o === 1) {
+    // If attacker is flag
+    if (result === 2) {
+      /* If attacker lost to target, that is, the player attacked with a flag but
+       * the target wasn't a flag or an empty space
+       */
+      room.winner = room[opponent].name;
+    }
+
+    if (destination[1] === lastRow) {
+      // If destination is on last row
+      room.flagOnLastRow = destination;
+    }
+  }
+
+  // Fix boards
+
+  // delete attacker
+  delete playerBoard[origin];
+  delete opponentBoard[origin];
+  delete room.board[origin];
+
+  if (result === 1) {
+    // move attacker to destination
+    playerBoard[destination] = playerBoard[origin];
+    opponentBoard[destination] = opponentBoard[origin];
+    room.board[destination] = room.board[origin];
+  } else if (result === 2) {
+    // attacker is already deleted
+  } else if (result === 3) {
+    // delete both attacker and target
+    delete playerBoard[destination];
+    delete opponentBoard[destination];
+    delete room.board[destination];
+  }
+
+  return result;
 };
