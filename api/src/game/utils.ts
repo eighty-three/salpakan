@@ -144,7 +144,7 @@ export const checkMove = (
   }
 
 
-  // Apply 'side-effects' to game data
+  // Apply 'side effects' to game data
 
   if (flag && destination !== flag) {
     // If there is a flag on last row and the destination isn't on that flag's position
