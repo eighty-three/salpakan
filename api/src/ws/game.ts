@@ -123,7 +123,10 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
 
         if (result === 0) {
           const gameInfo = getGameInfo(room);
-          socket.send(JSON.stringify({ type: 'fail', data: gameInfo }));
+          /* `result` should almost never be 0. It'll only happen if the checks in
+           * the client weren't successful and the user managed to send bogus data
+           */
+          socket.send(JSON.stringify({ type: 'bug', data: gameInfo }));
         } else {
           refreshTime(room, player);
           room.turn = room[opponent].name;
