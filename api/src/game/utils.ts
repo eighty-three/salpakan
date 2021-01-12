@@ -173,24 +173,22 @@ export const checkMove = (
 
   // Fix boards
 
-  // delete attacker
-  delete playerBoard[origin];
-  delete opponentBoard[origin];
-  delete room.board[origin];
-
   if (result === 1) {
     // move attacker to destination
     playerBoard[destination] = playerBoard[origin];
     opponentBoard[destination] = opponentBoard[origin];
     room.board[destination] = room.board[origin];
-  } else if (result === 2) {
-    // attacker is already deleted
   } else if (result === 3) {
     // delete both attacker and target
     delete playerBoard[destination];
     delete opponentBoard[destination];
     delete room.board[destination];
   }
+
+  // delete attacker (covers 'result === 2' branch)
+  delete playerBoard[origin];
+  delete opponentBoard[origin];
+  delete room.board[origin];
 
   return result;
 };
