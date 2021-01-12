@@ -61,7 +61,7 @@ export const connectToGame = (id, setGameInfo, setUser) => {
         setGameInfo({ ...res.data, board: res.board });
         break;
 
-      case 'fail':
+      case 'bug':
         setGameInfo((prev) => {
           return {
             ...res.data,
