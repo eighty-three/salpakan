@@ -72,17 +72,6 @@ export const storeGame = async (
   await db.none(query);
 };
 
-export const deleteGames = async (): Promise<void> => {
-  const query = new PS({ name: 'delete-games', text: '\
-    DELETE FROM games WHERE expiry < $1'
-  });
-
-  const currentTime = Math.floor(Date.now() / 1000);
-
-  query.values = [ currentTime ];
-  await db.none(query);
-};
-
 export const deleteGame = async (
   roomName: string
 ): Promise<void> => {
@@ -93,3 +82,21 @@ export const deleteGame = async (
   query.values = [ roomName ];
   await db.none(query);
 };
+
+export const deleteGames = async (): Promise<string[]|null> => {
+  const query = new PS({ name: 'delete-games', text: '\
+    DELETE FROM games WHERE expiry < $1 RETURNING name'
+  });
+
+  const currentTime = Math.floor(Date.now() / 1000);
+
+  query.values = [ currentTime ];
+  return await db.manyOrNone(query);
+};
+
+// const deletedGames = await deleteGames();
+// for (let i=0; i < deletedGames.length; i++) {
+//    delete gameStates[deletedGames[i]];
+// }
+//
+// When to call this?
