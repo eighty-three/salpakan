@@ -3,7 +3,7 @@ import config from '@utils/config';
 import { performance } from 'perf_hooks';
 
 import { getUsername } from '@authMiddleware/authToken';
-import { deleteGame } from '../game/model';
+import { deleteGame, storeGame } from '../game/model';
 import { cleanBoards, checkMove, checkIfLegal } from '../game/utils';
 import { decode, refreshTime, getGameInfo } from './utils';
 
@@ -129,6 +129,12 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
           room.turn = room[opponent].name;
 
           const gameInfo = getGameInfo(room);
+
+          if (gameInfo.winner) {
+            delete gameStates[socket.url];
+            await storeGame(socket.url, room.p1.board, room.p2.board, gameInfo.winner);
+          }
+
           socket.publish(socket.url, JSON.stringify({
             type: 'move',
             data: gameInfo,
@@ -145,12 +151,17 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
       refreshTime(room, data.message);
 
       const gameInfo = getGameInfo(room);
+
+      if (gameInfo.winner) {
+        delete gameStates[socket.url];
+        await storeGame(socket.url, room.p1.board, room.p2.board, gameInfo.winner);
+      }
+
       socket.publish(socket.url, JSON.stringify({
         type: 'time',
         data: gameInfo,
         board: room.board
       }));
-      // Delete in memory, store in database
     }
   }
 };
