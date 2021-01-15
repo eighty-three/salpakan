@@ -6,6 +6,7 @@ import Countdown from './Countdown';
 
 import SocketContext from '@/lib/SocketContext';
 import GameInfoContext from '@/lib/GameInfoContext';
+import TurnContext from '@/lib/TurnContext';
 import TurnChangeReducer from '@/lib/TurnChangeReducer';
 
 const propTypes = {
@@ -19,13 +20,14 @@ const Player = (props) => {
 
   const socket = useContext(SocketContext);
   const gameInfo = useContext(GameInfoContext);
+  const turn = useContext(TurnContext);
 
   const initialState = {
-    turn: gameInfo?.turn,
+    turn,
     player: {
       time: gameInfo?.[playerNum].time,
-      turn: gameInfo?.turn === gameInfo?.[playerNum].name,
-      css: (gameInfo?.turn === gameInfo?.[playerNum].name)
+      turn: turn === gameInfo?.[playerNum].name,
+      css: (turn === gameInfo?.[playerNum].name)
         ? ''
         : styles.fade
     }
@@ -36,12 +38,12 @@ const Player = (props) => {
   useEffect(() => {
     dispatch({ type: 'update',
       payload: {
-        turn: gameInfo?.turn,
+        turn,
         player: gameInfo?.[playerNum].name,
         time: gameInfo?.[playerNum].time,
       }
     });
-  }, [gameInfo?.turn]);
+  }, [turn]);
 
   const fn = (time, turn) => {
     if (turn && time > 0) {
