@@ -4,7 +4,7 @@ import { performance } from 'perf_hooks';
 
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame } from '../game/model';
-import { cleanBoards, checkMove } from '../game/utils';
+import { cleanBoards, checkMove, checkIfLegal } from '../game/utils';
 import { decode, refreshTime, getGameInfo } from './utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
@@ -113,21 +113,18 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
 
     case 'move': {
       if (socket.cn === room.turn) {
-
         const coordinates = {
           origin: data.message.o,
           destination: data.message.d
         };
 
-        const result = checkMove(gameStates, socket.url, player, data.message.o, data.message.d);
-
-        if (result === 0) {
+        if (!checkIfLegal(coordinates.origin, coordinates.destination)) {
           const gameInfo = getGameInfo(room);
-          /* `result` should almost never be 0. It'll only happen if the checks in
-           * the client weren't successful and the user managed to send bogus data
-           */
+
           socket.send(JSON.stringify({ type: 'bug', data: gameInfo }));
         } else {
+          const result = checkMove(gameStates, socket.url, player, data.message.o, data.message.d);
+
           refreshTime(room, player);
           room.turn = room[opponent].name;
 
