@@ -59,15 +59,16 @@ export const getGame = async (
 export const storeGame = async (
   roomName: string,
   player1_state: IBoard,
-  player2_state: IBoard
+  player2_state: IBoard,
+  winner: string
 ): Promise<void> => {
   const query = new PS({ name: 'store-game', text: '\
     UPDATE games SET \
-      player1_state=$2, player2_state=$3, ongoing=$4 \
+      player1_state=$2, player2_state=$3, ongoing=$4, winner=$5 \
     WHERE name=$1'
   });
 
-  query.values = [ roomName, player1_state, player2_state, false ];
+  query.values = [ roomName, player1_state, player2_state, false, winner ];
   await db.none(query);
 };
 
