@@ -20,7 +20,6 @@ export const refreshTime = (room: IRoom, player: TPlayer) => {
 
 export const getGameInfo = (room: IRoom) => {
   return {
-    turn: room.turn,
     p1: {
       name: room.p1.name,
       time: room.p1.time

@@ -41,17 +41,22 @@ export const open: IOpen<Promise<void>> = async (socket) => {
   const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
   const turn = (room.turn === room.p1.name) ? 'p1' : 'p2';
 
-  if (room.start) refreshTime(room, turn);
-
-  const gameInfo = (room.start)
-    ? getGameInfo(room)
-    : { time: room.time - Math.floor(Date.now() / 100) };
+  let gameInfo, ongoingTurn;
+  if (room.start) {
+    refreshTime(room, turn);
+    gameInfo = getGameInfo(room);
+    ongoingTurn = room.turn;
+  } else {
+    gameInfo = { time: room.time - Math.floor(Date.now() / 100) };
+    ongoingTurn = undefined;
+  }
 
   socket.send(JSON.stringify({
     type: 'init',
     data: gameInfo,
     board: room[player].board,
-    user: socket.cn
+    user: socket.cn,
+    turn: ongoingTurn
   }));
 };
 
@@ -97,7 +102,8 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         socket.publish(socket.url, JSON.stringify({
           type: 'start',
           data: gameInfo,
-          board: room.board
+          board: room.board,
+          turn: room.turn
         }));
       }
 
@@ -121,7 +127,11 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         if (!checkIfLegal(coordinates.origin, coordinates.destination)) {
           const gameInfo = getGameInfo(room);
 
-          socket.send(JSON.stringify({ type: 'bug', data: gameInfo }));
+          socket.send(JSON.stringify({
+            type: 'bug',
+            data: gameInfo,
+            turn: room.turn
+          }));
         } else {
           const result = checkMove(gameStates, socket.url, player, data.message.o, data.message.d);
 
@@ -139,7 +149,8 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
             type: 'move',
             data: gameInfo,
             board: coordinates,
-            result
+            result,
+            turn: room.turn
           }));
         }
       }
