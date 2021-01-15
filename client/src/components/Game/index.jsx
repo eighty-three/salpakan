@@ -9,7 +9,7 @@ import Board from './Board';
 import SocketContext from '@/lib/SocketContext';
 import GameInfoContext from '@/lib/GameInfoContext';
 import UserContext from '@/lib/UserContext';
-import { connectToGame } from '@/lib/game';
+import { connectToGame, checkIfLegal } from '@/lib/game';
 
 const propTypes = {
   id: PropTypes.string,
@@ -40,7 +40,15 @@ const Game = (props) =>{
       user === gameInfo?.turn
       && !gameInfo?.winner
     ) {
-      socket.send(JSON.stringify({ type: 'move' }));
+      if (checkIfLegal(gameInfo.board, 'C3', 'C4')) {
+        socket.send(JSON.stringify({
+          type: 'move',
+          message: {
+            o: 'C3',
+            d: 'C4'
+          }
+        }));
+      }
     }
   };
 
