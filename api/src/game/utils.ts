@@ -221,6 +221,7 @@ export const checkMove = (
     }
   }
 
+
   // Fix boards
 
   if (result === 1) {
