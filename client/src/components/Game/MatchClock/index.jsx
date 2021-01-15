@@ -36,13 +36,17 @@ const Player = (props) => {
   const [ state, dispatch ] = useReducer(TurnChangeReducer, initialState);
 
   useEffect(() => {
-    dispatch({ type: 'update',
-      payload: {
-        turn,
-        player: gameInfo?.[playerNum].name,
-        time: gameInfo?.[playerNum].time,
-      }
-    });
+    if (turn) {
+      dispatch({ type: 'update',
+        payload: {
+          turn,
+          player: gameInfo?.[playerNum].name,
+          time: gameInfo?.[playerNum].time,
+        }
+      });
+    } else {
+      dispatch({ type: 'pause' });
+    }
   }, [turn]);
 
   const fn = (time, turn) => {

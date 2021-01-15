@@ -44,6 +44,8 @@ const Game = (props) =>{
       && !gameInfo?.winner
     ) {
       if (checkIfLegal(gameInfo.board, 'C3', 'C4')) {
+        setTurn(null);
+
         socket.send(JSON.stringify({
           type: 'move',
           message: {
