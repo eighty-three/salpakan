@@ -1,11 +1,10 @@
-import * as dbSetup from '@utils/dbSetup';
+//import * as dbSetup from '@utils/dbSetup';
 
-beforeAll(async () => {
-  await dbSetup.resetData();
-});
+//beforeAll(async () => {
+  //await dbSetup.resetData();
+//});
 
-afterAll(async () => {
-  await dbSetup.resetData();
-  await dbSetup.resetSequence();
-});
-
+//afterAll(async () => {
+  //await dbSetup.resetData();
+  //await dbSetup.resetSequence();
+//});
