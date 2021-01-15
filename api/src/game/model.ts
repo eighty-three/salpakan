@@ -1,6 +1,6 @@
 import db from '@utils/db';
 import { PreparedStatement as PS } from 'pg-promise';
-import { IGameStates, IGame } from './types';
+import { IGameStates, IGame, IBoard } from './types';
 import { getInitialBoardState } from './utils';
 
 export const startGame = async (
@@ -58,8 +58,8 @@ export const getGame = async (
 
 export const storeGame = async (
   roomName: string,
-  player1_state: string, // Stringified JSON
-  player2_state: string
+  player1_state: IBoard,
+  player2_state: IBoard
 ): Promise<void> => {
   const query = new PS({ name: 'store-game', text: '\
     UPDATE games SET \
