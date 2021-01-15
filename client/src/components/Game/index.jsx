@@ -9,12 +9,14 @@ import Board from './Board';
 import SocketContext from '@/lib/SocketContext';
 import GameInfoContext from '@/lib/GameInfoContext';
 import UserContext from '@/lib/UserContext';
+import TurnContext from '@/lib/TurnContext';
 import { connectToGame, checkIfLegal } from '@/lib/game';
 
 const propTypes = {
   id: PropTypes.string,
   state: PropTypes.object
 };
+
 
 const Game = (props) =>{
   const {
@@ -24,11 +26,12 @@ const Game = (props) =>{
 
   const [ socket, setSocket] = useState(null);
   const [ gameInfo, setGameInfo ] = useState(null);
-  const [ user, setUser ] = useState('');
+  const [ user, setUser ] = useState(null);
+  const [ turn, setTurn ] = useState(undefined);
 
   useEffect(() => {
     if (state.ongoing) {
-      setSocket(connectToGame(id, setGameInfo, setUser));
+      setSocket(connectToGame(id, setGameInfo, setUser, setTurn));
     } else {
       setGameInfo(state);
     }
@@ -37,7 +40,7 @@ const Game = (props) =>{
   const moveFn = () => {
     // Temporary to simulate moves. It should be attached to the Piece components
     if (
-      user === gameInfo?.turn
+      user === turn
       && !gameInfo?.winner
     ) {
       if (checkIfLegal(gameInfo.board, 'C3', 'C4')) {
@@ -57,24 +60,28 @@ const Game = (props) =>{
       <UserContext.Provider value={user}>
         <GameInfoContext.Provider value={gameInfo}>
           <SocketContext.Provider value={socket}>
-            <div className={styles.container}>
-              <button onClick={moveFn}>Emulate Move</button>
+            <TurnContext.Provider value={turn}>
+              <div className={styles.container}>
 
-              <div className={styles.p1}>
-                {(gameInfo?.turn === undefined && !gameInfo?.winner)
-                  ? (<Setup/>)
-                  : (<Player playerNum={'p1'} />)
-                }
-              </div>
+                <button onClick={moveFn}>Emulate Move</button>
 
-              <div className={styles.board}>
-                <Board />
-              </div>
+                <div className={styles.p1}>
+                  {(turn === undefined && !gameInfo?.winner)
+                    ? (<Setup/>)
+                    : (<Player playerNum={'p1'} />)
+                  }
+                </div>
 
-              <div className={styles.p2}>
-                <Player playerNum={'p2'} />
+                <div className={styles.board}>
+                  <Board />
+                </div>
+
+                <div className={styles.p2}>
+                  <Player playerNum={'p2'} />
+                </div>
+
               </div>
-            </div>
+            </TurnContext.Provider>
           </SocketContext.Provider>
         </GameInfoContext.Provider>
       </UserContext.Provider>

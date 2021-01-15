@@ -7,6 +7,7 @@ import PlayerInfo from './PlayerInfo';
 import Winner from './Winner';
 
 import GameInfoContext from '@/lib/GameInfoContext';
+import TurnContext from '@/lib/TurnContext';
 
 const propTypes = {
   playerNum: PropTypes.string
@@ -18,10 +19,11 @@ const Player = (props) => {
   } = props;
 
   const gameInfo = useContext(GameInfoContext);
+  const turn = useContext(TurnContext);
 
   return (
     <div className={styles.container}>
-      {(gameInfo?.turn !== undefined || gameInfo?.winner) &&
+      {(turn !== undefined || gameInfo?.winner) &&
         <>
           <div className={styles.info}>
             <PlayerInfo playerNum={playerNum} />
