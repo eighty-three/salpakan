@@ -37,7 +37,7 @@ const Home = (props) => {
         <title>{siteTitle}</title>
       </Head>
       <section>
-        <MatchmakingComponent username={username} />
+        <MatchmakingComponent />
       </section>
     </Layout>
   );
