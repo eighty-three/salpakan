@@ -2,7 +2,6 @@ import { gameStates } from './index';
 import { nanoid } from 'nanoid';
 import config from '@utils/config';
 
-import { decode } from './utils';
 import { IUpgrade, IOpen, IClose } from './types';
 
 import { getUsername } from '@authMiddleware/authToken';
@@ -13,12 +12,11 @@ const connections: string[] = [];
 
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
   const upgradeAborted = {aborted: false};
-  const username = await getUsername(req.getHeader('cookie'));
-  const ipAddress = decode(res.getRemoteAddressAsText());
-  const cn = username || ipAddress;
+  const cn = await getUsername(req.getHeader('cookie'));
 
   if (
-    !connections.includes(cn)
+    cn
+    && !connections.includes(cn)
     && req.getHeader('origin') === config.CLIENT_HOST
   ) {
     res.upgrade(

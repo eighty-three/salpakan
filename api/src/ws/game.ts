@@ -11,13 +11,12 @@ import { IUpgrade, IOpen, IClose, IMessage } from './types';
 
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
   const upgradeAborted = {aborted: false};
-  const username = await getUsername(req.getHeader('cookie'));
-  const ipAddress = decode(res.getRemoteAddressAsText());
-  const cn = username || ipAddress;
+  const cn = await getUsername(req.getHeader('cookie'));
   const url = req.getParameter(0);
 
   if (
-    gameStates[url]?.playerList.includes(cn)
+    cn
+    && gameStates[url]?.playerList.includes(cn)
     && req.getHeader('origin') === config.CLIENT_HOST
   ) {
     res.upgrade(
