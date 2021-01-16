@@ -27,4 +27,8 @@ router.post('/logout',
   account.logout
 );
 
+router.get('/cookie',
+  account.getCookie
+);
+
 export default router;
