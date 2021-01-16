@@ -12,11 +12,13 @@ const secret = process.env.SECRET;
 
 export const authCheck = async (ctx) => {
   const reqCookie = ctx.req.headers.cookie;
-  if (!reqCookie) return null; //No token
+  if (!reqCookie) return null; // No token
 
   const cookies = cookie.parse(reqCookie);
+  if (!cookies.auth) return null; // Wrong value
+
   const payload = verify(cookies.auth, secret);
-  if (!payload) return null; //Invalid token
+  if (!payload) return null; // Invalid token
 
   const { username } = payload;
   const headers = ctx.req.headers;
@@ -44,6 +46,8 @@ export const lightAuthCheck = async (ctx) => {
   if (!reqCookie) return null; // No token
 
   const cookies = cookie.parse(reqCookie);
+  if (!cookies.auth) return null; // Wrong value
+
   const payload = verify(cookies.auth, secret);
   if (!payload) return null; // Invalid token
 
