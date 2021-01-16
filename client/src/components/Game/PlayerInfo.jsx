@@ -18,7 +18,10 @@ const PlayerInfo = (props) => {
   const gameInfo = useContext(GameInfoContext);
   const user = useContext(UserContext);
 
-  const name = gameInfo?.[playerNum].name;
+  const name = (gameInfo?.[playerNum].name[1] !== '=')
+    ? gameInfo?.[playerNum].name
+    : 'Anonymous';
+
   const css = (gameInfo?.[playerNum].name === user)
     ? `${styles.player_text} ${styles.self}`
     : styles.player_text;
