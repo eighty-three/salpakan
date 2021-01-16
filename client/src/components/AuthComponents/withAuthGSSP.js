@@ -2,8 +2,8 @@ import { authCheck } from '@/lib/authCheck';
 
 const withAuthServerSideProps = (getServerSidePropsFunc) => {
   return async (ctx) => {
-    const userId = await authCheck(ctx);
-    const username = (userId && userId[1] !== '=') ? userId : null;
+    const cookieValue = await authCheck(ctx);
+    const username = (cookieValue && cookieValue[1] !== '=') ? cookieValue : null;
 
     if (getServerSidePropsFunc) {
       return {

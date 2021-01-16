@@ -11,17 +11,17 @@ import { getCookie } from '@/lib/account';
 
 const propTypes = {
   username: PropTypes.string,
-  userId: PropTypes.string
+  cookieValue: PropTypes.string
 };
 
 const Home = (props) => {
   const {
     username,
-    userId
+    cookieValue
   } = props;
 
   useEffect(() => {
-    if (!userId) {
+    if (!cookieValue) {
       const setCookie = async () => {
         await getCookie();
       };
@@ -44,14 +44,14 @@ const Home = (props) => {
 };
 
 export const getServerSideProps = async (ctx) => {
-  const userId = await lightAuthCheck(ctx);
-  const username = (userId && userId[1] !== '=') ? userId : null;
+  const cookieValue = await lightAuthCheck(ctx);
+  const username = (cookieValue && cookieValue[1] !== '=') ? cookieValue : null;
 
   return {
     props:
       {
         username,
-        userId
+        cookieValue
       }
   };
 };
