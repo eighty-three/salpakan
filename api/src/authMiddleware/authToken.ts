@@ -52,6 +52,24 @@ export const verifyExistingToken: RequestHandler = async (req, res, next) => {
   res.status(400).json({ error: 'Already logged in' });
 };
 
+export const verifyCookie: RequestHandler = async (req, res, next) => {
+  if (!req.headers.cookie) {
+    res.status(401).json({ error: 'You are not authenticated' });
+    return;
+  }
+
+  const cookies = cookie.parse(req.headers.cookie);
+  verify(cookies.auth, config.SECRET_JWT, async function (err, decoded: IPayload|undefined) {
+    if (err && !decoded) {
+      res.status(401).json({ error: 'You are not authenticated' });
+      return;
+    } else if (decoded) {
+      next();
+      return;
+    }
+  });
+};
+
 export const getUsername = async (reqCookie: string|null): Promise<string|void> => {
   if (!reqCookie) return;
 
