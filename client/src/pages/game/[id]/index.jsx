@@ -37,7 +37,9 @@ const GamePage = (props) => {
 };
 
 export const getServerSideProps = async (ctx) => {
-  const username = await lightAuthCheck(ctx);
+  const cookieValue = await lightAuthCheck(ctx);
+  const username = (cookieValue && cookieValue[1] !== '=') ? cookieValue : null;
+
   const id = ctx.params.id;
   const state = await getGame(id);
 
@@ -45,6 +47,7 @@ export const getServerSideProps = async (ctx) => {
     props:
       {
         username,
+        cookieValue,
         id,
         state
       }
