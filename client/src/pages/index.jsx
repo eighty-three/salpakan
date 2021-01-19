@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import Layout, { siteTitle } from '@/components/Layout';
 
 import MatchmakingComponent from '@/components/MatchmakingComponent';
+import CreateLobbyButton from '@/components/CreateLobbyComponent';
 
 import { lightAuthCheck } from '@/lib/authCheck';
 import { getCookie } from '@/lib/account';
@@ -30,7 +31,6 @@ const Home = (props) => {
     }
   }, []);
 
-
   return (
     <Layout username={username}>
       <Head>
@@ -38,6 +38,7 @@ const Home = (props) => {
       </Head>
       <section>
         <MatchmakingComponent />
+        <CreateLobbyButton cookieValue={cookieValue} />
       </section>
     </Layout>
   );
