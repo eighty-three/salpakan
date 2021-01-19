@@ -12,17 +12,17 @@ export const getInitialBoardState = (player: TPlayer): IBoard => {
     H1: { name: 'private', value: 2 },
     I1: { name: 'private', value: 2 },
     A2: { name: 'sergeant', value: 3 },
-    B2: { name: '2ndlt', value: 4 },
-    C2: { name: '1stlt', value: 5 },
+    B2: { name: 'lt2', value: 4 },
+    C2: { name: 'lt1', value: 5 },
     D2: { name: 'captain', value: 6 },
     E2: { name: 'major', value: 7 },
     F2: { name: 'ltcol', value: 8 },
-    G2: { name: 'col', value: 9 },
-    H2: { name: '1star', value: 10 },
-    I2: { name: '2star', value: 11 },
-    A3: { name: '3star', value: 12 },
-    B3: { name: '4star', value: 13 },
-    C3: { name: '5star', value: 14 }
+    G2: { name: 'colonel', value: 9 },
+    H2: { name: 'gen1', value: 10 },
+    I2: { name: 'gen2', value: 11 },
+    A3: { name: 'gen3', value: 12 },
+    B3: { name: 'gen4', value: 13 },
+    C3: { name: 'gen5', value: 14 }
   };
 
   const player2Board = {
@@ -36,17 +36,17 @@ export const getInitialBoardState = (player: TPlayer): IBoard => {
     H8: { name: 'private', value: 2 },
     I8: { name: 'private', value: 2 },
     A7: { name: 'sergeant', value: 3 },
-    B7: { name: '2ndlt', value: 4 },
-    C7: { name: '1stlt', value: 5 },
+    B7: { name: 'lt2', value: 4 },
+    C7: { name: 'lt1', value: 5 },
     D7: { name: 'captain', value: 6 },
     E7: { name: 'major', value: 7 },
     F7: { name: 'ltcol', value: 8 },
-    G7: { name: 'col', value: 9 },
-    H7: { name: '1star', value: 10 },
-    I7: { name: '2star', value: 11 },
-    A6: { name: '3star', value: 12 },
-    B6: { name: '4star', value: 13 },
-    C6: { name: '5star', value: 14 }
+    G7: { name: 'colonel', value: 9 },
+    H7: { name: 'gen1', value: 10 },
+    I7: { name: 'gen2', value: 11 },
+    A6: { name: 'gen3', value: 12 },
+    B6: { name: 'gen4', value: 13 },
+    C6: { name: 'gen5', value: 14 }
   };
 
   return (player === 'p1') ? player1Board : player2Board;
