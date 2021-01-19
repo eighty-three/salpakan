@@ -1,8 +1,10 @@
 import uWS from 'uWebSockets.js';
 import { IGameStates } from '../game/types';
+import config from '@utils/config';
+
 import * as mm from './matchmaking';
 import * as game from './game';
-import config from '@utils/config';
+import * as lobby from './lobby';
 
 const options = {
   key_file_name: '../../misc/privkey.pem',
@@ -19,6 +21,14 @@ wsApp.ws('/ws/matchmaking', {
   upgrade: mm.upgrade,
   open: mm.open,
   close: mm.close
+});
+
+wsApp.ws('/ws/lobby/:id', {
+  compression: 1,
+  maxPayloadLength: 1024,
+  upgrade: lobby.upgrade,
+  open: lobby.open,
+  close: lobby.close
 });
 
 wsApp.ws('/ws/game/:id', {

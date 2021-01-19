@@ -13,4 +13,7 @@ router.use('/account', accountRouter);
 import gameRouter from './game/router';
 router.use('/game', gameRouter);
 
+import lobbyRouter from './lobby/router';
+router.use('/lobby', lobbyRouter);
+
 export default router;
