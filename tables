@@ -17,3 +17,8 @@ CREATE TABLE games (
   winner TEXT,
   expiry INT NOT NULL
 );
+
+CREATE TABLE lobbies (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL
+);
