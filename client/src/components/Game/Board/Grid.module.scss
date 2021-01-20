@@ -1,0 +1,12 @@
+.coord {
+  width: 100px / 9px * 1%;
+  height: 100px / 8px * 1%;
+}
+
+.coord:nth-child(2n) {
+  background-color: #ffdab9;
+}
+
+.coord:nth-child(2n+1) {
+  background-color: gray;
+}
