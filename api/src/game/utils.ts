@@ -1,4 +1,4 @@
-import { IBoard, IGameStates, TPlayer, TCoordinate } from './types';
+import { IBoard, IGameStates, TPlayer, TCoordinate, IRoom } from './types';
 
 export const getInitialBoardState = (player: TPlayer): IBoard => {
   const player1Board = {
@@ -154,8 +154,6 @@ export const checkMove = (
   destination: TCoordinate
 ): number => {
   const room = gameStates[roomName];
-  const flag = room.flagOnLastRow;
-  const lastRow = (player === 'p1') ? '1' : '8';
   const opponent = (player === 'p1') ? 'p2' : 'p1';
   const playerBoard = room[player].board;
   const opponentBoard = room[opponent].board;
@@ -184,7 +182,7 @@ export const checkMove = (
     result = (d === 2) ? 2 : 1;
   } else if (o === 2) {
     // If attacker is a private, check if target is spy
-    result = (d === 99) ? 1 : 2;
+    result = (d === 99 || d < 2) ? 1 : 2;
   } else if (o > d) {
     // If attacker is stronger than target
     result = 1;
@@ -193,8 +191,26 @@ export const checkMove = (
     result = 2;
   }
 
+  return result;
+};
 
-  // Apply 'side effects' to game data
+export const updateRoomState = (
+  room: IRoom,
+  player: TPlayer,
+  origin: TCoordinate,
+  destination: TCoordinate,
+  result: number
+) => {
+
+  const flag = room.flagOnLastRow;
+  const lastRow = (player === 'p1') ? '8' : '1';
+  const opponent = (player === 'p1') ? 'p2' : 'p1';
+  const playerBoard = room[player].board;
+  const opponentBoard = room[opponent].board;
+
+  const o = playerBoard[origin]?.value;
+  // if destination isn't on opponent's board, it's empty (so 0)
+  const d = opponentBoard[destination]?.value || 0;
 
   if (flag && destination !== flag) {
     // If there is a flag on last row and the destination isn't on that flag's position
@@ -220,26 +236,30 @@ export const checkMove = (
       room.flagOnLastRow = destination;
     }
   }
+};
 
-
-  // Fix boards
+export const movePiece = (
+  board: IBoard,
+  playerBoard: IBoard,
+  opponentBoard: IBoard,
+  origin: TCoordinate,
+  destination: TCoordinate,
+  result: number) => {
 
   if (result === 1) {
     // move attacker to destination
     playerBoard[destination] = playerBoard[origin];
     opponentBoard[destination] = opponentBoard[origin];
-    room.board[destination] = room.board[origin];
+    board[destination] = board[origin];
   } else if (result === 3) {
     // delete both attacker and target
     delete playerBoard[destination];
     delete opponentBoard[destination];
-    delete room.board[destination];
+    delete board[destination];
   }
 
   // delete attacker (covers 'result === 2' branch)
   delete playerBoard[origin];
   delete opponentBoard[origin];
-  delete room.board[origin];
-
-  return result;
+  delete board[origin];
 };
