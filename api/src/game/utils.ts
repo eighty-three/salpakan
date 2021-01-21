@@ -155,7 +155,7 @@ export const checkMove = (
 ): number => {
   const room = gameStates[roomName];
   const flag = room.flagOnLastRow;
-  const lastRow = (player === 'p1') ? '1' : '8';
+  const lastRow = (player === 'p1') ? '8' : '1';
   const opponent = (player === 'p1') ? 'p2' : 'p1';
   const playerBoard = room[player].board;
   const opponentBoard = room[opponent].board;
@@ -184,7 +184,7 @@ export const checkMove = (
     result = (d === 2) ? 2 : 1;
   } else if (o === 2) {
     // If attacker is a private, check if target is spy
-    result = (d === 99) ? 1 : 2;
+    result = (d === 99 || d < 2) ? 1 : 2;
   } else if (o > d) {
     // If attacker is stronger than target
     result = 1;
