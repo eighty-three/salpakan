@@ -26,8 +26,8 @@ const Player = (props) => {
     turn,
     player: {
       time: gameInfo?.[playerNum].time,
-      turn: turn === gameInfo?.[playerNum].name,
-      css: (turn === gameInfo?.[playerNum].name)
+      turn: turn === playerNum,
+      css: (turn === playerNum)
         ? ''
         : styles.fade
     }
@@ -40,7 +40,7 @@ const Player = (props) => {
       dispatch({ type: 'update',
         payload: {
           turn,
-          player: gameInfo?.[playerNum].name,
+          player: playerNum,
           time: gameInfo?.[playerNum].time,
         }
       });

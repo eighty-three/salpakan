@@ -44,7 +44,7 @@ export const open: IOpen<Promise<void>> = async (socket) => {
   if (room.start) {
     refreshTime(room, turn);
     gameInfo = getGameInfo(room);
-    ongoingTurn = room.turn;
+    ongoingTurn = turn;
   } else {
     gameInfo = {
       time: room.time - Math.floor(Date.now() / 100),
@@ -67,7 +67,7 @@ export const close: IClose<void> = (socket) => {
   const room = gameStates[socket.url];
 
   if (room?.start) {
-    const turn = (room.turn === room.p1.name) ? 'p1' : 'p2';
+    const turn = (room.turn === 'p1') ? 'p1' : 'p2';
     refreshTime(room, turn);
   }
 };
@@ -106,7 +106,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
           type: 'start',
           data: gameInfo,
           board: room.board,
-          turn: room.turn
+          turn: 'p1'
         }));
       }
 
@@ -121,7 +121,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
       break;
 
     case 'move': {
-      if (socket.cn === room.turn) {
+      if (player === room.turn) {
         const coordinates = {
           origin: data.message.o,
           destination: data.message.d
@@ -133,13 +133,13 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
           socket.send(JSON.stringify({
             type: 'bug',
             data: gameInfo,
-            turn: room.turn
+            turn: player
           }));
         } else {
           const result = checkMove(gameStates, socket.url, player, data.message.o, data.message.d);
 
           refreshTime(room, player);
-          room.turn = room[opponent].name;
+          room.turn = opponent;
 
           const gameInfo = getGameInfo(room);
 
