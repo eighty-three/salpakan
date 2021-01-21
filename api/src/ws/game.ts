@@ -4,7 +4,7 @@ import { performance } from 'perf_hooks';
 
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame, storeGame } from '../game/model';
-import { cleanBoards, checkMove, checkIfLegal } from '../game/utils';
+import { cleanBoards, checkMove, checkIfLegal, updateRoomState, movePiece } from '../game/utils';
 import { decode, refreshTime, getGameInfo } from './utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
@@ -133,7 +133,8 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
           }));
         } else {
           const result = checkMove(gameStates, socket.url, player, data.message.o, data.message.d);
-
+          updateRoomState(room, player, data.message.o, data.message.d, result);
+          movePiece(room.board, room.p1.board, room.p2.board, data.message.o, data.message.d, result);
           refreshTime(room, player);
           room.turn = room[opponent].name;
 
