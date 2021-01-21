@@ -8,7 +8,7 @@ export type TCoordinate = `${Column}${Row}`;
 export interface IRoom extends TPlayers {
   playerList: string[];
   board: IBoard;
-  turn: string;
+  turn: TPlayer;
   start: boolean;
   lastMove: number;
   time: number;

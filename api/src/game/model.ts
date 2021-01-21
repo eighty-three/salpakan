@@ -26,7 +26,7 @@ export const startGame = async (
       start: false
     },
     board: {},
-    turn: arr[0],
+    turn: 'p1',
     start: false,
     lastMove: 0,
     winner: null,
