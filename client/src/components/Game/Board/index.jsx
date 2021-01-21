@@ -1,33 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React from 'react';
 
-import styles from './index.module.css';
-import Piece from './Piece';
+import styles from './index.module.scss';
 
-import GameInfoContext from '@/lib/GameInfoContext';
+import Grid from './Grid';
+import Pieces from './Pieces';
 
 const Board = () => {
-  const gameInfo = useContext(GameInfoContext);
-  const [ board, setBoard ] = useState({});
-
-  useEffect(() => {
-    setBoard(gameInfo?.board);
-  }, [gameInfo?.board]);
-
   return (
     <>
-      <div className={`${styles.board}`}>
-        { board &&
-          <>
-            {Object.keys(board).map((key) => (
-              <Piece
-                key={key}
-                name={board[`${key}`].name}
-                coordinate={key}
-              />
-            ))}
-          </>
-        }
+      <div className={styles.board}>
+        <Pieces />
+        <Grid />
       </div>
+
+      <div className={styles.placeholder}></div>
     </>
   );
 };
