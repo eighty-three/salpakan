@@ -8,15 +8,14 @@ import Board from './Board';
 
 import SocketContext from '@/lib/SocketContext';
 import GameInfoContext from '@/lib/GameInfoContext';
-import UserContext from '@/lib/UserContext';
 import TurnContext from '@/lib/TurnContext';
+import PlayerContext from '@/lib/PlayerContext';
 import { connectToGame, checkIfLegal } from '@/lib/game';
 
 const propTypes = {
   id: PropTypes.string,
   state: PropTypes.object
 };
-
 
 const Game = (props) =>{
   const {
@@ -26,12 +25,12 @@ const Game = (props) =>{
 
   const [ socket, setSocket] = useState(null);
   const [ gameInfo, setGameInfo ] = useState(null);
-  const [ user, setUser ] = useState(null);
   const [ turn, setTurn ] = useState(undefined);
+  const [ player, setPlayer ] = useState(null);
 
   useEffect(() => {
     if (state.ongoing) {
-      setSocket(connectToGame(id, setGameInfo, setUser, setTurn));
+      setSocket(connectToGame(id, setGameInfo, setTurn, setPlayer));
     } else {
       setGameInfo(state);
     }
@@ -40,7 +39,7 @@ const Game = (props) =>{
   const moveFn = () => {
     // Temporary to simulate moves. It should be attached to the Piece components
     if (
-      user === turn
+      player === turn
       && !gameInfo?.winner
     ) {
       if (checkIfLegal(gameInfo.board, 'C3', 'C4')) {
@@ -59,14 +58,12 @@ const Game = (props) =>{
 
   return (
     <>
-      <UserContext.Provider value={user}>
+      <SocketContext.Provider value={socket}>
         <GameInfoContext.Provider value={gameInfo}>
-          <SocketContext.Provider value={socket}>
-            <TurnContext.Provider value={turn}>
+          <TurnContext.Provider value={turn}>
+            <PlayerContext.Provider value={player}>
               <div className={styles.container}>
-
                 <button onClick={moveFn}>Emulate Move</button>
-
                 <div className={styles.p1}>
                   {(turn === undefined && !gameInfo?.winner)
                     ? (<Setup/>)
@@ -81,12 +78,11 @@ const Game = (props) =>{
                 <div className={styles.p2}>
                   <Player playerNum={'p2'} />
                 </div>
-
               </div>
-            </TurnContext.Provider>
-          </SocketContext.Provider>
+            </PlayerContext.Provider>
+          </TurnContext.Provider>
         </GameInfoContext.Provider>
-      </UserContext.Provider>
+      </SocketContext.Provider>
     </>
   );
 };

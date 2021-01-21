@@ -5,7 +5,7 @@ const api = `${HOST}/api/game`;
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 
-export const connectToGame = (id, setGameInfo, setUser, setTurn) => {
+export const connectToGame = (id, setGameInfo, setTurn, setPlayer) => {
   let socket = new WS(`${WS_HOST}/ws/game/${id}`);
 
   socket.onopen = () => {
@@ -18,8 +18,8 @@ export const connectToGame = (id, setGameInfo, setUser, setTurn) => {
     switch (res.type) {
       case 'init':
         setGameInfo({ ...res.data, board: res.board });
-        setUser(res.user);
         setTurn(res.turn);
+        setPlayer(res.player);
         break;
 
       case 'start': {
