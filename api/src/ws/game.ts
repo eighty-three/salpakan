@@ -57,7 +57,6 @@ export const open: IOpen<Promise<void>> = async (socket) => {
     type: 'init',
     data: gameInfo,
     board: room[player].board,
-    user: socket.cn,
     turn: ongoingTurn,
     player
   }));
