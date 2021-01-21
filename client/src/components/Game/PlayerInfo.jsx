@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import styles from './PlayerInfo.module.css';
 
 import GameInfoContext from '@/lib/GameInfoContext';
-import UserContext from '@/lib/UserContext';
+import PlayerContext from '@/lib/PlayerContext';
 
 const propTypes = {
   playerNum: PropTypes.string
@@ -16,13 +16,13 @@ const PlayerInfo = (props) => {
   } = props;
 
   const gameInfo = useContext(GameInfoContext);
-  const user = useContext(UserContext);
+  const player = useContext(PlayerContext);
 
   const name = (gameInfo?.[playerNum].name[1] !== '=')
     ? gameInfo?.[playerNum].name
     : 'Anonymous';
 
-  const css = (gameInfo?.[playerNum].name === user)
+  const css = (player === playerNum)
     ? `${styles.player_text} ${styles.self}`
     : styles.player_text;
 
