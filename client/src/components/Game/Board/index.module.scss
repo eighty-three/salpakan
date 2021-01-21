@@ -1,0 +1,48 @@
+@mixin styling($square-width) {
+  .board {
+    width: $square-width * 9;
+    height: $square-width / 9 * 8 * 8;
+    
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .placeholder {
+    width: $square-width * 9;
+    height: $square-width / 9 * 8 * 8;
+    
+    margin: 0 auto;
+  }
+}
+
+@media screen and (min-width: 0px) {
+  @include styling($square-width: 45px);
+}
+
+@media screen and (min-width: 510px) {
+  @include styling($square-width: 55px);
+}
+
+@media screen and (min-width: 576px) {
+  @include styling($square-width: 60px);
+}
+
+@media screen and (min-width: 660px) {
+  @include styling($square-width: 70px);
+}
+
+@media screen and (min-width: 750px) {
+  @include styling($square-width: 80px);
+}
+
+@media screen and (min-width: 830px) {
+  @include styling($square-width: 90px);
+}
+
+@media screen and (min-width: 920px) {
+  @include styling($square-width: 100px);
+}
