@@ -36,6 +36,7 @@
     "react-bootstrap": "^1.4.0",
     "react-dom": "^17.0.1",
     "react-hook-form": "^6.11.0",
+    "sass": "^1.32.4",
     "worker-timers": "^7.0.7",
     "ws": "^7.4.0"
   },
