@@ -10,7 +10,7 @@ import SocketContext from '@/lib/SocketContext';
 import GameInfoContext from '@/lib/GameInfoContext';
 import TurnContext from '@/lib/TurnContext';
 import PlayerContext from '@/lib/PlayerContext';
-import { connectToGame, checkIfLegal } from '@/lib/game';
+import { connectToGame } from '@/lib/game';
 
 const propTypes = {
   id: PropTypes.string,
@@ -36,26 +36,6 @@ const Game = (props) =>{
     }
   }, []);
 
-  const moveFn = () => {
-    // Temporary to simulate moves. It should be attached to the Piece components
-    if (
-      player === turn
-      && !gameInfo?.winner
-    ) {
-      if (checkIfLegal(gameInfo.board, 'C3', 'C4')) {
-        setTurn(null);
-
-        socket.send(JSON.stringify({
-          type: 'move',
-          message: {
-            o: 'C3',
-            d: 'C4'
-          }
-        }));
-      }
-    }
-  };
-
   return (
     <>
       <SocketContext.Provider value={socket}>
@@ -63,7 +43,6 @@ const Game = (props) =>{
           <TurnContext.Provider value={turn}>
             <PlayerContext.Provider value={player}>
               <div className={styles.container}>
-                <button onClick={moveFn}>Emulate Move</button>
                 <div className={styles.p1}>
                   {(turn === undefined && !gameInfo?.winner)
                     ? (<Setup/>)
