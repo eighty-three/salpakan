@@ -46,7 +46,10 @@ export const open: IOpen<Promise<void>> = async (socket) => {
     gameInfo = getGameInfo(room);
     ongoingTurn = room.turn;
   } else {
-    gameInfo = { time: room.time - Math.floor(Date.now() / 100) };
+    gameInfo = {
+      time: room.time - Math.floor(Date.now() / 100),
+      player
+    };
     ongoingTurn = undefined;
   }
 
@@ -55,7 +58,8 @@ export const open: IOpen<Promise<void>> = async (socket) => {
     data: gameInfo,
     board: room[player].board,
     user: socket.cn,
-    turn: ongoingTurn
+    turn: ongoingTurn,
+    player
   }));
 };
 
