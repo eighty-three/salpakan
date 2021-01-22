@@ -18,6 +18,20 @@ const Countdown = (props) => {
   } = props;
 
   const timeOut = useRef(null);
+
+  /* I've tried using Preact before but there's some bug with useEffect where
+   * it's not triggering if the tab is not in focus.
+   *
+   * It has been fixed since July 2019 and it looks like it's actually working
+   * because after trying it out on another project of mine where there's also
+   * a countdown, it is working as intended.
+   *
+   * It means whatever the problem is is with this codebase so I'm putting it
+   * back in. I still haven't fixed it yet, whatever it is, but for now I
+   * think the 40kb saved is more important than the inconvenience to the
+   * users who want to change tabs while playing. Just switch to a different
+   * window till I fix this (hopefully soon), please and thank you
+   */
   useEffect(() => {
     timeOut.current = workerTimers.setTimeout(counter, 92.5);
     return () => workerTimers.clearTimeout(timeOut.current);
