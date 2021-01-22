@@ -10,6 +10,7 @@ import SocketContext from '@/lib/SocketContext';
 import GameInfoContext from '@/lib/GameInfoContext';
 import TurnContext from '@/lib/TurnContext';
 import PlayerContext from '@/lib/PlayerContext';
+import SettersContext from '@/lib/SettersContext';
 import { connectToGame } from '@/lib/game';
 
 const propTypes = {
@@ -38,30 +39,30 @@ const Game = (props) =>{
 
   return (
     <>
-      <SocketContext.Provider value={socket}>
-        <GameInfoContext.Provider value={gameInfo}>
-          <TurnContext.Provider value={turn}>
-            <PlayerContext.Provider value={player}>
-              <div className={styles.container}>
-                <div className={styles.p1}>
-                  {(turn === undefined && !gameInfo?.winner)
-                    ? (<Setup/>)
-                    : (<Player playerNum={'p1'} />)
-                  }
+      <SettersContext.Provider value={[setGameInfo, setTurn]}>
+        <SocketContext.Provider value={socket}>
+          <GameInfoContext.Provider value={gameInfo}>
+            <TurnContext.Provider value={turn}>
+              <PlayerContext.Provider value={player}>
+                <div className={styles.container}>
+                  <div className={styles.p1}>
+                    {(turn === undefined && !gameInfo?.winner)
+                      ? (<Setup/>)
+                      : (<Player playerNum={'p1'} />)
+                    }
+                  </div>
+                  <div className={styles.board}>
+                    <Board />
+                  </div>
+                  <div className={styles.p2}>
+                    <Player playerNum={'p2'} />
+                  </div>
                 </div>
-
-                <div className={styles.board}>
-                  <Board />
-                </div>
-
-                <div className={styles.p2}>
-                  <Player playerNum={'p2'} />
-                </div>
-              </div>
-            </PlayerContext.Provider>
-          </TurnContext.Provider>
-        </GameInfoContext.Provider>
-      </SocketContext.Provider>
+              </PlayerContext.Provider>
+            </TurnContext.Provider>
+          </GameInfoContext.Provider>
+        </SocketContext.Provider>
+      </SettersContext.Provider>
     </>
   );
 };
