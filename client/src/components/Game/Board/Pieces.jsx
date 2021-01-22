@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext, useReducer } from 'react';
 
-import styles from './DragTarget.module.scss';
+import styles from './DropTarget.module.scss';
 
 import Piece from './Piece';
-import DragTarget from './DragTarget';
+import DropTarget from './DropTarget';
 
 import GameInfoContext from '@/lib/GameInfoContext';
 import DragContext from '@/lib/DragContext';
@@ -14,7 +14,7 @@ const Pieces = () => {
   const [ board, setBoard ] = useState({});
 
   /* `winner` key is purely for UX, so pieces can't be moved
-   * or `DragTarget` can't be dropped on anymore on game end
+   * or `DropTarget` can't be dropped on anymore on game end
    */
   const initialState = {
     draggable: false,
@@ -35,7 +35,7 @@ const Pieces = () => {
   return (
     <>
       <DragContext.Provider value={[state, dispatch]}>
-        <DragTarget />
+        <DropTarget />
         { board &&
           <>
             {Object.keys(board).map((key) => {

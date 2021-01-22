@@ -1,4 +1,4 @@
-import styles from '@/components/Game/Board/DragTarget.module.scss';
+import styles from '@/components/Game/Board/DropTarget.module.scss';
 
 const TurnChangeReducer = (state, action) => {
   switch (action.type) {
