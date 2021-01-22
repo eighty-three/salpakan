@@ -148,3 +148,17 @@ export const checkIfLegal = (board, origin, destination) => {
     return false;
   }
 };
+
+export const checkIfWithinBounds = (player, destination) => {
+  const destCol = Number(destination[1]);
+
+  if (player === 'p1') {
+    if (destCol <= 3) return true;
+    // A1 to I1, A3 to I3
+  } else {
+    if (destCol >= 6) return true;
+    //A6 to I6, A8 to I8
+  }
+
+  return false;
+};
