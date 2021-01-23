@@ -3,6 +3,8 @@ import { WS_HOST } from '@/lib/host';
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 
+export const WS_MATCHMAKING_URL = `${WS_HOST}/ws/matchmaking`;
+
 export const findMatch = (button) => {
   let socket = new WS(`${WS_HOST}/ws/matchmaking`);
 
