@@ -8,6 +8,16 @@ import ON_VS from '@/sounds/on_vs.mp3';
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 
+export const getGame = async (id) => {
+  try {
+    const req = ky.get(`${api}/${id}`);
+    const response = await req.json();
+    return response;
+  } catch (err) {
+    return { error: 'Something went wrong' };
+  }
+};
+
 export const connectToGame = (id, setGameInfo, setTurn, setPlayer) => {
   let socket = new WS(`${WS_HOST}/ws/game/${id}`);
 
@@ -101,16 +111,6 @@ export const connectToGame = (id, setGameInfo, setTurn, setPlayer) => {
   };
 
   return socket;
-};
-
-export const getGame = async (id) => {
-  try {
-    const req = ky.get(`${api}/${id}`);
-    const response = await req.json();
-    return response;
-  } catch (err) {
-    return { error: 'Something went wrong' };
-  }
 };
 
 export const checkIfLegal = (board, origin, destination) => {
