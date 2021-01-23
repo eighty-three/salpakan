@@ -85,6 +85,46 @@ export const cleanBoards = (
 };
 
 /**
+ * Receives the players' boards and removes the keys with a value of
+ * { name: 'unknown' }, while also adding { owner: 'opponent' } to
+ * the board of the loser.
+ *
+ * @param {IBoard} winnerBoard Board of the winner
+ * @param {IBoard} loserBoard Board of the loser
+ * @returns {Object} An object containing the fixed `winnerBoard` and fixed `loserBoard`
+ */
+export const removeUnknownValues = (
+  winnerBoard: IBoard,
+  loserBoard: IBoard
+): { fixedWinnerBoard: IBoard, fixedLoserBoard: IBoard } => {
+  const fixedWinnerBoard: IBoard = {...winnerBoard};
+  const fixedLoserBoard: IBoard = {...loserBoard};
+
+  for (const key in fixedWinnerBoard) {
+    if (fixedWinnerBoard[key as TCoordinate]?.name === 'unknown') {
+      delete fixedWinnerBoard[key as TCoordinate];
+    }
+  }
+
+  for (const key in fixedLoserBoard) {
+    const name = fixedLoserBoard[key as TCoordinate]?.name;
+    const value = fixedLoserBoard[key as TCoordinate]?.value;
+
+    if (name === 'unknown') {
+      delete fixedLoserBoard[key as TCoordinate];
+    } else if (name) {
+      fixedLoserBoard[key as TCoordinate] = {
+        name,
+        value,
+        owner: 'opponent'
+      };
+    }
+  }
+
+  return { fixedWinnerBoard, fixedLoserBoard };
+};
+
+/**
  * checks two coordinates, e.g., `A1` and `B1`, to know if
  * movement between them is possible
  *
