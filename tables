@@ -9,8 +9,8 @@ CREATE TABLE accounts (
 CREATE TABLE games (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
-  player1_state JSONB,
-  player2_state JSONB,
+  winner_board JSONB,
+  loser_board JSONB,
   player1 TEXT NOT NULL,
   player2 TEXT NOT NULL,
   ongoing BOOLEAN DEFAULT TRUE,
