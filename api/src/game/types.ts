@@ -42,3 +42,7 @@ export interface IGame {
   ongoing: boolean;
   winner: string;
 }
+
+export interface IName {
+  name: string;
+}
