@@ -18,6 +18,7 @@ const wsApp = (config.NODE_ENV === 'production')
 wsApp.ws('/ws/matchmaking', {
   compression: 1,
   maxPayloadLength: 1024,
+  idleTimeout: 0,
   upgrade: mm.upgrade,
   open: mm.open,
   close: mm.close
@@ -26,6 +27,7 @@ wsApp.ws('/ws/matchmaking', {
 wsApp.ws('/ws/lobby/:id', {
   compression: 1,
   maxPayloadLength: 1024,
+  idleTimeout: 0,
   upgrade: lobby.upgrade,
   open: lobby.open,
   close: lobby.close
@@ -44,3 +46,20 @@ wsApp.ws('/ws/game/:id', {
 export const gameStates: IGameStates = {};
 
 export default wsApp;
+
+
+import cron from 'node-cron';
+import { deleteGames } from '../game/model';
+import { IName } from '../game/types';
+
+const task = cron.schedule('*/30 * * * *', async () => {
+  const deletedGames: IName[] | null = await deleteGames();
+  if (deletedGames?.length) {
+    console.log(`Deleting ${deletedGames.length} game(s)...`);
+    for (let i=0; i < deletedGames.length; i++) {
+      delete gameStates[deletedGames[i].name];
+    }
+  }
+});
+
+task.start();
