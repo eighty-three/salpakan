@@ -5,8 +5,6 @@ import styles from './index.module.css';
 
 import { siteTitle } from '@/components/Layout';
 
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
 import { logout } from '@/lib/account';
 
 const propTypes = {
@@ -26,26 +24,24 @@ const NavbarComponent = (props) => {
 
   return (
     <>
-      <Navbar>
-        <Navbar.Text>
-          <a href="/" className={`${styles.title}`}>
-            {siteTitle}
-          </a>
-        </Navbar.Text>
+      <div className={styles.container}>
+        <a href="/" className={styles.title}>
+          {siteTitle}
+        </a>
 
-        <Nav className={`${styles.loginContainer}`}>
+        <div className={styles.loginContainer}>
           { loggedIn
             ? (
-              <Nav.Link onClick={logout}>Logout</Nav.Link>
+              <a href='#' onClick={logout}>Logout</a>
             ) : (
               <>
-                <Nav.Link href={redirectLink} >Login</Nav.Link>
-                <Nav.Link href="/signup">Signup</Nav.Link>
+                <a href={redirectLink} >Login</a>
+                <a href="/signup">Signup</a>
               </>
             )
           }
-        </Nav>
-      </Navbar>
+        </div>
+      </div>
 
       <div className={`${styles.bar}`}></div>
     </>

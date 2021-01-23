@@ -21,7 +21,7 @@ const Winner = (props) => {
     : '';
 
   return (
-    <p className={styles.text}>{text}</p>
+    <div className={styles.text}>{text}</div>
   );
 };
 

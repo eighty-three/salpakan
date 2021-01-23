@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import Button from 'react-bootstrap/Button';
+import styles from './Buttons.module.scss';
 
 import { findMatch } from '@/lib/matchmaking';
 
@@ -13,17 +13,15 @@ const FindGameButton = () => {
   };
 
   return (
-    <>
-      <Button
+    <div className={styles.container}>
+      <button
         onClick={onClickFn}
-        variant="dark"
-        type="submit"
-        block
         disabled={buttonState.disabled}
+        className={styles.button}
       >
         {buttonState.text}
-      </Button>
-    </>
+      </button>
+    </div>
   );
 };
 

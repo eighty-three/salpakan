@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Button from 'react-bootstrap/Button';
+import styles from './Buttons.module.scss';
 
 import { createLobby } from '@/lib/lobby';
 
@@ -29,17 +29,15 @@ const CreateLobbyButton = (props) => {
   };
 
   return (
-    <>
-      <Button
+    <div className={styles.container}>
+      <button
         onClick={() => onClickFn(cookieValue)}
-        variant="dark"
-        type="submit"
-        block
         disabled={buttonState.disabled}
+        className={styles.button}
       >
         {buttonState.text}
-      </Button>
-    </>
+      </button>
+    </div>
   );
 };
 
