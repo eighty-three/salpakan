@@ -27,6 +27,7 @@ export type IBoard = {
   [K in TCoordinate]?: {
     name: string;
     value?: number; // Value is optional because when the board is "cleaned", only the name remains (i.e., 'unknown') because you shouldn't know the value of your opponent's pieces
+    owner?: 'opponent'; // To differentiate between pieces in postgame
   }
 }
 
@@ -35,8 +36,8 @@ export interface IGameStates {
 }
 
 export interface IGame {
-  player1_state: IBoard;
-  player2_state: IBoard;
+  winner_board: IBoard;
+  loser_board: IBoard;
   player1: string;
   player2: string;
   ongoing: boolean;

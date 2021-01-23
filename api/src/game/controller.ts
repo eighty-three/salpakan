@@ -11,10 +11,10 @@ export const getGame: RequestHandler = async (req, res) => {
       res.json({ ongoing: true });
     } else {
       res.json({
-        gameState: {
-          player1_state: gameState.player1_state,
-          player2_state: gameState.player2_state,
-        }, // Should be merged
+        board: {
+          ...gameState.winner_board,
+          ...gameState.loser_board
+        },
         p1: { name: gameState.player1 },
         p2: { name: gameState.player2 },
         winner: gameState.winner

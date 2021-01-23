@@ -50,7 +50,7 @@ const Game = (props) =>{
 
     } else {
       setGameInfo({
-        board: state.gameState.player1_state,
+        board: state.board,
         p1: { name: state.p1.name },
         p2: { name: state.p2.name },
         winner: state.winner
