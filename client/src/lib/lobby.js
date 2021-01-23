@@ -16,18 +16,18 @@ export const getLobby = async (id) => {
   }
 };
 
-export const createLobby = async (button) => {
+export const createLobby = async () => {
   try {
     const req = ky.get(`${api}/create`);
     const response = await req.json();
 
-    if (!response.error) {
-      Router.push(`/lobby/${response.roomName}`);
+    if (response.error) {
+      return response;
     } else {
-      button({ disabled: true, text: 'Something went wrong' });
+      Router.push(`/lobby/${response.roomName}`);
     }
   } catch (err) {
-    button({ disabled: true, text: 'Something went wrong' });
+    return { error: 'Something went wrong' };
   }
 };
 
