@@ -1,6 +1,6 @@
 import db from '@utils/db';
 import { PreparedStatement as PS } from 'pg-promise';
-import { IGameStates, IGame, IBoard } from './types';
+import { IGameStates, IGame, IBoard, IName } from './types';
 import { getInitialBoardState } from './utils';
 
 export const startGame = async (
@@ -30,7 +30,7 @@ export const startGame = async (
     start: false,
     lastMove: 0,
     winner: null,
-    time: Math.floor(Date.now() / 100) + 600
+    time: Math.floor(Date.now() / 100) + 900
   };
 
   const expiry = Math.floor(Date.now() / 1000) + 7200;
@@ -83,7 +83,7 @@ export const deleteGame = async (
   await db.none(query);
 };
 
-export const deleteGames = async (): Promise<string[]|null> => {
+export const deleteGames = async (): Promise<IName[]|null> => {
   const query = new PS({ name: 'delete-games', text: '\
     DELETE FROM games WHERE expiry < $1 RETURNING name'
   });
@@ -93,10 +93,3 @@ export const deleteGames = async (): Promise<string[]|null> => {
   query.values = [ currentTime ];
   return await db.manyOrNone(query);
 };
-
-// const deletedGames = await deleteGames();
-// for (let i=0; i < deletedGames.length; i++) {
-//    delete gameStates[deletedGames[i]];
-// }
-//
-// When to call this?
