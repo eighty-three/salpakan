@@ -24,7 +24,7 @@ const CreatePrivateLobby = (props) => {
       setButtonState({ disabled: true, text: 'Creating...' });
 
       const req = await createLobby();
-      if (!req || req.error) setButtonState({ disabled: false, text: req.error });
+      if (req?.error) setButtonState({ disabled: false, text: 'Please try again' });
     } else {
       setButtonState({ disabled: false, text: 'Please try again' });
     }
