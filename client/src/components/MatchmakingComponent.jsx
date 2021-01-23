@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
+import Router from 'next/router';
 
 import styles from './Buttons.module.scss';
 
-import { findMatch } from '@/lib/matchmaking';
+import ws from 'ws';
+const WS = global.WebSocket || ws;
+import { WS_HOST } from '@/lib/host';
 
-const FindGameButton = () => {
+const FindMatch = () => {
   const [ buttonState, setButtonState ] = useState({ disabled: false, text: 'Find Match' });
 
   const onClickFn = () => {
     setButtonState({ disabled: true, text: 'Finding...' });
-    findMatch(setButtonState);
+
+    const socket = new WS(`${WS_HOST}/ws/matchmaking`);
+
+    socket.onmessage = (message) => {
+      const data = message.data;
+      socket.close();
+      setButtonState({ disabled: true, text: 'Match found!' });
+      Router.push(`/game/${data}`);
+    };
+
+    socket.onerror = () => {
+      setButtonState({ disabled: true , text: 'Please try again' });
+    };
   };
 
   return (
@@ -25,4 +40,4 @@ const FindGameButton = () => {
   );
 };
 
-export default FindGameButton;
+export default FindMatch;
