@@ -47,12 +47,12 @@ const Player = (props) => {
     } else {
       dispatch({ type: 'pause' });
     }
-  }, [turn]);
+  }, [turn, gameInfo?.[playerNum]?.time]);
 
   const fn = (time, turn) => {
     if (turn && time > 0) {
       dispatch({ type: 'time', payload: { time: time - 1 } });
-    } else if (time === 0) {
+    } else if (time <= 0) {
       socket.send(JSON.stringify({ type: 'time', message: playerNum }));
     }
   };
