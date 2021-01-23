@@ -25,6 +25,7 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "nanoid": "^3.1.18",
+    "node-cron": "^2.0.3",
     "pg-promise": "^10.6.2",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v18.8.0"
   },
@@ -36,6 +37,7 @@
     "@types/jest": "^26.0.14",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/node": "^14.11.5",
+    "@types/node-cron": "^2.0.3",
     "@types/supertest": "^2.0.10",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
