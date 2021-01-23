@@ -75,9 +75,14 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
   const data = JSON.parse(decode(message));
 
   const room = gameStates[socket.url];
+
   if (!room) {
-    socket.close();
-    return;
+    if (data.type === 'time') {
+      return;
+    } else {
+      socket.close();
+      return;
+    }
   }
 
   const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
