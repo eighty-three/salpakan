@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 
 import ON_MOVE from '@/sounds/on_move.mp3';
 
@@ -6,20 +7,27 @@ import SocketContext from '@/lib/SocketContext';
 import GameInfoContext from '@/lib/GameInfoContext';
 import TurnContext from '@/lib/TurnContext';
 import PlayerContext from '@/lib/PlayerContext';
-import DragContext from '@/lib/DragContext';
 import SettersContext from '@/lib/SettersContext';
 
 import { checkIfWithinBounds, checkIfLegal } from '@/lib/game';
 
-const DragTarget = () => {
+const propTypes = {
+  updateDragState: PropTypes.func,
+  dragState: PropTypes.object
+};
+
+const DropTarget = (props) => {
+  const {
+    updateDragState,
+    dragState
+  } = props;
+
   const [setGameInfo, setTurn] = useContext(SettersContext);
 
   const socket = useContext(SocketContext);
   const gameInfo = useContext(GameInfoContext);
   const turn = useContext(TurnContext);
   const player = useContext(PlayerContext);
-
-  const [state, dispatch] = useContext(DragContext);
 
   const dragStart = (e) => {
     e.preventDefault();
@@ -36,7 +44,7 @@ const DragTarget = () => {
   const check = (e) => {
     e.preventDefault();
 
-    dispatch({ type: 'dragEnd' });
+    updateDragState({ type: 'dragEnd' });
 
     const rect = e.target.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -86,18 +94,20 @@ const DragTarget = () => {
     }
   };
 
-  const options = (!state.draggable && !state.winner)
+  const options = (!dragState.draggable && !dragState.winner)
     ? {
-      className: state.css,
+      className: dragState.css,
       onDrag: dragStart,
       onDragOver: dragOver,
       onDragEnd: dragEnd,
       onDrop: check
     } : {
-      className: state.css,
+      className: dragState.css,
     };
 
   return React.createElement('div', options);
 };
 
-export default DragTarget;
+DropTarget.propTypes = propTypes;
+
+export default DropTarget;
