@@ -6,7 +6,6 @@ import Piece from './Piece';
 import DropTarget from './DropTarget';
 
 import GameInfoContext from '@/lib/GameInfoContext';
-import DragContext from '@/lib/DragContext';
 import DragReducer from '@/lib/DragReducer';
 
 const Pieces = () => {
@@ -34,22 +33,26 @@ const Pieces = () => {
 
   return (
     <>
-      <DragContext.Provider value={[state, dispatch]}>
-        <DropTarget />
-        { board &&
-          <>
-            {Object.keys(board).map((key) => {
-              return (
-                <Piece
-                  key={key}
-                  name={board[key].name}
-                  coordinate={key}
-                />
-              );
-            })}
-          </>
-        }
-      </DragContext.Provider>
+      <DropTarget
+        updateDragState={dispatch}
+        dragState={state}
+      />
+
+      { board &&
+        <>
+          {Object.keys(board).map((key) => {
+            return (
+              <Piece
+                key={key}
+                name={board[key].name}
+                coordinate={key}
+                winner={state.winner}
+                updateDragState={dispatch}
+              />
+            );
+          })}
+        </>
+      }
     </>
   );
 };
