@@ -11,7 +11,10 @@ import GameInfoContext from '@/lib/GameInfoContext';
 import TurnContext from '@/lib/TurnContext';
 import PlayerContext from '@/lib/PlayerContext';
 import SettersContext from '@/lib/SettersContext';
-import { connectToGame } from '@/lib/game';
+
+import { WSGAME_URL, gameSocketOnMessage }  from '@/lib/game';
+import ws from 'ws';
+const WS = global.WebSocket || ws;
 
 const propTypes = {
   id: PropTypes.string,
@@ -24,14 +27,27 @@ const Game = (props) =>{
     state
   } = props;
 
-  const [ socket, setSocket] = useState(null);
+  const [ socket, setSocket ] = useState(null);
   const [ gameInfo, setGameInfo ] = useState(null);
   const [ turn, setTurn ] = useState(undefined);
   const [ player, setPlayer ] = useState(null);
 
   useEffect(() => {
+    let socketCn;
     if (state.ongoing) {
-      setSocket(connectToGame(id, setGameInfo, setTurn, setPlayer));
+      socketCn = new WS(`${WSGAME_URL}/${id}`);
+      socketCn.onclose = () => setGameInfo(null);
+      socketCn.onmessage = (message) => {
+        const res = JSON.parse(message.data);
+        gameSocketOnMessage(res, {
+          gameInfo: setGameInfo,
+          turn: setTurn,
+          player: setPlayer
+        });
+      };
+
+      setSocket(socketCn);
+
     } else {
       setGameInfo({
         board: state.gameState.player1_state,
@@ -40,6 +56,12 @@ const Game = (props) =>{
         winner: state.winner
       });
     }
+
+    return () => {
+      if (state.ongoing) {
+        socketCn.close();
+      }
+    };
   }, []);
 
   return (
