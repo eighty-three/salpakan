@@ -9,7 +9,7 @@ const propTypes = {
   cookieValue: PropTypes.string
 };
 
-const CreateLobbyButton = (props) => {
+const CreatePrivateLobby = (props) => {
   const {
     cookieValue
   } = props;
@@ -19,10 +19,12 @@ const CreateLobbyButton = (props) => {
     text: 'Create Private Lobby'
   });
 
-  const onClickFn = (auth) => {
+  const onClickFn = async (auth) => {
     if (auth) {
       setButtonState({ disabled: true, text: 'Creating...' });
-      createLobby(setButtonState);
+
+      const req = await createLobby();
+      if (!req || req.error) setButtonState({ disabled: false, text: req.error });
     } else {
       setButtonState({ disabled: false, text: 'Please try again' });
     }
@@ -41,6 +43,6 @@ const CreateLobbyButton = (props) => {
   );
 };
 
-CreateLobbyButton.propTypes = propTypes;
+CreatePrivateLobby.propTypes = propTypes;
 
-export default CreateLobbyButton;
+export default CreatePrivateLobby;
