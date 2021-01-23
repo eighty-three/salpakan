@@ -115,6 +115,8 @@ export const getGame = async (id) => {
 
 export const checkIfLegal = (board, origin, destination) => {
   try {
+    if (origin.length !== 2 || destination.length !== 2) return false;
+
     const originRow = origin.charCodeAt(0);
     const destRow = destination.charCodeAt(0);
     const originCol = Number(origin[1]);
