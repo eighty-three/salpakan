@@ -11,6 +11,7 @@ export const getGame = async (id) => {
   try {
     const req = ky.get(`${api}/${id}`);
     const response = await req.json();
+
     return response;
   } catch (err) {
     return { error: 'Something went wrong' };
@@ -50,6 +51,13 @@ export const gameSocketOnMessage = (res, setters) => {
       let toPlay;
       setters.gameInfo((prev) => {
         toPlay = (prev.board[res.board.destination]) ? vsSound: moveSound;
+
+        if (res.data.winner) {
+          return {
+            ...res.data,
+            board: res.board
+          };
+        }
 
         const fixedBoard = {...prev.board};
         delete fixedBoard[res.board.origin];
