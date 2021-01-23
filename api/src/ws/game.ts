@@ -4,7 +4,7 @@ import { performance } from 'perf_hooks';
 
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame, storeGame } from '../game/model';
-import { cleanBoards, checkMove, checkIfLegal } from '../game/utils';
+import { cleanBoards, checkMove, checkIfLegal, removeUnknownValues } from '../game/utils';
 import { decode, refreshTime, getGameInfo } from './utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
@@ -144,7 +144,28 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
 
           if (gameInfo.winner) {
             delete gameStates[socket.url];
-            await storeGame(socket.url, room.p1.board, room.p2.board, gameInfo.winner);
+
+            const { winnerBoard, loserBoard } = (gameInfo.winner === room.p1.name) ? {
+              winnerBoard: room.p1.board,
+              loserBoard: room.p2.board
+            } : {
+              winnerBoard: room.p2.board,
+              loserBoard: room.p1.board
+            };
+
+            const { fixedWinnerBoard, fixedLoserBoard } = removeUnknownValues(winnerBoard, loserBoard);
+            room.board = { ...fixedWinnerBoard, ...fixedLoserBoard };
+
+            await storeGame(socket.url, fixedWinnerBoard, fixedLoserBoard, gameInfo.winner);
+
+            socket.publish(socket.url, JSON.stringify({
+              type: 'move',
+              data: gameInfo,
+              board: room.board,
+              turn: room.turn
+            }));
+
+            return;
           }
 
           socket.publish(socket.url, JSON.stringify({
@@ -167,7 +188,19 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
 
       if (gameInfo.winner) {
         delete gameStates[socket.url];
-        await storeGame(socket.url, room.p1.board, room.p2.board, gameInfo.winner);
+
+        const { winnerBoard, loserBoard } = (gameInfo.winner === room.p1.name) ? {
+          winnerBoard: room.p1.board,
+          loserBoard: room.p2.board
+        } : {
+          winnerBoard: room.p2.board,
+          loserBoard: room.p1.board
+        };
+
+        const { fixedWinnerBoard, fixedLoserBoard } = removeUnknownValues(winnerBoard, loserBoard);
+        room.board = { ...fixedWinnerBoard, ...fixedLoserBoard };
+
+        await storeGame(socket.url, fixedWinnerBoard, fixedLoserBoard, gameInfo.winner);
       }
 
       socket.publish(socket.url, JSON.stringify({
