@@ -3,8 +3,7 @@ import ky from 'ky-universal';
 import { HOST, WS_HOST } from '@/lib/host';
 const api = `${HOST}/api/lobby`;
 
-import ws from 'ws';
-const WS = global.WebSocket || ws;
+export const WSLOBBY_URL = `${WS_HOST}/ws/lobby`;
 
 export const getLobby = async (id) => {
   try {
@@ -29,17 +28,4 @@ export const createLobby = async () => {
   } catch (err) {
     return { error: 'Something went wrong' };
   }
-};
-
-export const connectToLobby = async (id, setText) => {
-  let socket = new WS(`${WS_HOST}/ws/lobby/${id}`);
-
-  socket.onmessage = (message) => {
-    setText('Redirecting...');
-    socket.close();
-
-    const data = message.data;
-
-    Router.push(`/game/${data}`);
-  };
 };
