@@ -2,6 +2,9 @@ import ky from 'ky-universal';
 import { HOST, WS_HOST } from '@/lib/host';
 const api = `${HOST}/api/game`;
 
+import ON_MOVE from '@/sounds/on_move.mp3';
+import ON_VS from '@/sounds/on_vs.mp3';
+
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 
@@ -14,6 +17,8 @@ export const connectToGame = (id, setGameInfo, setTurn, setPlayer) => {
 
   socket.onmessage = (message) => {
     const res = JSON.parse(message.data);
+    const moveSound = new Audio(ON_MOVE);
+    const vsSound = new Audio(ON_VS);
 
     switch (res.type) {
       case 'init':
@@ -35,11 +40,16 @@ export const connectToGame = (id, setGameInfo, setTurn, setPlayer) => {
 
         setTurn(res.turn);
 
+        moveSound.play();
+
         break;
       }
 
-      case 'move':
+      case 'move': {
+        let toPlay;
         setGameInfo((prev) => {
+          toPlay = (prev.board[res.board.destination]) ? vsSound: moveSound;
+
           const fixedBoard = {...prev.board};
           delete fixedBoard[res.board.origin];
 
@@ -59,8 +69,10 @@ export const connectToGame = (id, setGameInfo, setTurn, setPlayer) => {
         });
 
         setTurn(res.turn);
+        toPlay.play();
 
         break;
+      }
 
       case 'time':
         setGameInfo({ ...res.data, board: res.board });

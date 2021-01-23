@@ -1,5 +1,7 @@
 import React, { useContext } from 'react';
 
+import ON_MOVE from '@/sounds/on_move.mp3';
+
 import SocketContext from '@/lib/SocketContext';
 import GameInfoContext from '@/lib/GameInfoContext';
 import TurnContext from '@/lib/TurnContext';
@@ -61,6 +63,9 @@ const DragTarget = () => {
 
           return {...prev, board};
         });
+
+        const sound = new Audio(ON_MOVE);
+        sound.play();
       }
     } else if (
       player === turn
@@ -76,6 +81,7 @@ const DragTarget = () => {
             d: destination
           }
         }));
+
       }
     }
   };
