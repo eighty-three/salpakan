@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import Layout, { siteTitle } from '@/components/Layout';
 
 import { lightAuthCheck } from '@/lib/authCheck';
-import { getLobby, WSLOBBY_URL}  from '@/lib/lobby';
 import { getCookie } from '@/lib/account';
+import { getLobby, WSLOBBY_URL}  from '@/lib/lobby';
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 
