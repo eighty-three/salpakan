@@ -1,10 +1,5 @@
 .text {
   font-weight: bold;
-
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  flex-direction: column;
 }
 
-@media (min-width: 576px) { .text { font-size: 1.5em; } }
+@media (min-width: 576px) { .text { font-size: 1.2em; } }

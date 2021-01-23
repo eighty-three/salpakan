@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
-
-import utilStyles from '@/styles/utils.module.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -78,7 +77,7 @@ const CustomAuthForms = (props) => {
       `}
       </style>
 
-      <div className={`w-75 mx-auto ${utilStyles.pd20}`}>
+      <div className={'w-75 mx-auto'}>
         <Form className="mx-auto" onSubmit={handleSubmit(onSubmit)}>
           {forms.map((form) => transForm(form)).map((formData) =>
             <IndividualForm key={formData.id} {...formData} title={title} register={register} />

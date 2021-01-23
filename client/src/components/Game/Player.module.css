@@ -9,10 +9,20 @@
 
 .info {
   grid-area: info;
+  font-size: 0.8em;
 }
 
 .result {
   grid-area: result;
+  font-size: 0.8em;
+
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
 }
 
-@media (min-width: 576px) { .info { font-size: 1.5em; } }
+@media (min-width: 576px) {
+  .info { font-size: 1.2em; }
+  .result { font-size: 1.2em; }
+}

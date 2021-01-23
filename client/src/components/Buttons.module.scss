@@ -1,0 +1,28 @@
+.container {
+  text-align: center;
+  padding: 1.5em;
+  margin: 2em auto;
+}
+
+.button {
+  height: 100px;
+  width: 200px;
+  max-width: 100%;
+  grid-area: button;
+  font-size: 1.5em;
+  
+  display: table-cell;
+  vertical-align: middle;
+}
+
+@media (min-width: 576px) { 
+  .button { 
+    height: 200px;
+    width: 350px;
+    font-size: 2em;
+  }
+
+  .container {
+    padding: 2em;
+  }
+}

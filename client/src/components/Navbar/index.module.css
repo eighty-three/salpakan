@@ -1,22 +1,11 @@
-.title, .title:hover {
-  color: rgb(130, 25, 25) !important;
-	font-size: 1.5em;
-  font-weight: bold;
-}
-
-.link, .link:hover {
-  color: black;
-}
-
 .container {
   display: flex;
-  padding-bottom: 1em;
 }
 
 .titleContainer {
   display: flex;
-  flex-grow: 1;
   align-items: center;
+  justify-content: center;
 }
 
 .loginContainer {
@@ -24,10 +13,36 @@
   flex-grow: 1;
   align-items: center;
   justify-content: flex-end;
+  align-content: center;
+}
+
+.title, .title:hover {
+  color: rgb(130, 25, 25);
+	font-size: 1em;
+  font-weight: bold;
+  padding-left: 1em;
+}
+
+.loginContainer a {
+  color: black;
+  font-size: 0.8em;
+  padding-right: 1em;
 }
 
 .bar {
   width: 100%;
   border: thin solid rgb(140, 55, 55);
   border-radius: 10px;
+}
+
+@media (min-width: 576px) { 
+  .loginContainer a { 
+    font-size: 1em;
+    padding-right: 1.5em;
+  }
+
+  .title, .title:hover { 
+    font-size: 1.5em;
+    padding-left: 1.5em;
+  }
 }
