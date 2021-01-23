@@ -35,7 +35,7 @@ const Game = (props) =>{
   useEffect(() => {
     let socketCn;
     let isMounted = true;
-    if (state && state.ongoing) {
+    if (state?.ongoing) {
       socketCn = new WS(`${WSGAME_URL}/${id}`);
 
       socketCn.onclose = () => {
