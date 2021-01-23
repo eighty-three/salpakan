@@ -3,7 +3,18 @@ const router = express.Router();
 
 // Middleware
 import { authToken, authAccount } from '@authMiddleware/index';
-router.post('/verify', authToken.verifyToken, authAccount.verifyUser);
+import Joi from '@hapi/joi';
+import validator from '@utils/validator';
+
+const username = Joi.object({
+  username: Joi.string().regex(/^[a-zA-Z0-9_]{1,29}$/).required(),
+});
+
+router.post('/verify',
+  validator(username, 'body'),
+  authToken.verifyToken,
+  authAccount.verifyUser
+);
 
 
 // Routes
