@@ -7,11 +7,10 @@
  * inside the same div as other elements which makes
  * counting from the top inconsistent
  */
-
 .coord:nth-last-child(2n) {
-  background-color: #ffdab9;
+  background-color: rgb(240, 240, 240);
 }
 
 .coord:nth-last-child(2n+1) {
-  background-color: gray;
+  background-color: rgb(200, 200, 200);
 }
