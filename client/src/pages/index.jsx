@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 
 import Layout, { siteTitle } from '@/components/Layout';
 
-import MatchmakingComponent from '@/components/MatchmakingComponent';
-import CreateLobbyButton from '@/components/CreateLobbyComponent';
+import FindMatch from '@/components/FindMatch';
+import CreatePrivateLobby from '@/components/CreatePrivateLobby';
 
 import { lightAuthCheck } from '@/lib/authCheck';
 import { getCookie } from '@/lib/account';
@@ -37,8 +37,8 @@ const Home = (props) => {
         <title>{siteTitle}</title>
       </Head>
       <section>
-        <MatchmakingComponent />
-        <CreateLobbyButton cookieValue={cookieValue} />
+        <FindMatch />
+        <CreatePrivateLobby cookieValue={cookieValue} />
       </section>
     </Layout>
   );
