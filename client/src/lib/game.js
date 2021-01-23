@@ -5,8 +5,7 @@ const api = `${HOST}/api/game`;
 import ON_MOVE from '@/sounds/on_move.mp3';
 import ON_VS from '@/sounds/on_vs.mp3';
 
-import ws from 'ws';
-const WS = global.WebSocket || ws;
+export const WSGAME_URL = `${WS_HOST}/ws/game`;
 
 export const getGame = async (id) => {
   try {
@@ -18,99 +17,80 @@ export const getGame = async (id) => {
   }
 };
 
-export const connectToGame = (id, setGameInfo, setTurn, setPlayer) => {
-  let socket = new WS(`${WS_HOST}/ws/game/${id}`);
+export const gameSocketOnMessage = (res, setters) => {
+  const moveSound = new Audio(ON_MOVE);
+  const vsSound = new Audio(ON_VS);
 
-  socket.onopen = () => {
-    console.log('hello');
-  };
+  switch (res.type) {
+    case 'init':
+      setters.gameInfo({ ...res.data, board: res.board });
+      setters.turn(res.turn);
+      setters.player(res.player);
+      break;
 
-  socket.onmessage = (message) => {
-    const res = JSON.parse(message.data);
-    const moveSound = new Audio(ON_MOVE);
-    const vsSound = new Audio(ON_VS);
-
-    switch (res.type) {
-      case 'init':
-        setGameInfo({ ...res.data, board: res.board });
-        setTurn(res.turn);
-        setPlayer(res.player);
-        break;
-
-      case 'start': {
-        setGameInfo((prev) => {
-          return {
-            ...res.data,
-            board: {
-              ...res.board,
-              ...prev.board
-            }
-          };
-        });
-
-        setTurn(res.turn);
-
-        moveSound.play();
-
-        break;
-      }
-
-      case 'move': {
-        let toPlay;
-        setGameInfo((prev) => {
-          toPlay = (prev.board[res.board.destination]) ? vsSound: moveSound;
-
-          const fixedBoard = {...prev.board};
-          delete fixedBoard[res.board.origin];
-
-          /* Implicit case where res.result === 2 where the action is
-           * just `delete fixedBoard[res.board.origin];`
-           */
-          if (res.result === 1) {
-            fixedBoard[res.board.destination] = prev.board[res.board.origin];
-          } else if (res.result === 3) {
-            delete fixedBoard[res.board.destination];
+    case 'start': {
+      setters.gameInfo((prev) => {
+        return {
+          ...res.data,
+          board: {
+            ...res.board,
+            ...prev.board
           }
+        };
+      });
 
-          return {
-            ...res.data,
-            board: {...fixedBoard}
-          };
-        });
+      setters.turn(res.turn);
 
-        setTurn(res.turn);
-        toPlay.play();
+      moveSound.play();
 
-        break;
-      }
-
-      case 'time':
-        setGameInfo({ ...res.data, board: res.board });
-        break;
-
-      case 'bug':
-        setGameInfo((prev) => {
-          return {
-            ...res.data,
-            board: prev.board
-          };
-        });
-
-        setTurn(res.turn);
-
-        break;
+      break;
     }
-  };
 
-  socket.onclose = () => {
-    setGameInfo(null);
-  };
+    case 'move': {
+      let toPlay;
+      setters.gameInfo((prev) => {
+        toPlay = (prev.board[res.board.destination]) ? vsSound: moveSound;
 
-  socket.onerror = () => {
-    console.log('no room');
-  };
+        const fixedBoard = {...prev.board};
+        delete fixedBoard[res.board.origin];
 
-  return socket;
+        /* Implicit case where res.result === 2 where the action is
+         * just `delete fixedBoard[res.board.origin];`
+         */
+        if (res.result === 1) {
+          fixedBoard[res.board.destination] = prev.board[res.board.origin];
+        } else if (res.result === 3) {
+          delete fixedBoard[res.board.destination];
+        }
+
+        return {
+          ...res.data,
+          board: {...fixedBoard}
+        };
+      });
+
+      setters.turn(res.turn);
+      toPlay.play();
+
+      break;
+    }
+
+    case 'time':
+      setters.gameInfo({ ...res.data, board: res.board });
+      break;
+
+    case 'bug':
+      setters.gameInfo((prev) => {
+        return {
+          ...res.data,
+          board: prev.board
+        };
+      });
+
+      setters.turn(res.turn);
+
+      break;
+  }
 };
 
 export const checkIfLegal = (board, origin, destination) => {
