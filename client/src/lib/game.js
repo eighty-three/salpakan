@@ -84,7 +84,20 @@ export const gameSocketOnMessage = (res, setters) => {
     }
 
     case 'time':
-      setters.gameInfo({ ...res.data, board: res.board });
+      if (res.data.winner) {
+        setters.gameInfo({ ...res.data, board: res.board });
+      } else {
+        setters.gameInfo((prev) => {
+          return {
+            ...res.data,
+            board: {
+              ...res.board,
+              ...prev.board
+            }
+          };
+        });
+      }
+
       break;
 
     case 'bug':
