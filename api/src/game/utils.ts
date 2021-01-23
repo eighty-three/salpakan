@@ -220,7 +220,7 @@ export const checkMove = (
 
   if (o === d) {
     // If attacker is same piece as target, check if the pieces are flags
-    result = (o === 1) ? 1 : 3 ;
+    result = (o === 1) ? 1 : 3;
   } else if (o === 99) {
     // If attacker is a spy, check if target is private
     result = (d === 2) ? 2 : 1;
