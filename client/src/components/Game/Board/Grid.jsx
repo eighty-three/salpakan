@@ -25,4 +25,4 @@ const Grid = () => {
   );
 };
 
-export default Grid;
+export default React.memo(Grid);
