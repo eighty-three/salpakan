@@ -34,9 +34,19 @@ const Game = (props) =>{
 
   useEffect(() => {
     let socketCn;
-    if (state.ongoing) {
+    let isMounted = true;
+    if (state && state.ongoing) {
       socketCn = new WS(`${WSGAME_URL}/${id}`);
-      socketCn.onclose = () => setGameInfo(null);
+
+      socketCn.onclose = () => {
+        /* should differentiate if socket is closing because the connection
+         * was closed, e.g. on game end, or if because of the component unmounting
+         */
+        if (isMounted) {
+          setGameInfo(null);
+        }
+      };
+
       socketCn.onmessage = (message) => {
         const res = JSON.parse(message.data);
         gameSocketOnMessage(res, {
@@ -59,6 +69,7 @@ const Game = (props) =>{
 
     return () => {
       if (state.ongoing) {
+        isMounted = false;
         socketCn.close();
       }
     };
