@@ -33,7 +33,12 @@ const Game = (props) =>{
     if (state.ongoing) {
       setSocket(connectToGame(id, setGameInfo, setTurn, setPlayer));
     } else {
-      setGameInfo(state);
+      setGameInfo({
+        board: state.gameState.player1_state,
+        p1: { name: state.p1.name },
+        p2: { name: state.p2.name },
+        winner: state.winner
+      });
     }
   }, []);
 
