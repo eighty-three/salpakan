@@ -41,6 +41,8 @@ const Pieces = () => {
       { board &&
         <>
           {Object.keys(board).map((key) => {
+            const owner = (board[key]?.owner) ? board[key].owner : '';
+
             return (
               <Piece
                 key={key}
@@ -48,6 +50,7 @@ const Pieces = () => {
                 coordinate={key}
                 winner={state.winner}
                 updateDragState={dispatch}
+                owner={owner}
               />
             );
           })}

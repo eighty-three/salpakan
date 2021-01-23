@@ -7,7 +7,8 @@ const propTypes = {
   name: PropTypes.string,
   coordinate: PropTypes.string,
   updateDragState: PropTypes.func,
-  winner: PropTypes.bool
+  winner: PropTypes.bool,
+  owner: PropTypes.string
 };
 
 const Piece = (props) => {
@@ -15,7 +16,8 @@ const Piece = (props) => {
     name, // for image of piece
     coordinate, // for position of piece
     updateDragState,
-    winner
+    winner,
+    owner
   } = props;
 
   const [ vis, setVis ] = useState(null);
@@ -46,7 +48,8 @@ const Piece = (props) => {
 
   const pieceStyle = styles[name];
   const coordinateStyle = styles[coordinate];
-  const css = `${pieceStyle} ${coordinateStyle} ${styles.piece}`;
+  const ownerStyle = (owner === 'opponent') ? styles.opponent : '';
+  const css = `${pieceStyle} ${coordinateStyle} ${ownerStyle} ${styles.piece}`;
 
   const options = (name !== 'unknown' && !winner)
     ? {
