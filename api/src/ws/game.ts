@@ -38,7 +38,7 @@ export const open: IOpen<Promise<void>> = async (socket) => {
 
   const room = gameStates[socket.url];
   const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
-  const turn = (room.turn === room.p1.name) ? 'p1' : 'p2';
+  const turn = (room.turn === 'p1') ? 'p1' : 'p2';
 
   let gameInfo, ongoingTurn;
   if (room.start) {
