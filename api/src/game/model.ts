@@ -30,7 +30,7 @@ export const startGame = async (
     start: false,
     lastMove: 0,
     winner: null,
-    time: Math.floor(Date.now() / 100) + 900
+    time: Math.floor(Date.now() / 100) + 1200
   };
 
   const expiry = Math.floor(Date.now() / 1000) + 7200;
