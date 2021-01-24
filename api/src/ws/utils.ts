@@ -6,7 +6,7 @@ const decoder = new StringDecoder('utf8');
 
 export const decode = (buf: ArrayBuffer): string => decoder.write(Buffer.from(buf));
 
-export const refreshTime = (room: IRoom, player: TPlayer) => {
+export const refreshTime = (room: IRoom, player: TPlayer): void => {
   const currentTime = performance.now() / 100;
   const elapsedTime = currentTime - room.lastMove;
   room[player].time = room[player].time - elapsedTime;
