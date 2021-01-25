@@ -4,10 +4,8 @@ import PropTypes from 'prop-types';
 import styles from './index.module.css';
 import Countdown from './Countdown';
 
-import SocketContext from '@/lib/SocketContext';
-import GameInfoContext from '@/lib/GameInfoContext';
-import TurnContext from '@/lib/TurnContext';
 import TurnChangeReducer from '@/lib/TurnChangeReducer';
+import GameStateContext from '@/lib/GameStateContext';
 
 const propTypes = {
   playerNum: PropTypes.string
@@ -18,16 +16,14 @@ const Player = (props) => {
     playerNum
   } = props;
 
-  const socket = useContext(SocketContext);
-  const gameInfo = useContext(GameInfoContext);
-  const turn = useContext(TurnContext);
+  const [gameState] = useContext(GameStateContext);
 
   const initialState = {
-    turn,
+    turn: gameState.turn,
     player: {
-      time: gameInfo?.[playerNum].time,
-      turn: turn === playerNum,
-      css: (turn === playerNum)
+      time: gameState.gameInfo?.[playerNum].time,
+      turn: gameState.turn === playerNum,
+      css: (gameState.turn === playerNum)
         ? ''
         : styles.fade
     }
@@ -36,30 +32,30 @@ const Player = (props) => {
   const [ state, dispatch ] = useReducer(TurnChangeReducer, initialState);
 
   useEffect(() => {
-    if (turn) {
+    if (gameState.turn) {
       dispatch({ type: 'update',
         payload: {
-          turn,
+          turn: gameState.turn,
           player: playerNum,
-          time: gameInfo?.[playerNum].time,
+          time: gameState.gameInfo?.[playerNum].time,
         }
       });
     } else {
       dispatch({ type: 'pause' });
     }
-  }, [turn, gameInfo?.[playerNum]?.time]);
+  }, [gameState.turn, gameState.gameInfo?.[playerNum]?.time]);
 
   const fn = (time, turn) => {
     if (turn && time > 0) {
       dispatch({ type: 'time', payload: { time: time - 1 } });
     } else if (time <= 0) {
-      socket.send(JSON.stringify({ type: 'time', message: playerNum }));
+      gameState.socket.send(JSON.stringify({ type: 'time', message: playerNum }));
     }
   };
 
   return (
     <>
-      { gameInfo &&
+      { gameState.gameInfo &&
         <div className={styles.container}>
           <div className={state?.player.css}>
             <Countdown

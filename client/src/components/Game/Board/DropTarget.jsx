@@ -1,15 +1,8 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
-import ON_MOVE from '@/sounds/on_move.mp3';
-
-import SocketContext from '@/lib/SocketContext';
-import GameInfoContext from '@/lib/GameInfoContext';
-import TurnContext from '@/lib/TurnContext';
-import PlayerContext from '@/lib/PlayerContext';
-import SettersContext from '@/lib/SettersContext';
-
 import { checkIfWithinBounds, checkIfLegal } from '@/lib/game';
+import GameStateContext from '@/lib/GameStateContext';
 
 const propTypes = {
   updateDragState: PropTypes.func,
@@ -22,12 +15,7 @@ const DropTarget = (props) => {
     dragState
   } = props;
 
-  const [setGameInfo, setTurn] = useContext(SettersContext);
-
-  const socket = useContext(SocketContext);
-  const gameInfo = useContext(GameInfoContext);
-  const turn = useContext(TurnContext);
-  const player = useContext(PlayerContext);
+  const [state, dispatch] = useContext(GameStateContext);
 
   const dragEnter = (e) => {
     e.preventDefault();
@@ -51,34 +39,15 @@ const DropTarget = (props) => {
     const destination = `${String.fromCharCode(col+64)}${row}`;
     const origin = localStorage.getItem('coordinate');
 
-    if (turn === undefined) {
-      if (checkIfWithinBounds(player, destination)) {
-        setGameInfo((prev) => {
-          const fixedBoard = {...prev.board};
-          const originValue = prev.board[origin];
-          const destValue = prev.board[destination];
-          const board = {
-            ...fixedBoard,
-            [origin]: destValue,
-            [destination]: originValue
-          };
-
-          if (!destValue) delete board[origin];
-
-          return {...prev, board};
-        });
-
-        const sound = new Audio(ON_MOVE);
-        sound.play();
+    if (state.turn === undefined) {
+      if (checkIfWithinBounds(state.player, destination)) {
+        dispatch({ type: 'onPieceSetup', payload: { origin, destination }});
       }
-    } else if (
-      player === turn
-      && !gameInfo?.winner
-    ) {
-      if (checkIfLegal(gameInfo.board, origin, destination)) {
-        setTurn(null);
+    } else if (state.player === state.turn) {
+      if (checkIfLegal(state.board, origin, destination)) {
+        dispatch({ type: 'onPieceMove' });
 
-        socket.send(JSON.stringify({
+        state.socket.send(JSON.stringify({
           type: 'move',
           message: {
             o: origin,
