@@ -1,18 +1,13 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useEffect, useContext, useReducer } from 'react';
 import PropTypes from 'prop-types';
 
 import styles from './Piece.module.scss';
 
-import ON_MOVE from '@/sounds/on_move.mp3';
-
-import SocketContext from '@/lib/SocketContext';
-import GameInfoContext from '@/lib/GameInfoContext';
-import TurnContext from '@/lib/TurnContext';
-import PlayerContext from '@/lib/PlayerContext';
-import SettersContext from '@/lib/SettersContext';
+import GameStateContext from '@/lib/GameStateContext';
 
 import { checkIfWithinBounds, checkIfLegal } from '@/lib/game';
-import { getCurrentCoordinates, getSquareDimensions, snapToCursor } from '@/lib/drag';
+import { getCurrentCoordinates, getSquareDimensions } from '@/lib/drag';
+import PieceStateReducer from '@/lib/PieceStateReducer';
 
 const propTypes = {
   name: PropTypes.string,
@@ -31,33 +26,35 @@ const Piece = (props) => {
     owner
   } = props;
 
-  const [setGameInfo, setTurn] = useContext(SettersContext);
-  const socket = useContext(SocketContext);
-  const gameInfo = useContext(GameInfoContext);
-  const turn = useContext(TurnContext);
-  const player = useContext(PlayerContext);
+  const [ gameState, dispatch ] = useContext(GameStateContext);
 
-  const [ style, setStyle ] = useState({ visibility: 'visible' });
+  const initialPieceState = {
+    style: { visibility: 'visible' },
 
-  /* isDragging is a state to prevent other events from activating
-   * on other pieces while the actual relevant piece is being moved
-   */
-  const [ isDragging, setIsDragging ] = useState(false);
+    /* isDragging is a state to prevent other events from activating
+     * on other pieces while the actual relevant piece is being moved
+     */
+    isDragging: false,
 
-  /* 'drop' events will hide the piece to prevent the flickering
-   * so this useEffect call with reveal it again
-   */
-  const [ hasDropped, setDrop ] = useState(false);
+    /* 'drop' events will hide the piece to prevent the flickering
+     * so this useEffect call with reveal it again. Not used on moves,
+     * only during setup because of possible delay which will result in
+     * the piece being invisible until the response from the server
+     */
+    hasDropped: false
+  };
+
+  const [ pieceState, changePieceState ] = useReducer(PieceStateReducer, initialPieceState);
+
   useEffect(() => {
-    setStyle({ visibility: 'visible' });
-    setDrop(false);
-  }, [hasDropped]);
+    changePieceState({ type: 'revertState' });
+    return () => changePieceState({ type: 'cleanup' });
+  }, [pieceState.hasDropped]);
 
   const dragStart = (e) => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault(); // for touchevents
 
-    setIsDragging(true);
-    snapToCursor(e, setStyle);
+    changePieceState({ type: 'dragStart', payload: e });
 
     /* get coordinate from localStorage because using
      * dataTransfer.(g|s)etData isn't working
@@ -67,13 +64,22 @@ const Piece = (props) => {
   };
 
   const drag = (e) => {
-    e.preventDefault();
-    if (isDragging) snapToCursor(e, setStyle);
+    if (e.cancelable) e.preventDefault();
+
+    /* If Piece has no parentNode, don't continue with dispatch.
+     * This is only a problem (not really, it's a noop) that happens when the user
+     * is dragging the Piece component while time runs out.
+     *
+     * Is there a better way of doing this, like cancelling the event altogether?
+     */
+    if (pieceState.isDragging && e?.target?.parentNode) {
+      changePieceState({ type: 'dragging', payload: e });
+    }
   };
 
   const drop = (e) => {
-    if (isDragging) {
-      e.preventDefault();
+    e.preventDefault();
+    if (pieceState.isDragging && e?.target?.parentNode) {
       updateDragState({ type: 'dragEnd' });
 
       const [ sW, sH ] = getSquareDimensions(e);
@@ -84,50 +90,34 @@ const Piece = (props) => {
       const origin = localStorage.getItem('coordinate');
       const destination = `${String.fromCharCode(col+64)}${row}`;
 
-      if (turn === undefined) {
+      if (gameState.turn === undefined) {
 
         /* If the piece didn't change places or if the piece is not placed
          * on the grid, set it back to its original position
          */
-        if (origin === destination || !checkIfWithinBounds(player, destination)) {
-          setStyle({ visibility: 'visible' });
+        if (origin === destination || !checkIfWithinBounds(gameState.player, destination)) {
+          changePieceState({ type: 'revertPosition' });
 
-        } else if (checkIfWithinBounds(player, destination)) {
-          setGameInfo((prev) => {
-            const fixedBoard = {...prev.board};
-            const originValue = prev.board[origin];
-            const destValue = prev.board[destination];
-            const board = {
-              ...fixedBoard,
-              [origin]: destValue,
-              [destination]: originValue
-            };
-
-            if (!destValue) delete board[origin];
-
-            return {...prev, board};
-          });
+        } else if (checkIfWithinBounds(gameState.player, destination)) {
+          dispatch({ type: 'onPieceSetup', payload: { origin, destination }});
 
           /* Hide piece after setGameInfo so it won't go back to its
            * original position in that instant. useEffect's purpose is to
            * set back visibility to 'visible' once the piece(s) are in the
            * new, correct position
            */
-          setStyle({ visibility: 'hidden' });
-
-          const sound = new Audio(ON_MOVE);
-          sound.play();
+          changePieceState({ type: 'hidePiece' });
         }
-      } else if (player === turn) { // Only allow moves on player's turn
-        if (checkIfLegal(gameInfo.board, origin, destination)) {
+      } else if (gameState.player === gameState.turn) { // Only allow moves on player's turn
+        if (checkIfLegal(gameState.board, origin, destination)) {
 
           /* Set turn to null so that the timer for the player stops
            * counting down from his perspective while waiting for the
            * server to confirm the move
            */
-          setTurn(null);
+          dispatch({ type: 'onPieceMove' });
 
-          socket.send(JSON.stringify({
+          gameState.socket.send(JSON.stringify({
             type: 'move',
             message: {
               o: origin,
@@ -137,10 +127,8 @@ const Piece = (props) => {
         }
       }
 
-      setIsDragging(false);
+      changePieceState({ type: 'dropped' });
     }
-
-    setDrop(true);
   };
 
   const pieceStyle = styles[name];
@@ -161,7 +149,7 @@ const Piece = (props) => {
       onTouchStart: dragStart,
       onTouchMove: drag,
       onTouchEnd: drop,
-      style
+      style: pieceState.style
     } : {
       className: css
     };
