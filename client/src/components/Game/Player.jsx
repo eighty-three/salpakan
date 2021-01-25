@@ -6,9 +6,7 @@ import playerInfoStyle from './PlayerInfo.module.css';
 import MatchClock from './MatchClock';
 import PlayerInfo from './PlayerInfo';
 
-import GameInfoContext from '@/lib/GameInfoContext';
-import TurnContext from '@/lib/TurnContext';
-import PlayerContext from '@/lib/PlayerContext';
+import GameStateContext from '@/lib/GameStateContext';
 
 const propTypes = {
   playerNum: PropTypes.string
@@ -19,21 +17,19 @@ const Player = (props) => {
     playerNum
   } = props;
 
-  const gameInfo = useContext(GameInfoContext);
-  const turn = useContext(TurnContext);
-  const player = useContext(PlayerContext);
+  const [gameState] = useContext(GameStateContext);
 
-  const name = (gameInfo?.[playerNum]?.name[1] !== '=')
-    ? gameInfo?.[playerNum]?.name
+  const name = (gameState.gameInfo?.[playerNum]?.name[1] !== '=')
+    ? gameState.gameInfo?.[playerNum]?.name
     : 'Anonymous';
 
-  const css = (player === playerNum)
+  const css = (gameState.player === playerNum)
     ? `${playerInfoStyle.player_text} ${playerInfoStyle.self}`
     : playerInfoStyle.player_text;
 
   return (
     <div className={styles.container}>
-      {(turn !== undefined || gameInfo?.winner) &&
+      {(gameState.turn !== undefined || gameState.gameInfo?.winner) &&
         <>
           <div className={styles.info}>
             <PlayerInfo
@@ -42,10 +38,10 @@ const Player = (props) => {
             />
           </div>
           <div className={styles.result}>
-            { !gameInfo?.winner &&
+            { !gameState.gameInfo?.winner &&
               <MatchClock playerNum={playerNum} />
             }
-            { gameInfo?.winner === gameInfo?.[playerNum].name &&
+            { gameState.gameInfo?.winner === gameState.gameInfo?.[playerNum].name &&
               <div className={styles.winner}>WINNER</div>
             }
           </div>

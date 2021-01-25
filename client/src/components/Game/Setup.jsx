@@ -3,37 +3,35 @@ import React, { useState, useEffect, useContext } from 'react';
 import styles from './Setup.module.css';
 import Countdown from './MatchClock/Countdown';
 
-import GameInfoContext from '@/lib/GameInfoContext';
-import SocketContext from '@/lib/SocketContext';
+import GameStateContext from '@/lib/GameStateContext';
 
 const Setup = () => {
-  const socket = useContext(SocketContext);
-  const gameInfo = useContext(GameInfoContext);
-  const [ time, setTime ] = useState(gameInfo?.time);
+  const [gameState] = useContext(GameStateContext);
+  const [ time, setTime ] = useState(gameState.gameInfo?.time);
   const [ afk, setAfk ] = useState(false);
   const [ disabled, setDisabled ] = useState(false);
 
   useEffect(() => {
-    setTime(gameInfo?.time);
-  }, [gameInfo?.time]);
+    setTime(gameState.gameInfo?.time);
+  }, [gameState.gameInfo?.time]);
 
   const countDown = async () => {
     if (time > 0) {
       setTime(time - 1);
-    } else if (time <= 0 && socket) {
-      socket.send(JSON.stringify({ type: 'afk' }));
+    } else if (time <= 0 && gameState.socket) {
+      gameState.socket.send(JSON.stringify({ type: 'afk' }));
       setAfk(true);
     }
   };
 
   const onClickFn = () => {
     setDisabled(true);
-    socket.send(JSON.stringify({ type: 'ready', message: gameInfo.board }));
+    gameState.socket.send(JSON.stringify({ type: 'ready', message: gameState.board }));
   };
 
   return (
     <div className={styles.container}>
-      { gameInfo &&
+      { gameState.gameInfo &&
         <>
           <button className={styles.button} onClick={onClickFn} disabled={disabled}>
             Submit board

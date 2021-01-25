@@ -5,11 +5,11 @@ import styles from './DropTarget.module.scss';
 import Piece from './Piece';
 import DropTarget from './DropTarget';
 
-import GameInfoContext from '@/lib/GameInfoContext';
 import DragReducer from '@/lib/DragReducer';
+import GameStateContext from '@/lib/GameStateContext';
 
 const Pieces = () => {
-  const gameInfo = useContext(GameInfoContext);
+  const [gameState] = useContext(GameStateContext);
   const [ board, setBoard ] = useState({});
 
   /* `winner` key is purely for UX, so pieces can't be moved
@@ -18,18 +18,18 @@ const Pieces = () => {
   const initialState = {
     draggable: false,
     css: styles.target,
-    winner: (gameInfo?.winner) ? true : false
+    winner: (gameState.gameInfo?.winner) ? true : false
   };
 
   const [ state, dispatch ] = useReducer(DragReducer, initialState);
 
   useEffect(() => {
-    setBoard(gameInfo?.board);
-  }, [gameInfo?.board]);
+    setBoard(gameState.board);
+  }, [gameState.board]);
 
   useEffect(() => {
-    dispatch({ type: 'update', payload: (gameInfo?.winner) ? true : false });
-  }, [gameInfo?.winner]);
+    dispatch({ type: 'update', payload: (gameState.gameInfo?.winner) ? true : false });
+  }, [gameState.gameInfo?.winner]);
 
   return (
     <>
