@@ -16,6 +16,10 @@
   grid-area: p2;
 }
 
+.setup {
+  grid-area: p1;
+}
+
 .board {
   grid-area: board;
 }
