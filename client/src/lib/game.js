@@ -2,9 +2,6 @@ import ky from 'ky-universal';
 import { HOST, WS_HOST } from '@/lib/host';
 const api = `${HOST}/api/game`;
 
-import ON_MOVE from '@/sounds/on_move.mp3';
-import ON_VS from '@/sounds/on_vs.mp3';
-
 export const WSGAME_URL = `${WS_HOST}/ws/game`;
 
 export const getGame = async (id) => {
@@ -15,102 +12,6 @@ export const getGame = async (id) => {
     return response;
   } catch (err) {
     return { error: 'Something went wrong' };
-  }
-};
-
-export const gameSocketOnMessage = (res, setters) => {
-  const moveSound = new Audio(ON_MOVE);
-  const vsSound = new Audio(ON_VS);
-
-  switch (res.type) {
-    case 'init':
-      setters.gameInfo({ ...res.data, board: res.board });
-      setters.turn(res.turn);
-      setters.player(res.player);
-      break;
-
-    case 'start': {
-      setters.gameInfo((prev) => {
-        return {
-          ...res.data,
-          board: {
-            ...res.board,
-            ...prev.board
-          }
-        };
-      });
-
-      setters.turn(res.turn);
-
-      moveSound.play();
-
-      break;
-    }
-
-    case 'move': {
-      let toPlay;
-      setters.gameInfo((prev) => {
-        toPlay = (prev.board[res.board.destination]) ? vsSound: moveSound;
-
-        if (res.data.winner) {
-          return {
-            ...res.data,
-            board: res.board
-          };
-        }
-
-        const fixedBoard = {...prev.board};
-        delete fixedBoard[res.board.origin];
-
-        /* Implicit case where res.result === 2 where the action is
-         * just `delete fixedBoard[res.board.origin];`
-         */
-        if (res.result === 1) {
-          fixedBoard[res.board.destination] = prev.board[res.board.origin];
-        } else if (res.result === 3) {
-          delete fixedBoard[res.board.destination];
-        }
-
-        return {
-          ...res.data,
-          board: {...fixedBoard}
-        };
-      });
-
-      setters.turn(res.turn);
-      toPlay.play();
-
-      break;
-    }
-
-    case 'time':
-      if (res.data.winner) {
-        setters.gameInfo({ ...res.data, board: res.board });
-      } else {
-        setters.gameInfo((prev) => {
-          return {
-            ...res.data,
-            board: {
-              ...res.board,
-              ...prev.board
-            }
-          };
-        });
-      }
-
-      break;
-
-    case 'bug':
-      setters.gameInfo((prev) => {
-        return {
-          ...res.data,
-          board: prev.board
-        };
-      });
-
-      setters.turn(res.turn);
-
-      break;
   }
 };
 
