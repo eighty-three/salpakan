@@ -18,6 +18,22 @@ const PieceStateReducer = (state, action) => {
       };
     }
 
+    case 'revertPosition': {
+      return {
+        style: { visibility: 'visible' },
+        isDragging: state.isDragging,
+        hasDropped: state.hasDropped
+      };
+    }
+
+    case 'hidePiece': {
+      return {
+        style: { visibility: 'hidden' },
+        isDragging: state.isDragging,
+        hasDropped: state.hasDropped
+      };
+    }
+
     case 'dragStart': {
       if (!action.payload?.target?.parentNode) {
         return {
@@ -62,32 +78,12 @@ const PieceStateReducer = (state, action) => {
       };
     }
 
-    case 'revertPosition': {
-      return {
-        style: { visibility: 'visible' },
-        isDragging: state.isDragging,
-        hasDropped: state.hasDropped
-      };
-    }
-
-    case 'hidePiece': {
-      return {
-        style: { visibility: 'hidden' },
-        isDragging: state.isDragging,
-        hasDropped: state.hasDropped
-      };
-    }
-
     case 'dropped': {
       return {
         style: state.style,
         isDragging: false,
         hasDropped: true
       };
-    }
-
-    case 'pause': {
-      return {...state, turn: null, player: { ...state.player, turn: null }};
     }
   }
 };
