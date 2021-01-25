@@ -25,11 +25,11 @@ export const getSquareDimensions = (e) => {
   return [x, y];
 };
 
-export const snapToCursor = (e, setStyle) => {
+export const getCursorCoordinates = (e) => {
   const [sW, sH] = getSquareDimensions(e);
   const [x, y] = getCurrentCoordinates(e);
   const adjustedX = x - (sW/2);
   const adjustedY = y - (sH/2);
 
-  setStyle({ visibility: 'visible', transform: `translate(${adjustedX}px, ${adjustedY}px`, 'z-index': 99 });
+  return [adjustedX, adjustedY];
 };
