@@ -1,5 +1,5 @@
 .container {
   width: 100%;
-  /* 405px is the smallest possible board size */
-  min-width: 405px;
+  /* 320px is the smallest possible board size */
+  min-width: 320px;
 }

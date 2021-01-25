@@ -44,3 +44,11 @@
 @media screen and (max-width: 509px) {
   @include styling($square-width: 45px);
 }
+
+@media screen and (max-width: 409px) {
+  @include styling($square-width: 35px);
+}
+
+@media screen and (max-width: 319px) {
+  @include styling($square-width: 30px);
+}
