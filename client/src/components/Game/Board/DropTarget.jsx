@@ -29,11 +29,7 @@ const DropTarget = (props) => {
   const turn = useContext(TurnContext);
   const player = useContext(PlayerContext);
 
-  const dragStart = (e) => {
-    e.preventDefault();
-  };
-
-  const dragEnd = (e) => {
+  const dragEnter = (e) => {
     e.preventDefault();
   };
 
@@ -97,9 +93,8 @@ const DropTarget = (props) => {
   const options = (!dragState.draggable && !dragState.winner)
     ? {
       className: dragState.css,
-      onDrag: dragStart,
+      onDragEnter: dragEnter,
       onDragOver: dragOver,
-      onDragEnd: dragEnd,
       onDrop: check
     } : {
       className: dragState.css,
