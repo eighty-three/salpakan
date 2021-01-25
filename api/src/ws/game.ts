@@ -54,7 +54,7 @@ export const open: IOpen<Promise<void>> = async (socket) => {
   }
 
   socket.send(JSON.stringify({
-    type: 'init',
+    type: 'onSocketOpen',
     data: gameInfo,
     board: room[player].board,
     turn: ongoingTurn,
@@ -107,7 +107,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
 
         const gameInfo = getGameInfo(room);
         socket.publish(socket.url, JSON.stringify({
-          type: 'start',
+          type: 'onGameStart',
           data: gameInfo,
           board: room.board,
           turn: 'p1'
@@ -135,7 +135,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
           const gameInfo = getGameInfo(room);
 
           socket.send(JSON.stringify({
-            type: 'bug',
+            type: 'onSocketMessageBug',
             data: gameInfo,
             turn: player
           }));
@@ -164,7 +164,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
             await storeGame(socket.url, fixedWinnerBoard, fixedLoserBoard, gameInfo.winner);
 
             socket.publish(socket.url, JSON.stringify({
-              type: 'move',
+              type: 'onSocketMessageMove',
               data: gameInfo,
               board: room.board,
               turn: room.turn
@@ -174,7 +174,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
           }
 
           socket.publish(socket.url, JSON.stringify({
-            type: 'move',
+            type: 'onSocketMessageMove',
             data: gameInfo,
             board: coordinates,
             result,
@@ -209,7 +209,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
       }
 
       socket.publish(socket.url, JSON.stringify({
-        type: 'time',
+        type: 'onSocketMessageTime',
         data: gameInfo,
         board: room.board
       }));
