@@ -5,7 +5,6 @@ import styles from './Player.module.css';
 import playerInfoStyle from './PlayerInfo.module.css';
 import MatchClock from './MatchClock';
 import PlayerInfo from './PlayerInfo';
-import Winner from './Winner';
 
 import GameInfoContext from '@/lib/GameInfoContext';
 import TurnContext from '@/lib/TurnContext';
@@ -43,9 +42,11 @@ const Player = (props) => {
             />
           </div>
           <div className={styles.result}>
-            { gameInfo?.winner
-              ? (<Winner playerNum={playerNum} />)
-              : (<MatchClock playerNum={playerNum} />)
+            { !gameInfo?.winner &&
+              <MatchClock playerNum={playerNum} />
+            }
+            { gameInfo?.winner === gameInfo?.[playerNum].name &&
+              <div className={styles.winner}>WINNER</div>
             }
           </div>
         </>
