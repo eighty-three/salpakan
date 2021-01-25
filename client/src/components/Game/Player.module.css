@@ -22,7 +22,12 @@
   flex-direction: column;
 }
 
+.winner {
+  font-weight: bold;
+}
+
 @media (min-width: 576px) {
   .info { font-size: 1.2em; }
   .result { font-size: 1.2em; }
+  .winner { font-size: 1.2em; }
 }

@@ -1,5 +1,0 @@
-.text {
-  font-weight: bold;
-}
-
-@media (min-width: 576px) { .text { font-size: 1.2em; } }
