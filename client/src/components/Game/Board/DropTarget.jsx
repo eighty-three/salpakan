@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import { checkIfWithinBounds, checkIfLegal } from '@/lib/game';
 import GameStateContext from '@/lib/GameStateContext';
+import { getCursorCoordinates, getCurrentCoordinates, getSquareDimensions } from '@/lib/drag';
+
 
 const propTypes = {
   updateDragState: PropTypes.func,
@@ -17,32 +19,26 @@ const DropTarget = (props) => {
 
   const [state, dispatch] = useContext(GameStateContext);
 
-  const dragEnter = (e) => {
-    e.preventDefault();
-  };
-
-  const dragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const check = (e) => {
+  const onDrop = (e) => {
     e.preventDefault();
 
-    updateDragState({ type: 'dragEnd' });
+    const [ sW, sH ] = getSquareDimensions(e);
+    const [ x, y ] = getCurrentCoordinates(e);
+    const col = Math.ceil(x/sW);
+    const row = Math.ceil(y/sH);
 
-    const rect = e.target.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const col = Math.ceil(x / (rect.width / 9));
-    const row = Math.ceil(y / (rect.height / 8));
     const destination = `${String.fromCharCode(col+64)}${row}`;
     const origin = localStorage.getItem('coordinate');
 
     if (state.turn === undefined) {
-      if (checkIfWithinBounds(state.player, destination)) {
+      if (origin === destination || !checkIfWithinBounds(state.player, destination)) {
+        dragState.setter({ type: 'revertPosition' });
+
+      } else if (checkIfWithinBounds(state.player, destination)) {
         dispatch({ type: 'onPieceSetup', payload: { origin, destination }});
+        dragState.setter({ type: 'hidePiece' });
       }
+
     } else if (state.player === state.turn) {
       if (checkIfLegal(state.board, origin, destination)) {
         dispatch({ type: 'onPieceMove' });
@@ -54,17 +50,36 @@ const DropTarget = (props) => {
             d: destination
           }
         }));
-
       }
+    }
+
+    updateDragState({ type: 'dragEnd' });
+    dragState.setter({ type: 'dropped' });
+  };
+
+
+  /* onDrag is unreliable so I switched to this method. Using onMouseMove
+   * works better but if the cursor moves away from the dragged Piece too
+   * fast, the mouseMove event stops. It needs a bigger container to work
+   * properly, hence the mouseMove event handler being placed in DropTarget.
+   * However, the event needs to recognize the dragged Piece, which is why
+   * the setState function of the piece is passed to the dispatch, so the
+   * update of the coordinates of the Piece (in order to make it stick to
+   * the cursor) is done via setState.
+   */
+  const mouseMove = (e) => {
+    const [x, y] = getCursorCoordinates(e);
+
+    if (dragState.setter && e.target?.parentNode) {
+      dragState.setter({ type: 'snapToCursor', payload: { x, y }});
     }
   };
 
   const options = (!dragState.draggable && !dragState.winner)
     ? {
       className: dragState.css,
-      onDragEnter: dragEnter,
-      onDragOver: dragOver,
-      onDrop: check
+      onMouseMove: mouseMove,
+      onMouseUp: onDrop
     } : {
       className: dragState.css,
     };

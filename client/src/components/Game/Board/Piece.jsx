@@ -53,22 +53,36 @@ const Piece = (props) => {
 
   const dragStart = (e) => {
     if (e.cancelable) e.preventDefault(); // for touchevents
-
     changePieceState({ type: 'dragStart', payload: e });
 
     /* get coordinate from localStorage because using
      * dataTransfer.(g|s)etData isn't working
      */
     localStorage.setItem('coordinate', coordinate);
-    updateDragState({ type: 'dragStart' });
+    updateDragState({ type: 'dragStart', payload: changePieceState });
   };
 
-  const drag = (e) => {
+
+  /* * * * * * * *
+   * Touch Events
+   * * * * * * * */
+
+  const touchStart = (e) => {
+    if (e.cancelable) e.preventDefault();
+    changePieceState({ type: 'dragStart', payload: e });
+
+    /* get coordinate from localStorage because using
+     * dataTransfer.(g|s)etData isn't working
+     */
+    localStorage.setItem('coordinate', coordinate);
+  };
+
+  const touchMove = (e) => {
     if (e.cancelable) e.preventDefault();
 
     /* If Piece has no parentNode, don't continue with dispatch.
      * This is only a problem (not really, it's a noop) that happens when the user
-     * is dragging the Piece component while time runs out.
+     * is dragging the Piece component when time runs out.
      *
      * Is there a better way of doing this, like cancelling the event altogether?
      */
@@ -77,11 +91,9 @@ const Piece = (props) => {
     }
   };
 
-  const drop = (e) => {
+  const touchEnd = (e) => {
     e.preventDefault();
-    if (pieceState.isDragging && e?.target?.parentNode) {
-      updateDragState({ type: 'dragEnd' });
-
+    if (pieceState.isDragging) {
       const [ sW, sH ] = getSquareDimensions(e);
       const [ x, y ] = getCurrentCoordinates(e);
       const col = Math.ceil(x/sW);
@@ -142,13 +154,11 @@ const Piece = (props) => {
 
       // Mouse events
       onMouseDown: dragStart,
-      onMouseMove: drag,
-      onMouseUp: drop,
 
       // Touch events
-      onTouchStart: dragStart,
-      onTouchMove: drag,
-      onTouchEnd: drop,
+      onTouchStart: touchStart,
+      onTouchMove: touchMove,
+      onTouchEnd: touchEnd,
       style: pieceState.style
     } : {
       className: css

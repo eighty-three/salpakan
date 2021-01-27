@@ -34,6 +34,18 @@ const PieceStateReducer = (state, action) => {
       };
     }
 
+    case 'snapToCursor': {
+      return {
+        style: {
+          visibility: 'visible',
+          transform: `translate(${action.payload.x}px, ${action.payload.y}px)`,
+          'z-index': 98
+        },
+        isDragging: true,
+        hasDropped: state.hasDropped
+      };
+    }
+
     case 'dragStart': {
       if (!action.payload?.target?.parentNode) {
         return {
@@ -49,7 +61,7 @@ const PieceStateReducer = (state, action) => {
         style: {
           visibility: 'visible',
           transform: `translate(${x}px, ${y}px)`,
-          'z-index': 99
+          'z-index': 98
         },
         isDragging: true,
         hasDropped: state.hasDropped
@@ -71,7 +83,7 @@ const PieceStateReducer = (state, action) => {
         style: {
           visibility: 'visible',
           transform: `translate(${x}px, ${y}px)`,
-          'z-index': 99
+          'z-index': 98
         },
         isDragging: state.isDragging,
         hasDropped: state.hasDropped
