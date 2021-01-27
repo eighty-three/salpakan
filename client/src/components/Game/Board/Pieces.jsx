@@ -18,7 +18,8 @@ const Pieces = () => {
   const initialState = {
     draggable: false,
     css: styles.target,
-    winner: (gameState.gameInfo?.winner) ? true : false
+    winner: (gameState.gameInfo?.winner) ? true : false,
+    setter: null
   };
 
   const [ state, dispatch ] = useReducer(DragReducer, initialState);
