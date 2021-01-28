@@ -1,0 +1,65 @@
+.container {
+  padding: 0 0.5rem;
+  margin: 0.25rem auto 6rem;
+  max-width: 32rem;
+}
+
+.category {
+  font-weight: bold;
+  font-size: 1.2em;
+  padding-top: 0.5em;
+}
+
+.noMargin {
+  margin: 0;
+}
+
+.list > li {
+  font-size: 0.8em;
+}
+
+.list {
+  padding: 0 1em;
+}
+
+.container span {
+  font-size: 0.5em;
+}
+
+@media (min-width: 768px) { 
+  .list > li { font-size: 1em; }
+  .category { font-size: 1.6em; }
+  .container { max-width: 40rem; }
+}
+
+.piecesContainer{
+  padding: 1em 0;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.pieceInfoContainer {
+  height: 100px;
+  width: 100px;
+}
+
+.pieceInfo  {
+  height: auto;
+  width: 100px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+$pieces: flag, spy, private, sergeant, lt2, major, gen1;
+
+@each $piece in $pieces{
+  .#{$piece} {
+    height: 56px;
+    width: 63px;
+    background-image: url("/images/pieces/#{$piece}.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+}
+
