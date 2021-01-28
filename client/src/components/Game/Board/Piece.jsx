@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import styles from './Piece.module.scss';
 
 import GameStateContext from '@/lib/GameStateContext';
+import SoundContext from '@/lib/SoundContext';
 
 import { checkIfWithinBounds, checkIfLegal } from '@/lib/game';
 import { getCurrentCoordinates, getSquareDimensions } from '@/lib/drag';
@@ -27,6 +28,7 @@ const Piece = (props) => {
   } = props;
 
   const [ gameState, dispatch ] = useContext(GameStateContext);
+  const { move } = useContext(SoundContext);
 
   const initialPieceState = {
     style: { visibility: 'visible' },
@@ -111,7 +113,7 @@ const Piece = (props) => {
           changePieceState({ type: 'revertPosition' });
 
         } else if (checkIfWithinBounds(gameState.player, destination)) {
-          dispatch({ type: 'onPieceSetup', payload: { origin, destination }});
+          dispatch({ type: 'onPieceSetup', payload: { origin, destination }, sound: { move }});
 
           /* Hide piece after setGameInfo so it won't go back to its
            * original position in that instant. useEffect's purpose is to

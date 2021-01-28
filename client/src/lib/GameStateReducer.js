@@ -1,18 +1,12 @@
-import ON_MOVE from '@/sounds/on_move.mp3';
-import ON_VS from '@/sounds/on_vs.mp3';
-
 const GameStateReducer = (state, action) => {
-  const moveSound = new Audio(ON_MOVE);
-  const vsSound = new Audio(ON_VS);
-
   switch (action.type) {
     case 'onGameStart': {
       /* Upon receiving the enemy's board, play sound
        *
-       * Also, Overwrite the board with unknown values with your own board
+       * Also, overwrite the board with unknown values with your own board
        * in order to differentiate between enemy pieces and your own
        */
-      moveSound.play();
+      action.sound.move.play();
 
       return {
         socket: state.socket,
@@ -53,7 +47,7 @@ const GameStateReducer = (state, action) => {
 
       if (!destValue) delete board[action.payload.origin];
 
-      moveSound.play();
+      action.sound.move.play();
 
       return {
         socket: state.socket,
@@ -85,6 +79,8 @@ const GameStateReducer = (state, action) => {
     }
 
     case 'onSocketOpen': {
+      action.sound.move.play();
+
       return {
         socket: state.socket,
         gameInfo: {...action.payload.data},
@@ -154,7 +150,7 @@ const GameStateReducer = (state, action) => {
         delete fixedBoard[action.payload.board.destination];
       }
 
-      const toPlay = (state.board[action.payload.board.destination]) ? vsSound : moveSound;
+      const toPlay = (state.board[action.payload.board.destination]) ? action.sound.vs : action.sound.move;
       toPlay.play();
 
       return {
