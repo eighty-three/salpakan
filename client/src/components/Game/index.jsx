@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import styles from './index.module.css';
@@ -6,6 +6,10 @@ import Player from './Player';
 import Setup from './Setup';
 import Board from './Board';
 
+import ON_MOVE from '@/sounds/on_move.mp3';
+import ON_VS from '@/sounds/on_vs.mp3';
+
+import SoundContext from '@/lib/SoundContext';
 import GameStateContext from '@/lib/GameStateContext';
 import GameStateReducer from '@/lib/GameStateReducer';
 
@@ -34,6 +38,9 @@ const Game = (props) =>{
 
   const [gameState, dispatch] = useReducer(GameStateReducer, initialState);
 
+  const moveRef = useRef();
+  const vsRef = useRef();
+
   useEffect(() => {
     let socketCn;
     let isMounted = true;
@@ -52,7 +59,14 @@ const Game = (props) =>{
 
       socketCn.onmessage = (message) => {
         const res = JSON.parse(message.data);
-        dispatch({ type: res.type, payload: res });
+
+        /* attach sound file to play sound from component instead of importing
+         * the sound each time
+         */
+        dispatch({ type: res.type, payload: res, sound: {
+          move: moveRef.current,
+          vs: vsRef.current
+        }});
       };
 
 
@@ -70,24 +84,37 @@ const Game = (props) =>{
 
   return (
     <>
-      <GameStateContext.Provider value={[gameState, dispatch]}>
-        <div className={styles.container}>
-          <div className={styles.setup}>
-            {(gameState.turn === undefined && !gameState.gameInfo?.winner) &&
-              <Setup/>
-            }
+      {/* Audio files */}
+      <audio ref={moveRef}>
+        <source src={ON_MOVE} type={'audio/mpeg'} />
+      </audio>
+
+      <audio ref={vsRef}>
+        <source src={ON_VS} type={'audio/mpeg'} />
+      </audio>
+
+
+      {/* Actual content */}
+      <SoundContext.Provider value={{move: moveRef.current, vs: vsRef.current}}>
+        <GameStateContext.Provider value={[gameState, dispatch]}>
+          <div className={styles.container}>
+            <div className={styles.setup}>
+              {(gameState.turn === undefined && !gameState.gameInfo?.winner) &&
+                <Setup/>
+              }
+            </div>
+            <div className={styles.p1}>
+              <Player playerNum={'p1'} />
+            </div>
+            <div className={styles.board}>
+              <Board />
+            </div>
+            <div className={styles.p2}>
+              <Player playerNum={'p2'} />
+            </div>
           </div>
-          <div className={styles.p1}>
-            <Player playerNum={'p1'} />
-          </div>
-          <div className={styles.board}>
-            <Board />
-          </div>
-          <div className={styles.p2}>
-            <Player playerNum={'p2'} />
-          </div>
-        </div>
-      </GameStateContext.Provider>
+        </GameStateContext.Provider>
+      </SoundContext.Provider>
     </>
   );
 };
