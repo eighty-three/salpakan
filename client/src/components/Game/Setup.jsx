@@ -6,7 +6,7 @@ import Countdown from './MatchClock/Countdown';
 import GameStateContext from '@/lib/GameStateContext';
 
 const Setup = () => {
-  const [gameState] = useContext(GameStateContext);
+  const [gameState, dispatch] = useContext(GameStateContext);
   const [ time, setTime ] = useState(gameState.gameInfo?.time);
   const [ afk, setAfk ] = useState(false);
   const [ disabled, setDisabled ] = useState(false);
@@ -14,6 +14,11 @@ const Setup = () => {
   useEffect(() => {
     setTime(gameState.gameInfo?.time);
   }, [gameState.gameInfo?.time]);
+
+  useEffect(() => {
+    const bool = (gameState.gameInfo?.setup) ? true : false;
+    setDisabled(bool);
+  }, [gameState.gameInfo?.setup]);
 
   const countDown = async () => {
     if (time > 0) {
@@ -25,8 +30,11 @@ const Setup = () => {
   };
 
   const onClickFn = () => {
-    setDisabled(true);
-    gameState.socket.send(JSON.stringify({ type: 'ready', message: gameState.board }));
+    if (!gameState.gameInfo?.setup) {
+      setDisabled(true);
+      dispatch({ type: 'onReady' });
+      gameState.socket.send(JSON.stringify({ type: 'ready', message: gameState.board }));
+    }
   };
 
   return (
