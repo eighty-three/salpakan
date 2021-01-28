@@ -2,7 +2,8 @@ import { gameStates } from './index';
 import { nanoid } from 'nanoid';
 import config from '@utils/config';
 
-import { IUpgrade, IOpen, IClose } from './types';
+import { IUpgrade, IOpen, IClose, IMessage } from './types';
+import { decode } from './utils';
 
 import { getUsername } from '@authMiddleware/authToken';
 import { startGame } from '../game/model';
@@ -51,5 +52,12 @@ export const close: IClose<void> = () => {
   /* Should always be either 1 or 0, so if a socket somehow closes, it means
    * the sole person trying to find a match closed it himself (i.e. tab closed)
    */
+};
+
+export const message: IMessage<Promise<void>> = async (socket, message) => {
+  const data = JSON.parse(decode(message));
+  if (data.message === 'ping') {
+    socket.send('pong');
+  }
 };
 
