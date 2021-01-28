@@ -46,10 +46,16 @@ export const open: IOpen<Promise<void>> = async (socket) => {
     gameInfo = getGameInfo(room);
     ongoingTurn = turn;
   } else {
-    gameInfo = {
-      time: room.time - Math.floor(Date.now() / 100),
-      player
-    };
+    gameInfo = (room[player].start)
+      ? {
+        time: room.time - Math.floor(Date.now() / 100),
+        player,
+        setup: true
+      } : {
+        time: room.time - Math.floor(Date.now() / 100),
+        player
+      };
+
     ongoingTurn = undefined;
   }
 
