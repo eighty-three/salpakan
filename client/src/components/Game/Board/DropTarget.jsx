@@ -19,7 +19,7 @@ const DropTarget = (props) => {
     dragState
   } = props;
 
-  const [state, dispatch] = useContext(GameStateContext);
+  const [gameState, dispatch] = useContext(GameStateContext);
   const { move } = useContext(SoundContext);
 
   const onDrop = (e) => {
@@ -33,20 +33,20 @@ const DropTarget = (props) => {
     const destination = `${String.fromCharCode(col+64)}${row}`;
     const origin = localStorage.getItem('coordinate');
 
-    if (state.turn === undefined && !state.gameInfo.setup) {
-      if (origin === destination || !checkIfWithinBounds(state.player, destination)) {
+    if (gameState.turn === undefined && !gameState.gameInfo.setup) {
+      if (origin === destination || !checkIfWithinBounds(gameState.player, destination)) {
         dragState.setter({ type: 'revertPosition' });
 
-      } else if (checkIfWithinBounds(state.player, destination)) {
+      } else if (checkIfWithinBounds(gameState.player, destination)) {
         dispatch({ type: 'onPieceSetup', payload: { origin, destination }, sound: { move }});
         dragState.setter({ type: 'hidePiece' });
       }
 
-    } else if (state.player === state.turn) {
-      if (checkIfLegal(state.board, origin, destination)) {
+    } else if (gameState.player === gameState.turn) {
+      if (checkIfLegal(gameState.board, origin, destination)) {
         dispatch({ type: 'onPieceMove' });
 
-        state.socket.send(JSON.stringify({
+        gameState.socket.send(JSON.stringify({
           type: 'move',
           message: {
             o: origin,
