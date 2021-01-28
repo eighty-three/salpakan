@@ -104,7 +104,7 @@ const Piece = (props) => {
       const origin = localStorage.getItem('coordinate');
       const destination = `${String.fromCharCode(col+64)}${row}`;
 
-      if (gameState.turn === undefined) {
+      if (gameState.turn === undefined && !gameState.gameInfo.setup) {
 
         /* If the piece didn't change places or if the piece is not placed
          * on the grid, set it back to its original position

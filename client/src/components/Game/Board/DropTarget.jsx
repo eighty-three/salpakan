@@ -33,7 +33,7 @@ const DropTarget = (props) => {
     const destination = `${String.fromCharCode(col+64)}${row}`;
     const origin = localStorage.getItem('coordinate');
 
-    if (state.turn === undefined) {
+    if (state.turn === undefined && !state.gameInfo.setup) {
       if (origin === destination || !checkIfWithinBounds(state.player, destination)) {
         dragState.setter({ type: 'revertPosition' });
 
