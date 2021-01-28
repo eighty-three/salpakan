@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
-import { checkIfWithinBounds, checkIfLegal } from '@/lib/game';
 import GameStateContext from '@/lib/GameStateContext';
+import SoundContext from '@/lib/SoundContext';
+
+import { checkIfWithinBounds, checkIfLegal } from '@/lib/game';
 import { getCursorCoordinates, getCurrentCoordinates, getSquareDimensions } from '@/lib/drag';
 
 
@@ -18,6 +20,7 @@ const DropTarget = (props) => {
   } = props;
 
   const [state, dispatch] = useContext(GameStateContext);
+  const { move } = useContext(SoundContext);
 
   const onDrop = (e) => {
     e.preventDefault();
@@ -35,7 +38,7 @@ const DropTarget = (props) => {
         dragState.setter({ type: 'revertPosition' });
 
       } else if (checkIfWithinBounds(state.player, destination)) {
-        dispatch({ type: 'onPieceSetup', payload: { origin, destination }});
+        dispatch({ type: 'onPieceSetup', payload: { origin, destination }, sound: { move }});
         dragState.setter({ type: 'hidePiece' });
       }
 
