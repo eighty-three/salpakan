@@ -58,6 +58,16 @@ const GameStateReducer = (state, action) => {
       };
     }
 
+    case 'onReady': {
+      return {
+        socket: state.socket,
+        gameInfo: {...state.gameInfo, setup: true},
+        board: state.board,
+        turn: state.turn,
+        player: state.player
+      };
+    }
+
     case 'onPieceMove': {
       return {
         socket: state.socket,
