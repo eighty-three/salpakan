@@ -44,17 +44,16 @@ const Pieces = () => {
           {Object.keys(board).map((key) => {
             const owner = (board[key]?.owner) ? board[key].owner : '';
 
-            return (key)
-              ? (
-                <Piece
-                  key={key}
-                  name={board[key].name}
-                  coordinate={key}
-                  winner={state.winner}
-                  updateDragState={dispatch}
-                  owner={owner}
-                />
-              ) : null;
+            return (
+              <Piece
+                key={key}
+                name={board[key].name}
+                coordinate={key}
+                winner={state.winner}
+                updateDragState={dispatch}
+                owner={owner}
+              />
+            );
           })}
         </>
       }
