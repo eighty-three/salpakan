@@ -15,11 +15,28 @@ const FindMatch = () => {
 
     const socket = new WS(`${WS_HOST}/ws/matchmaking`);
 
-    socket.onmessage = (message) => {
+    socket.onopen = () => {
+      socket.send(JSON.stringify({ type: 'keepalive', message: 'ping' }));
+    };
+
+    socket.onmessage = async (message) => {
       const data = message.data;
-      socket.close();
-      setButtonState({ disabled: true, text: 'Match found!' });
-      Router.push(`/game/${data}`);
+
+      // room name cannot be 'pong' because of schema (10 characters length)
+      if (data !== 'pong') {
+        socket.close();
+        setButtonState({ disabled: true, text: 'Match found!' });
+        Router.push(`/game/${data}`);
+      } else {
+
+        // send back a 'ping' after a minute
+        const delay = () => new Promise(resolve => {
+          setTimeout(resolve, 60000);
+        });
+
+        await delay();
+        socket.send(JSON.stringify({ type: 'keepalive', message: 'ping' }));
+      }
     };
 
     socket.onerror = () => {
