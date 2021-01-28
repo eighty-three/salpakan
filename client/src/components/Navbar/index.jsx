@@ -26,11 +26,18 @@ const NavbarComponent = (props) => {
   return (
     <>
       <div className={styles.container}>
-        <Link href='/' passHref>
-          <a className={styles.title}>
-            {siteTitle}
-          </a>
-        </Link>
+        <div className={styles.titleContainer}>
+          <Link href='/' passHref>
+            <a className={styles.title}>
+              {siteTitle}
+            </a>
+          </Link>
+          <Link href='/howto' passHref>
+            <a className={styles.links}>
+              How To
+            </a>
+          </Link>
+        </div>
 
         <div className={styles.loginContainer}>
           { loggedIn
