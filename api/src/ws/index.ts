@@ -21,7 +21,8 @@ wsApp.ws('/ws/matchmaking', {
   idleTimeout: 0,
   upgrade: mm.upgrade,
   open: mm.open,
-  close: mm.close
+  close: mm.close,
+  message: mm.message
 });
 
 wsApp.ws('/ws/lobby/:id', {
