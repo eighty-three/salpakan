@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
+import styles from './index.module.css';
+
 import Layout, { siteTitle } from '@/components/Layout';
 
 import FindMatch from '@/components/FindMatch';
@@ -36,9 +38,15 @@ const Home = (props) => {
       <Head>
         <title>{siteTitle}</title>
       </Head>
-      <section>
+      <section className={styles.container}>
         <FindMatch />
         <CreatePrivateLobby cookieValue={cookieValue} />
+        <div className={styles.contact}>
+          Email:{' '}
+          <a className={styles.link} href="mailto:contact@eighty-three.dev">
+            contact@eighty-three.dev
+          </a>
+        </div>
       </section>
     </Layout>
   );
