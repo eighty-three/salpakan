@@ -42,14 +42,33 @@ const Home = (props) => {
   useEffect(() => {
     let socketRecord;
     socketRecord = new WS(`${WS_HOST}/ws/count`);
-    socketRecord.onmessage = (message) => {
-      const count = JSON.parse(message.data);
-      setUsers(count);
+
+    socketRecord.onopen = () => {
+      socketRecord.send(JSON.stringify({ type: 'keepalive', message: 'ping' }));
+    };
+
+    socketRecord.onmessage = async (message) => {
+      const data = message.data;
+
+      // if not 'pong', data is the total count
+      if (data !== 'pong') {
+        setUsers(data);
+      } else {
+
+        // send back a 'ping' after a minute
+        const delay = () => new Promise(resolve => {
+          setTimeout(resolve, 60000);
+        });
+
+        await delay();
+        socketRecord.send(JSON.stringify({ type: 'keepalive', message: 'ping' }));
+      }
     };
 
     return () => {
       socketRecord.close();
     };
+
   }, []);
 
   return (
