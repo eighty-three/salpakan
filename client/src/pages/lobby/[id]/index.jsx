@@ -6,7 +6,8 @@ import PropTypes from 'prop-types';
 import Layout, { siteTitle } from '@/components/Layout';
 
 import { lightAuthCheck } from '@/lib/authCheck';
-import { getCookie } from '@/lib/account';
+import useCookie from '@/lib/useCookie';
+
 import { getLobby, WSLOBBY_URL}  from '@/lib/lobby';
 import ws from 'ws';
 const WS = global.WebSocket || ws;
@@ -29,15 +30,7 @@ const LobbyPage = (props) => {
   const initialText = 'The first person to enter this lobby will be your opponent';
   const [ text, setText ] = useState(initialText);
 
-  useEffect(() => {
-    if (!cookieValue) {
-      const setCookie = async () => {
-        await getCookie();
-      };
-
-      setCookie();
-    }
-  }, []);
+  useCookie(cookieValue);
 
   useEffect(() => {
     const socket = new WS(`${WSLOBBY_URL}/${lobbyId}`);
