@@ -39,6 +39,7 @@ const NavbarComponent = (props) => {
           </Link>
         </div>
 
+        {/*
         <div className={styles.loginContainer}>
           { loggedIn
             ? (
@@ -55,6 +56,7 @@ const NavbarComponent = (props) => {
             )
           }
         </div>
+        */}
       </div>
 
       <div className={`${styles.bar}`}></div>
