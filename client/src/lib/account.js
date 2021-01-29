@@ -46,7 +46,3 @@ export const logout = async () => {
   await ky.post(`${api}/logout`, { json: { 'message': 'Log out' } });
   Router.reload();
 };
-
-export const getCookie = async () => {
-  await ky.get(`${api}/cookie`);
-};
