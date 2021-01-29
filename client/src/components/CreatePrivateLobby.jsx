@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import styles from './Buttons.module.scss';
@@ -15,9 +15,14 @@ const CreatePrivateLobby = (props) => {
   } = props;
 
   const [ buttonState, setButtonState ] = useState({
-    disabled: false,
+    disabled: true,
     text: 'Create Private Lobby'
   });
+
+  useEffect(() => {
+    setButtonState({...buttonState, disabled: false });
+  }, []);
+
 
   const onClickFn = async (auth) => {
     if (auth) {
