@@ -9,7 +9,11 @@ const Setup = () => {
   const [gameState, dispatch] = useContext(GameStateContext);
   const [ time, setTime ] = useState(gameState.gameInfo?.time);
   const [ afk, setAfk ] = useState(false);
-  const [ disabled, setDisabled ] = useState(false);
+  const [ disabled, setDisabled ] = useState(true);
+
+  useEffect(() => {
+    setDisabled(false);
+  }, []);
 
   useEffect(() => {
     setTime(gameState.gameInfo?.time);
