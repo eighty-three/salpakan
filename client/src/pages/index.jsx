@@ -58,8 +58,11 @@ const Home = (props) => {
         <title>{siteTitle}</title>
       </Head>
       <section className={styles.container}>
-
-        <div className={styles.count}> CURRENT USERS: <span>{users}</span> </div>
+        <div className={styles.countContainer}>
+          {(users !== 0) &&
+            <div className={styles.count}> CURRENT USERS: <span>{users}</span> </div>
+          }
+        </div>
 
         <FindMatch />
         <CreatePrivateLobby cookieValue={cookieValue} />
