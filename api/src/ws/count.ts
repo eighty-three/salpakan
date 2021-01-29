@@ -1,6 +1,6 @@
 import config from '@utils/config';
 
-import { IUpgrade, IOpen, IClose } from './types';
+import { IUpgrade, IOpen, IClose, IMessage } from './types';
 import { decode } from './utils';
 
 import { getUsername } from '@authMiddleware/authToken';
@@ -68,3 +68,10 @@ export const close: IClose<void> = (socket) => {
  * is fine since looping over 50 (if I'm lucky) items some n times is
  * very very very insignificant
  */
+
+export const message: IMessage<Promise<void>> = async (socket, message) => {
+  const data = JSON.parse(decode(message));
+  if (data.message === 'ping') {
+    socket.send('pong');
+  }
+};

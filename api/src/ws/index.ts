@@ -32,7 +32,8 @@ wsApp.ws('/ws/count', {
   idleTimeout: 0,
   upgrade: count.upgrade,
   open: count.open,
-  close: count.close
+  close: count.close,
+  message: count.message
 });
 
 wsApp.ws('/ws/lobby/:id', {
