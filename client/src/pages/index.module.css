@@ -6,3 +6,14 @@
   text-align: center;
   font-size: 0.8em;
 }
+
+.count {
+  padding-top: 1em;
+  text-align: center;
+  font-size: 0.8em;
+}
+
+.count > span {
+  color: rgb(130, 25, 25);
+  font-weight: bold;
+}
