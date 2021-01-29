@@ -13,6 +13,7 @@ import SoundContext from '@/lib/SoundContext';
 import GameStateContext from '@/lib/GameStateContext';
 import GameStateReducer from '@/lib/GameStateReducer';
 
+import { WS_HOST } from '@/lib/host';
 import { WSGAME_URL }  from '@/lib/game';
 import ws from 'ws';
 const WS = global.WebSocket || ws;
@@ -82,6 +83,19 @@ const Game = (props) =>{
     };
   }, []);
 
+  useEffect(() => {
+    let socketRecord;
+    if (state?.ongoing) {
+      socketRecord = new WS(`${WS_HOST}/ws/count`);
+    }
+
+    return () => {
+      if (state?.ongoing) {
+        socketRecord.close();
+      }
+    };
+  }, []);
+
   return (
     <>
       {/* Audio files */}
@@ -92,7 +106,6 @@ const Game = (props) =>{
       <audio ref={vsRef}>
         <source src={ON_VS} type={'audio/mpeg'} />
       </audio>
-
 
       {/* Actual content */}
       <SoundContext.Provider value={{move: moveRef.current, vs: vsRef.current}}>
