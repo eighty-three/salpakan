@@ -10,7 +10,7 @@ import FindMatch from '@/components/FindMatch';
 import CreatePrivateLobby from '@/components/CreatePrivateLobby';
 
 import { lightAuthCheck } from '@/lib/authCheck';
-import { getCookie } from '@/lib/account';
+import useCookie from '@/lib/useCookie';
 
 import { WS_HOST } from '@/lib/host';
 import ws from 'ws';
@@ -29,15 +29,7 @@ const Home = (props) => {
 
   const [users, setUsers] = useState(0);
 
-  useEffect(() => {
-    if (!cookieValue) {
-      const setCookie = async () => {
-        await getCookie();
-      };
-
-      setCookie();
-    }
-  }, []);
+  useCookie(cookieValue);
 
   useEffect(() => {
     let socketRecord;
