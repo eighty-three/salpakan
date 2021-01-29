@@ -5,6 +5,7 @@ import config from '@utils/config';
 import * as mm from './matchmaking';
 import * as game from './game';
 import * as lobby from './lobby';
+import * as count from './count';
 
 const options = {
   key_file_name: '../../misc/privkey.pem',
@@ -23,6 +24,15 @@ wsApp.ws('/ws/matchmaking', {
   open: mm.open,
   close: mm.close,
   message: mm.message
+});
+
+wsApp.ws('/ws/count', {
+  compression: 1,
+  maxPayloadLength: 1024,
+  idleTimeout: 0,
+  upgrade: count.upgrade,
+  open: count.open,
+  close: count.close
 });
 
 wsApp.ws('/ws/lobby/:id', {
