@@ -148,7 +148,9 @@ const Piece = (props) => {
   const pieceStyle = styles[name];
   const coordinateStyle = styles[coordinate];
   const ownerStyle = (owner === 'opponent') ? styles.opponent : '';
-  const css = `${pieceStyle} ${coordinateStyle} ${ownerStyle} ${styles.piece}`;
+  const lastMove = gameState.gameInfo?.lastMove?.destination;
+  const lastMoveStyle = (lastMove === coordinate) ? styles.lastMove : '';
+  const css = `${pieceStyle} ${coordinateStyle} ${ownerStyle} ${styles.piece} ${lastMoveStyle}`;
 
   const options = (name !== 'unknown' && !winner)
     ? {
