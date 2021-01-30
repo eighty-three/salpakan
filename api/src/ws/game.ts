@@ -181,7 +181,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
 
           socket.publish(socket.url, JSON.stringify({
             type: 'onSocketMessageMove',
-            data: gameInfo,
+            data: {...gameInfo, lastMove: coordinates},
             board: coordinates,
             result,
             turn: room.turn
