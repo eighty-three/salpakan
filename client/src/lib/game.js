@@ -81,3 +81,20 @@ export const checkIfWithinBounds = (player, destination) => {
 
   return false;
 };
+
+export const checkDirection = (origin, destination) => {
+  const originRow = origin.charCodeAt(0);
+  const destRow = destination.charCodeAt(0);
+  const originCol = Number(origin[1]);
+  const destCol = Number(destination[1]);
+
+  if ((originRow - destRow) === 1) {
+    return 'left';
+  } else if ((originRow - destRow) === -1) {
+    return 'right';
+  } else if ((originCol - destCol) === 1) {
+    return 'up';
+  } else if ((originCol - destCol) === -1) {
+    return 'down';
+  }
+};
