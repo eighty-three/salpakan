@@ -8,8 +8,8 @@ import wsApp from './ws';
 
 if (config.NODE_ENV === 'production') {
   const options = {
-    key: fs.readFileSync('misc/privkey.pem'),
-    cert: fs.readFileSync('misc/cert.pem')
+    key: fs.readFileSync('../../misc/privkey.pem'),
+    cert: fs.readFileSync('../../misc/cert.pem')
   };
 
   https.createServer(options, app).listen(config.PORT, () => {
