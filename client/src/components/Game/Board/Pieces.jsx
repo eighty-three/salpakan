@@ -4,9 +4,11 @@ import styles from './DropTarget.module.scss';
 
 import Piece from './Piece';
 import DropTarget from './DropTarget';
+import Square from './Square';
 
 import DragReducer from '@/lib/DragReducer';
 import GameStateContext from '@/lib/GameStateContext';
+import {checkDirection} from '@/lib/game';
 
 const Pieces = () => {
   const [gameState] = useContext(GameStateContext);
@@ -32,12 +34,26 @@ const Pieces = () => {
     dispatch({ type: 'update', payload: (gameState.gameInfo?.winner) ? true : false });
   }, [gameState.gameInfo?.winner]);
 
+  const directions = ['up', 'down', 'left', 'right'];
+
   return (
     <>
       <DropTarget
         updateDragState={dispatch}
         dragState={state}
       />
+
+      {/* Preload the arrows */}
+      {directions.map((key) => (
+        <Square key={key} coordinate={'unknown'} direction={key} />
+      ))}
+
+      { gameState.gameInfo?.lastMove &&
+        <Square
+          coordinate={gameState.gameInfo.lastMove.origin}
+          direction={checkDirection(gameState.gameInfo.lastMove.origin, gameState.gameInfo.lastMove.destination)}
+        />
+      }
 
       { board &&
         <>
