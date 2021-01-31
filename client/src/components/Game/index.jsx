@@ -14,7 +14,6 @@ import SoundContext from '@/lib/SoundContext';
 import GameStateContext from '@/lib/GameStateContext';
 import GameStateReducer from '@/lib/GameStateReducer';
 
-import { WS_HOST } from '@/lib/host';
 import { WSGAME_URL }  from '@/lib/game';
 import ws from 'ws';
 const WS = global.WebSocket || ws;
@@ -80,19 +79,6 @@ const Game = (props) =>{
       if (state.ongoing) {
         isMounted = false;
         socketCn.close();
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    let socketRecord;
-    if (state?.ongoing) {
-      socketRecord = new WS(`${WS_HOST}/ws/count`);
-    }
-
-    return () => {
-      if (state?.ongoing) {
-        socketRecord.close();
       }
     };
   }, []);

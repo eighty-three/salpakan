@@ -5,9 +5,11 @@ import { performance } from 'perf_hooks';
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame, storeGame } from '../game/model';
 import { cleanBoards, checkMove, checkIfLegal, removeUnknownValues } from '../game/utils';
-import { decode, refreshTime, getGameInfo } from './utils';
+import { decode, refreshTime, refreshPublishTime, getGameInfo } from './utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
+
+import { count } from './count';
 
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
   const upgradeAborted = {aborted: false};
@@ -35,6 +37,19 @@ export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
 
 export const open: IOpen<Promise<void>> = async (socket) => {
   socket.subscribe(socket.url);
+
+  // add to count on socket open
+  if (!count.connections.includes(socket.cn)) {
+    count.connections.push(socket.cn);
+  }
+
+  socket.subscribe('count');
+  socket.publish('count', JSON.stringify({
+    message: String(count.connections.length)
+  }));
+
+  refreshPublishTime(count, true);
+
 
   const room = gameStates[socket.url];
   const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
@@ -75,6 +90,10 @@ export const close: IClose<void> = (socket) => {
     const turn = (room.turn === 'p1') ? 'p1' : 'p2';
     refreshTime(room, turn);
   }
+
+  // delete user from count
+  const toDelete = count.connections.indexOf(socket.cn);
+  if (toDelete > -1) count.connections.splice(toDelete, 1);
 };
 
 export const message: IMessage<Promise<void>> = async (socket, message) => {
