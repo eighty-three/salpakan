@@ -56,7 +56,7 @@ const FindMatch = () => {
       <button
         onClick={onClickFn}
         disabled={buttonState.disabled}
-        className={styles.button}
+        className={`${styles.button} ${styles.l}`}
       >
         {buttonState.text}
       </button>
