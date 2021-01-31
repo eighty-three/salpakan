@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
@@ -28,6 +28,7 @@ const Home = (props) => {
   } = props;
 
   const [users, setUsers] = useState(0);
+  const timeOut = useRef(null);
 
   useCookie(cookieValue);
 
@@ -35,30 +36,25 @@ const Home = (props) => {
     let socketRecord;
     socketRecord = new WS(`${WS_HOST}/ws/count`);
 
-    socketRecord.onopen = () => {
-      socketRecord.send(JSON.stringify({ type: 'keepalive', message: 'ping' }));
-    };
-
     socketRecord.onmessage = async (message) => {
-      const data = message.data;
+      const data = JSON.parse(message.data);
+      setUsers(data.message);
 
-      // if not 'pong', data is the total count
-      if (data !== 'pong') {
-        setUsers(data);
-      } else {
+      // Reset the previous delay
+      clearTimeout(timeOut.current);
 
-        // send back a 'ping' after a minute
-        const delay = () => new Promise(resolve => {
-          setTimeout(resolve, 60000);
-        });
+      // Send back a 'ping' after 20 seconds
+      const delay = () => new Promise(resolve => {
+        timeOut.current = setTimeout(resolve, 20000);
+      });
 
-        await delay();
-        socketRecord.send(JSON.stringify({ type: 'keepalive', message: 'ping' }));
-      }
+      await delay();
+      socketRecord.send(JSON.stringify({ message: 'ping' }));
     };
 
     return () => {
       socketRecord.close();
+      clearTimeout(timeOut.current);
     };
 
   }, []);
