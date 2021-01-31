@@ -7,14 +7,16 @@ import Pieces from './Pieces';
 
 const Board = () => {
   return (
-    <>
-      <div className={styles.board}>
-        <Pieces />
-        <Grid />
-      </div>
+    <div className={styles.positionWrapper}>
+      <div className={styles.fillWrapper}>
+        <div className={styles.board}>
+          <Pieces />
+          <Grid />
+        </div>
 
-      <div className={styles.placeholder}></div>
-    </>
+        <div className={styles.placeholder}></div>
+      </div>
+    </div>
   );
 };
 
