@@ -5,6 +5,7 @@ import styles from './index.module.css';
 import Player from './Player';
 import Setup from './Setup';
 import Board from './Board';
+import Rematch from '../Rematch';
 
 import ON_MOVE from '@/sounds/on_move.mp3';
 import ON_VS from '@/sounds/on_vs.mp3';
@@ -124,6 +125,15 @@ const Game = (props) =>{
             </div>
             <div className={styles.p2}>
               <Player playerNum={'p2'} />
+            </div>
+            <div className={styles.button}>
+              {(gameState.turn !== undefined && state?.ongoing) &&
+                <>
+                  {(gameState.gameInfo?.winner) &&
+                    (<Rematch id={id} />)
+                  }
+                </>
+              }
             </div>
           </div>
         </GameStateContext.Provider>
