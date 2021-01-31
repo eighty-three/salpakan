@@ -1,0 +1,19 @@
+.link, .link:hover {
+  color: rgb(130, 25, 25);
+}
+
+.list {
+  margin: 0.5em; 
+  & > li {
+    font-size: 0.8em;
+  }
+}
+
+@media (min-width: 576px) { 
+  .list { 
+    margin: 1em;
+    & > li {
+      font-size: 1em;
+    }
+  }
+}
