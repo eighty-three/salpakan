@@ -15,6 +15,17 @@
     width: $square-width * 9;
     height: $square-width / 9 * 8 * 8;
   }
+
+  .fillWrapper {
+    position: absolute;
+    width: $square-width * 9;
+    height: $square-width / 9 * 8 * 8;
+  }
+
+  .positionWrapper {
+    width: $square-width * 9;
+    height: $square-width / 9 * 8 * 8;
+  }
 }
 
 @media screen and (max-width: 9999px) {
