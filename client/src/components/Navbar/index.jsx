@@ -37,6 +37,11 @@ const NavbarComponent = (props) => {
               Guide
             </a>
           </Link>
+          <Link href='/contact' passHref>
+            <a className={styles.links}>
+              Contact
+            </a>
+          </Link>
         </div>
 
         {/*
