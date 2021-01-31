@@ -40,7 +40,7 @@ const CreatePrivateLobby = (props) => {
       <button
         onClick={() => onClickFn(cookieValue)}
         disabled={buttonState.disabled}
-        className={styles.button}
+        className={`${styles.button} ${styles.l}`}
       >
         {buttonState.text}
       </button>
