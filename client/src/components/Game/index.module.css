@@ -1,11 +1,12 @@
 .container {
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: 35px auto 35px;
+  grid-template-rows: 35px auto 35px auto;
   grid-template-areas:
     "p1"
     "board"
     "p2"
+    "button"
 }
 
 .p1 {
@@ -20,8 +21,13 @@
   grid-area: p1;
 }
 
-.board {
-  grid-area: board;
+.button {
+  grid-area: button;
 }
 
-@media (min-width: 576px) { .container { grid-template-rows: 60px auto 60px; } }
+.board {
+  grid-area: board;
+  margin: 0 auto;
+}
+
+@media (min-width: 576px) { .container { grid-template-rows: 60px auto 60px auto; } }
