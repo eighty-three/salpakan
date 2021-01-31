@@ -5,18 +5,20 @@
 }
 
 .button {
-  height: 100px;
-  width: 200px;
   max-width: 100%;
   grid-area: button;
-  font-size: 1.5em;
-  
   display: table-cell;
   vertical-align: middle;
 }
 
+.l {
+  height: 100px;
+  width: 200px;
+  font-size: 1.5em;
+}
+
 @media (min-width: 576px) { 
-  .button { 
+  .l { 
     height: 200px;
     width: 350px;
     font-size: 2em;
