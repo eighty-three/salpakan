@@ -2,7 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
-import styles from './howto.module.scss';
+import styles from './guide.module.scss';
 
 import Layout, { siteTitle } from '@/components/Layout';
 
@@ -12,7 +12,7 @@ const propTypes = {
   username: PropTypes.string
 };
 
-const HowTo = (props) => {
+const Guide = (props) => {
   const {
     username
   } = props;
@@ -74,6 +74,6 @@ export const getServerSideProps = async (ctx) => {
   };
 };
 
-HowTo.propTypes = propTypes;
+Guide.propTypes = propTypes;
 
-export default HowTo;
+export default Guide;
