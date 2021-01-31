@@ -91,6 +91,7 @@ const LobbyPage = (props) => {
 
     socket.onmessage = async (message) => {
       setText('Redirecting...');
+      setConnection(true);
       socket.close();
 
       const data = message.data;
