@@ -77,14 +77,6 @@ const Home = (props) => {
 
         <FindMatch />
         <CreatePrivateLobby cookieValue={cookieValue} />
-
-        <div className={styles.contact}>
-          Email:{' '}
-          <a className={styles.link} href="mailto:contact@eighty-three.dev">
-            contact@eighty-three.dev
-          </a>
-        </div>
-
       </section>
     </Layout>
   );
