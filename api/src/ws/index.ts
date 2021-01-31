@@ -6,6 +6,7 @@ import * as mm from './matchmaking';
 import * as game from './game';
 import * as lobby from './lobby';
 import * as count from './count';
+import * as rematch from './rematch';
 
 const options = {
   key_file_name: '../../misc/privkey.pem',
@@ -34,6 +35,15 @@ wsApp.ws('/ws/count', {
   open: count.open,
   close: count.close,
   message: count.message
+});
+
+wsApp.ws('/ws/rematch/:id', {
+  compression: 1,
+  maxPayloadLength: 1024,
+  idleTimeout: 0,
+  upgrade: rematch.upgrade,
+  open: rematch.open,
+  close: rematch.close
 });
 
 wsApp.ws('/ws/lobby/:id', {
