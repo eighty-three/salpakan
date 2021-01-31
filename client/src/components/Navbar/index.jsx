@@ -32,9 +32,9 @@ const NavbarComponent = (props) => {
               {siteTitle}
             </a>
           </Link>
-          <Link href='/howto' passHref>
+          <Link href='/guide' passHref>
             <a className={styles.links}>
-              How To
+              Guide
             </a>
           </Link>
         </div>
