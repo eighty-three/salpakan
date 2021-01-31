@@ -1,12 +1,28 @@
 import config from '@utils/config';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
-import { decode } from './utils';
+import { decode, refreshPublishTime } from './utils';
 
 import { getUsername } from '@authMiddleware/authToken';
 
-const connections: string[] = [];
+export interface ICount {
+  connections: string[],
+  lastPublished: number
+}
 
+export const count: ICount = {
+  connections: [],
+  lastPublished: 0
+};
+
+/* If the game ever reaches 1000 concurrent users I'll probably remove
+ * all of these checks and just add a simple counter that adds the
+ * incoming connection no matter what. The higher the actual users,
+ * the less effect someone who wants to bother messing with the count
+ * can actually manage. So for now, iterating over all the connections
+ * is fine since looping over 50 (if I'm lucky) items some n times is
+ * very very very insignificant
+ */
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
   const upgradeAborted = {aborted: false};
 
@@ -24,8 +40,8 @@ export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
    * delete it to keep proper track of total connections
    */
   if (user) {
-    const toDelete = connections.indexOf(IP);
-    if (toDelete > -1) connections.splice(toDelete, 1);
+    const toDelete = count.connections.indexOf(IP);
+    if (toDelete > -1) count.connections.splice(toDelete, 1);
   }
 
   if (
@@ -47,31 +63,34 @@ export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
 };
 
 export const open: IOpen<Promise<void>> = async (socket) => {
-  if (!connections.includes(socket.cn)) {
-    connections.push(socket.cn);
+  if (!count. connections.includes(socket.cn)) {
+    count.connections.push(socket.cn);
   }
 
   socket.subscribe('count');
-  socket.publish('count', String(connections.length));
+  socket.publish('count', JSON.stringify({
+    message: String(count.connections.length)
+  }));
+
+  refreshPublishTime(count, true);
 };
 
 export const close: IClose<void> = (socket) => {
-  const toDelete = connections.indexOf(socket.cn);
-  if (toDelete > -1) connections.splice(toDelete, 1);
+  const toDelete = count.connections.indexOf(socket.cn);
+  if (toDelete > -1) count.connections.splice(toDelete, 1);
 };
-
-/* If the game ever reaches 1000 concurrent users I'll probably remove
- * all of these checks and just add a simple counter that adds the
- * incoming connection no matter what. The higher the actual users,
- * the less effect someone who wants to bother messing with the count
- * can actually manage. So for now, iterating over all the connections
- * is fine since looping over 50 (if I'm lucky) items some n times is
- * very very very insignificant
- */
 
 export const message: IMessage<Promise<void>> = async (socket, message) => {
   const data = JSON.parse(decode(message));
+
+  // Instead of "ponging" back, just publish the updated count
   if (data.message === 'ping') {
-    socket.send('pong');
+
+    // Prevents spamming of count, allowing publish only every 15 seconds
+    if (refreshPublishTime(count)) {
+      socket.publish('count', JSON.stringify({
+        message: String(count.connections.length)
+      }));
+    }
   }
 };

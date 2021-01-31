@@ -1,6 +1,8 @@
-import { IRoom, TPlayer } from '../game/types';
 import { performance } from 'perf_hooks';
 import { StringDecoder } from 'string_decoder';
+
+import { IRoom, TPlayer } from '../game/types';
+import { ICount } from './count';
 
 const decoder = new StringDecoder('utf8');
 
@@ -30,4 +32,23 @@ export const getGameInfo = (room: IRoom) => {
     },
     winner: room.winner
   };
+};
+
+export const refreshPublishTime = (count: ICount, forceRefresh?: boolean): boolean => {
+  const currentTime = performance.now();
+  const elapsedTime = currentTime - count.lastPublished;
+
+  // Sets to current time, called on socket open
+  if (forceRefresh) {
+    count.lastPublished = currentTime;
+    return true;
+  }
+
+  // Publish count only every 15 seconds
+  if (elapsedTime > 15000) {
+    count.lastPublished = currentTime;
+    return true;
+  }
+
+  return false;
 };
