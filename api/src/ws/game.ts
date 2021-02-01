@@ -214,6 +214,35 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         data: gameInfo,
         board: room.board
       }));
+
+      break;
+    }
+
+    case 'surrender': {
+      room.winner = room[opponent].name;
+      const gameInfo = getGameInfo(room);
+
+      const { winnerBoard, loserBoard } = (gameInfo.winner === room.p1.name) ? {
+        winnerBoard: room.p1.board,
+        loserBoard: room.p2.board
+      } : {
+        winnerBoard: room.p2.board,
+        loserBoard: room.p1.board
+      };
+
+      const { fixedWinnerBoard, fixedLoserBoard } = removeUnknownValues(winnerBoard, loserBoard);
+      room.board = { ...fixedWinnerBoard, ...fixedLoserBoard };
+
+      await storeGame(socket.url, fixedWinnerBoard, fixedLoserBoard, room.winner);
+
+      socket.publish(socket.url, JSON.stringify({
+        type: 'onSocketMessageSurrender',
+        data: gameInfo,
+        board: room.board,
+        turn: room.turn
+      }));
+
+      break;
     }
   }
 };

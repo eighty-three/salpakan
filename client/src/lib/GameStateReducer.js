@@ -137,6 +137,16 @@ const GameStateReducer = (state, action) => {
       };
     }
 
+    case 'onSocketMessageSurrender': {
+      return {
+        socket: state.socket,
+        gameInfo: {...action.payload.data},
+        board: {...action.payload.board},
+        turn: state.turn,
+        player: state.player
+      };
+    }
+
     case 'onSocketMessageMove': {
       if (action.payload.data.winner) {
         return {
