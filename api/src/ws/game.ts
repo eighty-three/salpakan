@@ -39,13 +39,13 @@ export const open: IOpen<Promise<void>> = async (socket) => {
   socket.subscribe(socket.url);
 
   // add to count on socket open
-  if (!count.connections.includes(socket.cn)) {
-    count.connections.push(socket.cn);
+  if (!count.list.includes(socket.cn)) {
+    count.list.push(socket.cn);
   }
 
   socket.subscribe('count');
   socket.publish('count', JSON.stringify({
-    message: String(count.connections.length)
+    message: String(count.list.length)
   }));
 
   refreshPublishTime(count, true);
@@ -92,8 +92,8 @@ export const close: IClose<void> = (socket) => {
   }
 
   // delete user from count
-  const toDelete = count.connections.indexOf(socket.cn);
-  if (toDelete > -1) count.connections.splice(toDelete, 1);
+  const toDelete = count.list.indexOf(socket.cn);
+  if (toDelete > -1) count.list.splice(toDelete, 1);
 };
 
 export const message: IMessage<Promise<void>> = async (socket, message) => {

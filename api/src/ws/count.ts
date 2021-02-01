@@ -1,17 +1,13 @@
 import config from '@utils/config';
 
-import { IUpgrade, IOpen, IClose, IMessage } from './types';
 import { decode, refreshPublishTime } from './utils';
+import { IUpgrade, IOpen, IClose, IMessage } from './types';
+import { ICount } from '../game/types';
 
 import { getUsername } from '@authMiddleware/authToken';
 
-export interface ICount {
-  connections: string[],
-  lastPublished: number
-}
-
 export const count: ICount = {
-  connections: [],
+  list: [],
   lastPublished: 0
 };
 
@@ -40,8 +36,8 @@ export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
    * delete it to keep proper track of total connections
    */
   if (user) {
-    const toDelete = count.connections.indexOf(IP);
-    if (toDelete > -1) count.connections.splice(toDelete, 1);
+    const toDelete = count.list.indexOf(IP);
+    if (toDelete > -1) count.list.splice(toDelete, 1);
   }
 
   if (
@@ -63,21 +59,21 @@ export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
 };
 
 export const open: IOpen<Promise<void>> = async (socket) => {
-  if (!count. connections.includes(socket.cn)) {
-    count.connections.push(socket.cn);
+  if (!count.list.includes(socket.cn)) {
+    count.list.push(socket.cn);
   }
 
   socket.subscribe('count');
   socket.publish('count', JSON.stringify({
-    message: String(count.connections.length)
+    message: String(count.list.length)
   }));
 
   refreshPublishTime(count, true);
 };
 
 export const close: IClose<void> = (socket) => {
-  const toDelete = count.connections.indexOf(socket.cn);
-  if (toDelete > -1) count.connections.splice(toDelete, 1);
+  const toDelete = count.list.indexOf(socket.cn);
+  if (toDelete > -1) count.list.splice(toDelete, 1);
 };
 
 export const message: IMessage<Promise<void>> = async (socket, message) => {
@@ -89,7 +85,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
     // Prevents spamming of count, allowing publish only every 15 seconds
     if (refreshPublishTime(count)) {
       socket.publish('count', JSON.stringify({
-        message: String(count.connections.length)
+        message: String(count.list.length)
       }));
     }
   }
