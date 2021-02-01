@@ -22,7 +22,7 @@ const Time = (props) => {
     deci
   } = props;
 
-  const str = (minutes || seconds > 9)
+  const str = (!deci)
     ? `${fixString(minutes)}:${fixString(seconds)}`
     : `${fixString(minutes)}:${fixString(seconds)}.${deci}`;
 
@@ -33,4 +33,4 @@ const Time = (props) => {
 
 Time.propTypes = propTypes;
 
-export default Time;
+export default React.memo(Time);

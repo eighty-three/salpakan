@@ -60,7 +60,10 @@ const Countdown = (props) => {
     <>
       {time > 0 &&
         <>
-          <Time minutes={minutes} seconds={seconds} deci={deci} />
+          {(minutes || seconds > 0)
+            ? (<Time minutes={minutes} seconds={seconds} />)
+            : (<Time minutes={minutes} seconds={seconds} deci={deci} />)
+          }
         </>
       }
     </>
