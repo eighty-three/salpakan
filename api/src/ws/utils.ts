@@ -30,7 +30,8 @@ export const getGameInfo = (room: IRoom) => {
       name: room.p2.name,
       time: room.p2.time
     },
-    winner: room.winner
+    winner: room.winner,
+    connections: room.connections.list
   };
 };
 

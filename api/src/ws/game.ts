@@ -5,7 +5,7 @@ import { performance } from 'perf_hooks';
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame, storeGame } from '../game/model';
 import { cleanBoards, checkMove, checkIfLegal, removeUnknownValues } from '../game/utils';
-import { decode, refreshTime, getGameInfo } from './utils';
+import { decode, refreshTime, refreshPublishTime, getGameInfo } from './utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
 
@@ -37,6 +37,7 @@ export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
 
 export const open: IOpen<Promise<void>> = async (socket) => {
   socket.subscribe(socket.url);
+  const room = gameStates[socket.url];
 
   // add to count on socket open
   if (!count.list.includes(socket.cn)) {
@@ -50,7 +51,19 @@ export const open: IOpen<Promise<void>> = async (socket) => {
    */
 
 
-  const room = gameStates[socket.url];
+  // publish current connections to the game
+  if (!room.connections.list.includes(socket.cn)) {
+    room.connections.list.push(socket.cn);
+  }
+
+  socket.publish(socket.url, JSON.stringify({
+    type: 'forStatusIndicator',
+    connections: room.connections.list
+  }));
+
+  refreshPublishTime(room.connections, 5, true);
+
+
   const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
   const turn = (room.turn === 'p1') ? 'p1' : 'p2';
 
@@ -90,9 +103,15 @@ export const close: IClose<void> = (socket) => {
     refreshTime(room, turn);
   }
 
+
   // delete user from count
-  const toDelete = count.list.indexOf(socket.cn);
-  if (toDelete > -1) count.list.splice(toDelete, 1);
+  const forCountDelete = count.list.indexOf(socket.cn);
+  if (forCountDelete > -1) count.list.splice(forCountDelete, 1);
+
+
+  // delete user from room connections
+  const forRoomDelete = room.connections.list.indexOf(socket.cn);
+  if (forRoomDelete > -1) room.connections.list.splice(forRoomDelete, 1);
 };
 
 export const message: IMessage<Promise<void>> = async (socket, message) => {
@@ -113,6 +132,17 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
   const opponent = (socket.cn === room.p1.name) ? 'p2' : 'p1';
 
   switch (data.type) {
+    case 'ping': {
+      if (refreshPublishTime(room.connections, 5)) {
+        socket.publish(socket.url, JSON.stringify({
+          type: 'forStatusIndicator',
+          connections: room.connections.list
+        }));
+      }
+
+      break;
+    }
+
     case 'ready': {
       room[player].start = true;
       room[player].board = data.message;
@@ -172,8 +202,6 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
           const gameInfo = getGameInfo(room);
 
           if (gameInfo.winner) {
-            delete gameStates[socket.url];
-
             const { winnerBoard, loserBoard } = (gameInfo.winner === room.p1.name) ? {
               winnerBoard: room.p1.board,
               loserBoard: room.p2.board
