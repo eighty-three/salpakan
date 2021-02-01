@@ -7,6 +7,7 @@ import Player from './Player';
 import Setup from './Setup';
 import Board from './Board';
 import Rematch from '../Rematch';
+import Surrender from '../Surrender';
 
 import ON_MOVE from '@/sounds/on_move.mp3';
 import ON_VS from '@/sounds/on_vs.mp3';
@@ -17,6 +18,7 @@ import GameStateReducer from '@/lib/GameStateReducer';
 
 import { WSGAME_URL }  from '@/lib/game';
 import ws from 'ws';
+import {useCallback} from 'react';
 const WS = global.WebSocket || ws;
 
 const propTypes = {
@@ -142,6 +144,16 @@ const Game = (props) =>{
    */
   }, [JSON.stringify(connections), countSocketCn]);
 
+  const surrenderFn = useCallback(
+    (socket) => {
+      if (socket) {
+        socket.send(JSON.stringify({
+          type: 'surrender'
+        }));
+      }
+    }, [gameState.socket]
+  );
+
   return (
     <>
       {/* Audio files */}
@@ -182,8 +194,9 @@ const Game = (props) =>{
                 <div className={styles.button}>
                   {(gameState.turn !== undefined && state?.ongoing) &&
                     <>
-                      {(gameState.gameInfo?.winner) &&
-                        (<Rematch id={id} />)
+                      {(gameState.gameInfo?.winner)
+                        ? (<Rematch id={id} />)
+                        : (<Surrender onClickFn={() => surrenderFn(gameState.socket)} />)
                       }
                     </>
                   }
