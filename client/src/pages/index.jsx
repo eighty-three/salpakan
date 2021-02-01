@@ -36,6 +36,10 @@ const Home = (props) => {
     let socketRecord;
     socketRecord = new WS(`${WS_HOST}/ws/count`);
 
+    socketRecord.onclose = () => {
+      clearTimeout(timeOut.current);
+    };
+
     socketRecord.onmessage = async (message) => {
       const data = JSON.parse(message.data);
       setUsers(data.message);
