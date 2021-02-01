@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 const propTypes = {
@@ -6,20 +6,14 @@ const propTypes = {
 };
 
 import styles from './Buttons.module.scss';
+import useButton from '@/lib/useButton';
 
 const Surrender = (props) => {
   const {
     onClickFn
   } = props;
 
-  const [ buttonState, setButtonState ] = useState({
-    disabled: true,
-    text: 'Surrender'
-  });
-
-  useEffect(() => {
-    setButtonState({...buttonState, disabled: false });
-  }, []);
+  const [buttonState] = useButton('Surrender');
 
   return (
     <div className={styles.container}>

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import styles from './Buttons.module.scss';
 
 import { createLobby } from '@/lib/lobby';
+import useButton from '@/lib/useButton';
 
 const propTypes = {
   cookieValue: PropTypes.string
@@ -14,15 +15,7 @@ const CreatePrivateLobby = (props) => {
     cookieValue
   } = props;
 
-  const [ buttonState, setButtonState ] = useState({
-    disabled: true,
-    text: 'Create Private Lobby'
-  });
-
-  useEffect(() => {
-    setButtonState({...buttonState, disabled: false });
-  }, []);
-
+  const [buttonState, setButtonState] = useButton('Create Private Lobby');
 
   const onClickFn = async (auth) => {
     if (auth) {
