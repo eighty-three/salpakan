@@ -65,7 +65,7 @@ export const open: IOpen<Promise<void>> = async (socket) => {
 
   socket.subscribe('count');
   socket.publish('count', JSON.stringify({
-    message: String(count.list.length)
+    message: count.list.length
   }));
 
   refreshPublishTime(count, 15, true);
@@ -85,7 +85,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
     // Prevents spamming of count, allowing publish only every 15 seconds
     if (refreshPublishTime(count, 15)) {
       socket.publish('count', JSON.stringify({
-        message: String(count.list.length)
+        message: count.list.length
       }));
     }
   }
