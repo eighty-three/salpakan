@@ -20,5 +20,6 @@ CREATE TABLE games (
 
 CREATE TABLE lobbies (
   id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL
+  name TEXT NOT NULL,
+  expiry INT NOT NULL
 );
