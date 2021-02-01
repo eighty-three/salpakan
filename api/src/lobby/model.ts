@@ -1,6 +1,8 @@
 import db from '@utils/db';
 import { PreparedStatement as PS } from 'pg-promise';
 
+import { IName } from './types';
+
 export const createLobby = async (
   roomName: string,
 ): Promise<void> => {
@@ -36,4 +38,15 @@ export const deleteLobby = async (
 
   query.values = [ roomName ];
   await db.none(query);
+};
+
+export const deleteLobbies = async (): Promise<IName[]|null> => {
+  const query = new PS({ name: 'delete-lobbies', text: '\
+    DELETE FROM lobbies WHERE expiry < $1 RETURNING name'
+  });
+
+  const currentTime = Math.floor(Date.now() / 1000);
+
+  query.values = [ currentTime ];
+  return await db.manyOrNone(query);
 };
