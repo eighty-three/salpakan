@@ -5,7 +5,7 @@ import { performance } from 'perf_hooks';
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame, storeGame } from '../game/model';
 import { cleanBoards, checkMove, checkIfLegal, removeUnknownValues } from '../game/utils';
-import { decode, refreshTime, refreshPublishTime, getGameInfo } from './utils';
+import { decode, refreshTime, getGameInfo } from './utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
 
@@ -43,12 +43,11 @@ export const open: IOpen<Promise<void>> = async (socket) => {
     count.list.push(socket.cn);
   }
 
-  socket.subscribe('count');
-  socket.publish('count', JSON.stringify({
-    message: String(count.list.length)
-  }));
-
-  refreshPublishTime(count, 15, true);
+  /* socket.publish and socket.subscribe aren't necessary here
+   *
+   * The refresh in the index is sufficient for the update of the total count.
+   * It doesn't have to waste another 'publish' call
+   */
 
 
   const room = gameStates[socket.url];
