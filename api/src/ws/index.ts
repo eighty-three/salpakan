@@ -7,6 +7,7 @@ import * as game from './game';
 import * as lobby from './lobby';
 import * as count from './count';
 import * as rematch from './rematch';
+import * as ingameCount from './ingameCount';
 
 const options = {
   key_file_name: '../../misc/privkey.pem',
@@ -53,6 +54,16 @@ wsApp.ws('/ws/lobby/:id', {
   upgrade: lobby.upgrade,
   open: lobby.open,
   close: lobby.close
+});
+
+wsApp.ws('/ws/game/count/:id', {
+  compression: 1,
+  maxPayloadLength: 1024,
+  idleTimeout: 0,
+  upgrade: ingameCount.upgrade,
+  open: ingameCount.open,
+  close: ingameCount.close,
+  message: ingameCount.message
 });
 
 wsApp.ws('/ws/game/:id', {
