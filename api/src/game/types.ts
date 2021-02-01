@@ -18,6 +18,7 @@ export interface IRoom extends TPlayers {
   lastMove: number;
   time: number;
   winner: string | null;
+  connections: ICount;
   flagOnLastRow?: string;
 }
 
