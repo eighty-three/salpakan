@@ -48,7 +48,7 @@ export const open: IOpen<Promise<void>> = async (socket) => {
     message: String(count.list.length)
   }));
 
-  refreshPublishTime(count, true);
+  refreshPublishTime(count, 15, true);
 
 
   const room = gameStates[socket.url];
