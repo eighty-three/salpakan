@@ -1,7 +1,8 @@
-import React, { useEffect, useReducer, useRef } from 'react';
+import React, { useState, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-import styles from './index.module.css';
+import styles from './index.module.scss';
+
 import Player from './Player';
 import Setup from './Setup';
 import Board from './Board';
@@ -38,27 +39,29 @@ const Game = (props) =>{
   };
 
   const [gameState, dispatch] = useReducer(GameStateReducer, initialState);
+  const [connections, setConnections] = useState([]);
+  const [gameSocketCn, retryGameSocket] = useState(true);
+  const [countSocketCn, retryCountSocket] = useState(true);
 
   const moveRef = useRef();
   const vsRef = useRef();
+  const timeOut = useRef(null);
 
   useEffect(() => {
-    let socketCn;
+    let gameSocket;
     let isMounted = true;
     if (state?.ongoing) {
-      socketCn = new WS(`${WSGAME_URL}/${id}`);
-      dispatch({ type: 'onSocketConnect', payload: { socket: socketCn }});
+      gameSocket = new WS(`${WSGAME_URL}/${id}`);
 
-      socketCn.onclose = () => {
-        /* should differentiate if socket is closing because the connection
-         * was closed, or if because of the component unmounting
-         */
-        if (isMounted) {
-          dispatch({ type: 'onSocketClose' });
-        }
+      gameSocket.onopen = () => {
+        dispatch({ type: 'onSocketConnect', payload: { socket: gameSocket }});
       };
 
-      socketCn.onmessage = (message) => {
+      gameSocket.onerror = () => {
+        retryGameSocket(!gameSocketCn);
+      };
+
+      gameSocket.onmessage = async (message) => {
         const res = JSON.parse(message.data);
 
         /* attach sound file to play sound from component instead of importing
@@ -70,7 +73,14 @@ const Game = (props) =>{
         }});
       };
 
-
+      gameSocket.onclose = () => {
+        /* should differentiate if socket is closing because the connection
+         * was closed, or if because of the component unmounting
+         */
+        if (isMounted) {
+          dispatch({ type: 'onSocketClose' });
+        }
+      };
     } else {
       dispatch({ type: 'onGameEnd', payload: state });
     }
@@ -78,10 +88,59 @@ const Game = (props) =>{
     return () => {
       if (state.ongoing) {
         isMounted = false;
-        socketCn.close();
+        gameSocket.close();
       }
     };
-  }, []);
+
+  /* gameSocketCn (and countSocketCn below) is added
+   * to the dependency array to make the socket reconnect
+   * in case of errors
+   */
+  }, [gameSocketCn]);
+
+  useEffect(() => {
+    let countSocket;
+    if (state?.ongoing) {
+      countSocket = new WS(`${WSGAME_URL}/count/${id}`);
+
+      countSocket.onerror = () => {
+        retryCountSocket(!countSocketCn);
+      };
+
+      countSocket.onmessage = async (message) => {
+        const res = JSON.parse(message.data);
+        clearTimeout(timeOut.current);
+
+        if (res.connections.length !== connections.length) {
+          setConnections(res.connections);
+        }
+
+        const delay = () => new Promise(resolve => {
+          timeOut.current = setTimeout(resolve, 5000);
+        });
+
+        await delay();
+
+        countSocket.send(JSON.stringify({
+          type: 'ping',
+        }));
+      };
+
+      countSocket.onclose = () => {
+        clearTimeout(timeOut.current);
+      };
+    }
+
+    return () => {
+      if (state.ongoing) {
+        countSocket.close();
+      }
+    };
+
+  /* if the array is used for the connections, useEffect will
+   * loop indefinitely, hence stringify
+   */
+  }, [JSON.stringify(connections), countSocketCn]);
 
   return (
     <>
@@ -95,35 +154,47 @@ const Game = (props) =>{
       </audio>
 
       {/* Actual content */}
-      <SoundContext.Provider value={{move: moveRef.current, vs: vsRef.current}}>
-        <GameStateContext.Provider value={[gameState, dispatch]}>
-          <div className={styles.container}>
-            <div className={styles.setup}>
-              {(gameState.turn === undefined && !gameState.gameInfo?.winner) &&
-                <Setup/>
-              }
-            </div>
-            <div className={styles.p1}>
-              <Player playerNum={'p1'} />
-            </div>
-            <div className={styles.board}>
-              <Board />
-            </div>
-            <div className={styles.p2}>
-              <Player playerNum={'p2'} />
-            </div>
-            <div className={styles.button}>
-              {(gameState.turn !== undefined && state?.ongoing) &&
-                <>
-                  {(gameState.gameInfo?.winner) &&
-                    (<Rematch id={id} />)
+      { gameState?.board
+        ? (
+          <SoundContext.Provider value={{move: moveRef.current, vs: vsRef.current}}>
+            <GameStateContext.Provider value={[gameState, dispatch]}>
+              <div className={styles.container}>
+                <div className={styles.setup}>
+                  {(gameState.turn === undefined && !gameState.gameInfo?.winner) &&
+                    <Setup/>
                   }
-                </>
-              }
-            </div>
-          </div>
-        </GameStateContext.Provider>
-      </SoundContext.Provider>
+                </div>
+                <div className={styles.p1}>
+                  <Player
+                    connections={connections}
+                    playerNum={'p1'}
+                  />
+                </div>
+                <div className={styles.board}>
+                  <Board />
+                </div>
+                <div className={styles.p2}>
+                  <Player
+                    connections={connections}
+                    playerNum={'p2'}
+                  />
+                </div>
+                <div className={styles.button}>
+                  {(gameState.turn !== undefined && state?.ongoing) &&
+                    <>
+                      {(gameState.gameInfo?.winner) &&
+                        (<Rematch id={id} />)
+                      }
+                    </>
+                  }
+                </div>
+              </div>
+            </GameStateContext.Provider>
+          </SoundContext.Provider>
+        ) : (
+          <h1 className={styles.textCenter}>Connecting to the game...</h1>
+        )
+      }
     </>
   );
 };
