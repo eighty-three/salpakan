@@ -35,6 +35,8 @@ const Player = (props) => {
       ? 'online'
       : 'offline';
 
+  const ongoing = (gameState.turn !== undefined) ? true : false;
+
   return (
     <div className={styles.container}>
       {(gameState.turn !== undefined || gameState.gameInfo?.winner) &&
@@ -44,6 +46,7 @@ const Player = (props) => {
               name={name}
               css={css}
               status={status}
+              ongoing={ongoing}
             />
           </div>
           <div className={styles.result}>
