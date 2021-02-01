@@ -1,21 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Router from 'next/router';
 
 import styles from './Buttons.module.scss';
+
+import useButton from '@/lib/useButton';
 
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 import { WS_HOST } from '@/lib/host';
 
 const FindMatch = () => {
-  const [ buttonState, setButtonState ] = useState({
-    disabled: true,
-    text: 'Find Match'
-  });
-
-  useEffect(() => {
-    setButtonState({...buttonState, disabled: false });
-  }, []);
+  const [buttonState, setButtonState] = useButton('Find Match');
 
   const onClickFn = () => {
     setButtonState({ disabled: true, text: 'Finding...' });

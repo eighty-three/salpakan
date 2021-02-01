@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 const propTypes = {
@@ -9,6 +9,7 @@ import styles from './Buttons.module.scss';
 
 import { WS_HOST } from '@/lib/host';
 import ws from 'ws';
+import useButton from '@/lib/useButton';
 const WS = global.WebSocket || ws;
 
 const Rematch = (props) => {
@@ -16,14 +17,7 @@ const Rematch = (props) => {
     id
   } = props;
 
-  const [ buttonState, setButtonState ] = useState({
-    disabled: true,
-    text: 'Rematch'
-  });
-
-  useEffect(() => {
-    setButtonState({...buttonState, disabled: false });
-  }, []);
+  const [buttonState, setButtonState] = useButton('Rematch');
 
   const onClickFn = () => {
     setButtonState({ disabled: true, text: 'Waiting for your opponent...' });
