@@ -2,7 +2,7 @@ import { performance } from 'perf_hooks';
 import { StringDecoder } from 'string_decoder';
 
 import { IRoom, TPlayer } from '../game/types';
-import { ICount } from './count';
+import { ICount } from '../game/types';
 
 const decoder = new StringDecoder('utf8');
 
@@ -34,7 +34,11 @@ export const getGameInfo = (room: IRoom) => {
   };
 };
 
-export const refreshPublishTime = (count: ICount, forceRefresh?: boolean): boolean => {
+export const refreshPublishTime = (
+  count: ICount,
+  threshold: number,
+  forceRefresh?: boolean
+): boolean => {
   const currentTime = performance.now();
   const elapsedTime = currentTime - count.lastPublished;
 
@@ -44,8 +48,8 @@ export const refreshPublishTime = (count: ICount, forceRefresh?: boolean): boole
     return true;
   }
 
-  // Publish count only every 15 seconds
-  if (elapsedTime > 15000) {
+  // Publish count only every x seconds
+  if (elapsedTime > threshold) {
     count.lastPublished = currentTime;
     return true;
   }

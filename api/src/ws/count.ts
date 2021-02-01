@@ -68,7 +68,7 @@ export const open: IOpen<Promise<void>> = async (socket) => {
     message: String(count.list.length)
   }));
 
-  refreshPublishTime(count, true);
+  refreshPublishTime(count, 15, true);
 };
 
 export const close: IClose<void> = (socket) => {
@@ -83,7 +83,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
   if (data.message === 'ping') {
 
     // Prevents spamming of count, allowing publish only every 15 seconds
-    if (refreshPublishTime(count)) {
+    if (refreshPublishTime(count, 15)) {
       socket.publish('count', JSON.stringify({
         message: String(count.list.length)
       }));
