@@ -5,6 +5,11 @@ type Column = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I';
 type Row = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export type TCoordinate = `${Column}${Row}`;
 
+export interface ICount {
+  list: string[];
+  lastPublished: number;
+}
+
 export interface IRoom extends TPlayers {
   playerList: string[];
   board: IBoard;
