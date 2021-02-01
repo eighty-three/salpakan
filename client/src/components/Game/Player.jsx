@@ -9,12 +9,14 @@ import PlayerInfo from './PlayerInfo';
 import GameStateContext from '@/lib/GameStateContext';
 
 const propTypes = {
-  playerNum: PropTypes.string
+  playerNum: PropTypes.string,
+  connections: PropTypes.array
 };
 
 const Player = (props) => {
   const {
-    playerNum
+    playerNum,
+    connections
   } = props;
 
   const [gameState] = useContext(GameStateContext);
@@ -27,6 +29,12 @@ const Player = (props) => {
     ? `${playerInfoStyle.player_text} ${playerInfoStyle.self}`
     : playerInfoStyle.player_text;
 
+  const status =
+    (connections?.includes(
+      gameState.gameInfo?.[playerNum]?.name))
+      ? 'online'
+      : 'offline';
+
   return (
     <div className={styles.container}>
       {(gameState.turn !== undefined || gameState.gameInfo?.winner) &&
@@ -35,6 +43,7 @@ const Player = (props) => {
             <PlayerInfo
               name={name}
               css={css}
+              status={status}
             />
           </div>
           <div className={styles.result}>
