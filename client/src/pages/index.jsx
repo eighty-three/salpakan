@@ -28,7 +28,6 @@ const Home = (props) => {
 
   const [users, setUsers] = useState(0);
   const [delay, clearDelay] = useDelay(20);
-
   useCookie(cookieValue);
 
   useEffect(() => {
@@ -67,7 +66,7 @@ const Home = (props) => {
         </div>
 
         <FindMatch />
-        <CreatePrivateLobby cookieValue={cookieValue} />
+        <CreatePrivateLobby />
       </section>
     </Layout>
   );
