@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Router from 'next/router';
 
 import styles from './Buttons.module.scss';
@@ -8,18 +8,17 @@ import useButton from '@/lib/useButton';
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 import { WS_HOST } from '@/lib/host';
+import useDelay from '@/lib/useDelay';
 
 const FindMatch = () => {
   const [buttonState, setButtonState] = useButton('Find Match');
-  const timeOut = useRef(null);
   const [socket, setSocket] = useState(null);
+  const [delay, clearDelay] = useDelay(60);
 
   // proper cleanup after match is found
   useEffect(() => {
     return () => {
-      if (timeOut.current) {
-        clearTimeout(timeOut.current);
-      }
+      clearDelay();
 
       if (socket) {
         socket.close();
@@ -33,7 +32,7 @@ const FindMatch = () => {
     const socketCn = new WS(`${WS_HOST}/ws/matchmaking`);
 
     socketCn.onclose = () => {
-      clearTimeout(timeOut.current);
+      clearDelay();
     };
 
     socketCn.onopen = () => {
@@ -43,21 +42,14 @@ const FindMatch = () => {
 
     socketCn.onmessage = async (message) => {
       const data = message.data;
+      clearDelay();
 
       // room name cannot be 'pong' because of schema (10 characters length)
       if (data !== 'pong') {
-        clearTimeout(timeOut.current);
-
         socketCn.close();
         setButtonState({ disabled: true, text: 'Match found!' });
         Router.push(`/game/${data}`);
       } else {
-
-        // send back a 'ping' after a minute
-        const delay = () => new Promise(resolve => {
-          timeOut.current = setTimeout(resolve, 60000);
-        });
-
         await delay();
         socketCn.send(JSON.stringify({ type: 'keepalive', message: 'ping' }));
       }

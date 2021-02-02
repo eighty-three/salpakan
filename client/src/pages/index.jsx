@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
@@ -14,6 +14,7 @@ import useCookie from '@/lib/useCookie';
 
 import { WS_HOST } from '@/lib/host';
 import ws from 'ws';
+import useDelay from '@/lib/useDelay';
 const WS = global.WebSocket || ws;
 
 const propTypes = {
@@ -28,7 +29,7 @@ const Home = (props) => {
   } = props;
 
   const [users, setUsers] = useState(0);
-  const timeOut = useRef(null);
+  const [delay, clearDelay] = useDelay(20);
 
   useCookie(cookieValue);
 
@@ -37,30 +38,22 @@ const Home = (props) => {
     socketRecord = new WS(`${WS_HOST}/ws/count`);
 
     socketRecord.onclose = () => {
-      clearTimeout(timeOut.current);
+      clearDelay();
     };
 
     socketRecord.onmessage = async (message) => {
       const data = JSON.parse(message.data);
       setUsers(data.message);
-
-      // Reset the previous delay
-      clearTimeout(timeOut.current);
-
-      // Send back a 'ping' after 20 seconds
-      const delay = () => new Promise(resolve => {
-        timeOut.current = setTimeout(resolve, 20000);
-      });
+      clearDelay();
 
       await delay();
       socketRecord.send(JSON.stringify({ message: 'ping' }));
     };
 
     return () => {
+      clearDelay();
       socketRecord.close();
-      clearTimeout(timeOut.current);
     };
-
   }, []);
 
   return (
