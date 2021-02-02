@@ -174,7 +174,7 @@ const GameStateReducer = (state, action) => {
       return {
         socket: state.socket,
         gameInfo: {...action.payload.data},
-        board: {...action.payload.board},
+        board: action.payload.board,
         turn: state.turn,
         player: state.player
       };
