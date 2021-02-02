@@ -16,7 +16,7 @@ export const startGame = async (
     p1: {
       name: arr[0],
       board: getInitialBoardState('p1'),
-      time: 6000,
+      time: 6000, // 10 minutes
       start: false
     },
     p2: {
@@ -30,11 +30,11 @@ export const startGame = async (
     start: false,
     lastMove: 0,
     winner: null,
-    time: Math.floor(Date.now() / 100) + 1200,
+    time: Math.floor(Date.now() / 100) + 1200, // 2 minutes setup time
     connections: { list: [], lastPublished: 0 }
   };
 
-  const expiry = Math.floor(Date.now() / 1000) + 7200;
+  const expiry = Math.floor(Date.now() / 1000) + 7200; // 2 hours till game expire
 
   const query = new PS({ name: 'start-game', text: '\
     INSERT INTO games (name, player1, player2, expiry) VALUES ($1, $2, $3, $4)'
@@ -48,7 +48,8 @@ export const getGame = async (
   roomName: string
 ): Promise<IGame|null> => {
   const query = new PS({ name: 'get-game', text: '\
-    SELECT winner_board, loser_board, player1, player2, ongoing, winner FROM games WHERE name=$1 AND expiry > $2'
+    SELECT winner_board, loser_board, player1, player2, ongoing, winner \
+    FROM games WHERE name=$1 AND expiry > $2'
   });
 
   const currentTime = Math.floor(Date.now() / 1000);

@@ -15,6 +15,16 @@ export const getGame = async (id) => {
   }
 };
 
+/**
+ * checks two coordinates, e.g., `A1` and `B1`, to know if
+ * movement between them is possible, and if the affected
+ * pieces are owned by the correct player
+ *
+ * @param {IBoard} board The board of the player making the move
+ * @param {TCoordinate} origin The coordinate where the move comes from
+ * @param {TCoordinate} destination The coordinate where the move is going to
+ * @returns {boolean} true if legal, false otherwise
+ */
 export const checkIfLegal = (board, origin, destination) => {
   try {
     if (origin.length !== 2 || destination.length !== 2) return false;
@@ -65,6 +75,15 @@ export const checkIfLegal = (board, origin, destination) => {
   }
 };
 
+/**
+ * Checks two coordinates, if the piece is being placed within
+ * the player's bounds. Used during setup to determine if the piece
+ * is not crossing the three-row boundary of each player
+ *
+ * @param {player} board The player making the move
+ * @param {TCoordinate} destination The coordinate where the move is going to
+ * @returns {boolean} true if within bounds, false otherwise
+ */
 export const checkIfWithinBounds = (player, destination) => {
   if (destination.length !== 2) return false;
 
@@ -82,6 +101,15 @@ export const checkIfWithinBounds = (player, destination) => {
   return false;
 };
 
+/**
+ * checks two coordinates, e.g., `A1` and `B1`, to know if
+ * what direction the piece is going. Used to indicate what
+ * the last move is
+ *
+ * @param {TCoordinate} origin The coordinate where the move comes from
+ * @param {TCoordinate} destination The coordinate where the move is going to
+ * @returns {string} up, down, left, or right
+ */
 export const checkDirection = (origin, destination) => {
   const originRow = origin.charCodeAt(0);
   const destRow = destination.charCodeAt(0);

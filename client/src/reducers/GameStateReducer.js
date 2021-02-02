@@ -45,6 +45,12 @@ const GameStateReducer = (state, action) => {
         [action.payload.destination]: originValue
       };
 
+      /* In the `board` declaration above, what basically happens with
+       * the origin and the destination is that they swap values.
+       *
+       * And then if `destValue` doesn't exist, it means the destination
+       * was an empty space. Its key shouldn't remain in the new board
+       */
       if (!destValue) delete board[action.payload.origin];
 
       action.sound.move.play();
@@ -59,6 +65,7 @@ const GameStateReducer = (state, action) => {
     }
 
     case 'onReady': {
+      // For when the user submits his setup
       return {
         socket: state.socket,
         gameInfo: {...state.gameInfo, setup: true},
@@ -69,6 +76,12 @@ const GameStateReducer = (state, action) => {
     }
 
     case 'onPieceMove': {
+      /* For moves during the game itself. `turn` is set to null because
+       * the countdown of both `MatchClock`s should be paused for the user.
+       * While waiting for the move to be sent to the server to be processed,
+       * the user's clock should not be ticking down. It's generally
+       * unnoticeable; it's only a UX enhancement for slow networks.
+       */
       return {
         socket: state.socket,
         gameInfo: state.gameInfo,
@@ -79,6 +92,7 @@ const GameStateReducer = (state, action) => {
     }
 
     case 'onSocketConnect': {
+      // Sets the socket
       return {
         socket: action.payload.socket,
         gameInfo: state.gameInfo,
@@ -89,6 +103,9 @@ const GameStateReducer = (state, action) => {
     }
 
     case 'onSocketOpen': {
+      /* Initial game state is received by the user. Sound is played to indicate
+       * that the game (or the setup) has started.
+       */
       action.sound.move.play();
 
       return {
@@ -101,6 +118,7 @@ const GameStateReducer = (state, action) => {
     }
 
     case 'onSocketClose': {
+      // For cleanup or if something went wrong in the server
       return {
         socket: null,
         gameInfo: null,
@@ -111,6 +129,16 @@ const GameStateReducer = (state, action) => {
     }
 
     case 'onSocketMessageTime': {
+      /* Because of the disparity in time in the server and the client,
+       * even if the time has ran out for the user, while it triggers a
+       * message from the socket to the server, it doesn't automatically
+       * mean that the player's time for the server is also 0. In that case,
+       * what determines it is if there is a winner.
+       *
+       * If someone already won, that is, the time actually went to zero,
+       * the user should receive the whole board with revealed pieces.
+       * Otherwise, there shouldn't be any changes except for the time.
+       */
       return (action.payload.data.winner)
         ? {
           socket: state.socket,
@@ -128,6 +156,10 @@ const GameStateReducer = (state, action) => {
     }
 
     case 'onSocketMessageBug': {
+      /* Doesn't really trigger except if for some reason an illegal
+       * move was sent to the server. If that's the case it just
+       * essentially resets the state
+       */
       return {
         socket: state.socket,
         gameInfo: {...action.payload.data},
@@ -138,6 +170,7 @@ const GameStateReducer = (state, action) => {
     }
 
     case 'onSocketMessageSurrender': {
+      // Game end, show the whole board and set the winner
       return {
         socket: state.socket,
         gameInfo: {...action.payload.data},
@@ -159,18 +192,32 @@ const GameStateReducer = (state, action) => {
       }
 
       const fixedBoard = {...state.board};
-      delete fixedBoard[action.payload.board.origin];
 
-      /* Implicit case where result === 2 where the action is
-       * just `delete fixedBoard[res.board.origin];`
-       */
+      // if result === 1, the attacker should be placed in its destination
       if (action.payload.result === 1) {
         fixedBoard[action.payload.board.destination] = state.board[action.payload.board.origin];
+
+      // else if result === 3, both pieces should be deleted so delete the destination
       } else if (action.payload.result === 3) {
         delete fixedBoard[action.payload.board.destination];
       }
 
-      const toPlay = (state.board[action.payload.board.destination]) ? action.sound.vs : action.sound.move;
+      /* Implicit case where result === 2 where the action is just
+       * `delete fixedBoard[res.board.origin];`
+       *
+       * Since no piece should be left in the origin, it should
+       * always be deleted
+       */
+      delete fixedBoard[action.payload.board.origin];
+
+
+      /* If there was originally something in the destination, meaning the
+       * opponent had a piece there, the sound should play `ON_VS`.
+       */
+      const toPlay = (state.board[action.payload.board.destination])
+        ? action.sound.vs
+        : action.sound.move;
+
       toPlay.play();
 
       return {
