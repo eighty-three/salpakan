@@ -5,12 +5,36 @@ import Countdown from './MatchClock/Countdown';
 
 import useButton from '@/hooks/useButton';
 import GameStateContext from '@/contexts/GameStateContext';
+import useDelay from '@/hooks/useDelay';
 
 const Setup = () => {
   const [gameState, dispatch] = useContext(GameStateContext);
-  const [ time, setTime ] = useState(gameState.gameInfo?.time);
-  const [ afk, setAfk ] = useState(false);
+  const [time, setTime] = useState(gameState.gameInfo?.time);
+  const [afk, setAfk] = useState(false);
   const [buttonState, setButtonState] = useButton('Submit Board');
+  const [delay, clearDelay] = useDelay(3);
+
+  useEffect(() => {
+    // If afk
+    if (afk) {
+      const fn = async () => {
+
+        // Wait 3 seconds
+        await delay();
+
+        // then refresh the page
+        if (typeof window !== undefined) {
+          window.location.reload();
+        }
+      };
+
+      fn();
+    }
+
+    return () => {
+      clearDelay();
+    };
+  }, [afk]);
 
   useEffect(() => {
     setTime(gameState.gameInfo?.time);
@@ -40,21 +64,25 @@ const Setup = () => {
 
   return (
     <div className={styles.container}>
-      { gameState.gameInfo &&
-        <>
-          <button className={styles.button} onClick={onClickFn} disabled={buttonState.disabled}>
-            {buttonState.text}
-          </button>
-          <div className={styles.clock}>
-            <Countdown time={time} counter={countDown} />
+      { afk
+        ? (
+          <div className={styles.afk}>
+            Your opponent was AFK, find another match
           </div>
-        </>
-      }
-
-      { afk &&
-        <div className={styles.afk}>
-          Your opponent was AFK, find another match
-        </div>
+        ) : (
+          <>
+            { gameState.gameInfo &&
+              <>
+                <button className={styles.button} onClick={onClickFn} disabled={buttonState.disabled}>
+                  {buttonState.text}
+                </button>
+                <div className={styles.clock}>
+                  <Countdown time={time} counter={countDown} />
+                </div>
+              </>
+            }
+          </>
+        )
       }
     </div>
   );
