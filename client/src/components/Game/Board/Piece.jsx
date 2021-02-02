@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 
 import styles from './Piece.module.scss';
 
-import GameStateContext from '@/lib/GameStateContext';
-import SoundContext from '@/lib/SoundContext';
-
+import PieceStateReducer from '@/reducers/PieceStateReducer';
 import { checkIfWithinBounds, checkIfLegal } from '@/lib/game';
 import { getCurrentCoordinates, getSquareDimensions } from '@/lib/drag';
-import PieceStateReducer from '@/lib/PieceStateReducer';
+import GameStateContext from '@/contexts/GameStateContext';
+import SoundContext from '@/contexts/SoundContext';
 
 const propTypes = {
   name: PropTypes.string,

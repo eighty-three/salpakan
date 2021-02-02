@@ -1,12 +1,10 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
-import GameStateContext from '@/lib/GameStateContext';
-import SoundContext from '@/lib/SoundContext';
-
 import { checkIfWithinBounds, checkIfLegal } from '@/lib/game';
 import { getCursorCoordinates, getCurrentCoordinates, getSquareDimensions } from '@/lib/drag';
-
+import GameStateContext from '@/contexts/GameStateContext';
+import SoundContext from '@/contexts/SoundContext';
 
 const propTypes = {
   updateDragState: PropTypes.func,

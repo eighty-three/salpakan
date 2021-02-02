@@ -3,8 +3,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import styles from './Setup.module.css';
 import Countdown from './MatchClock/Countdown';
 
-import GameStateContext from '@/lib/GameStateContext';
-import useButton from '@/lib/useButton';
+import useButton from '@/hooks/useButton';
+import GameStateContext from '@/contexts/GameStateContext';
 
 const Setup = () => {
   const [gameState, dispatch] = useContext(GameStateContext);

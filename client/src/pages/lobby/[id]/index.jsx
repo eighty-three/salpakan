@@ -3,12 +3,11 @@ import Router from 'next/router';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
+import styles from '@/components/Buttons.module.scss';
 import Layout, { siteTitle } from '@/components/Layout';
 
-import styles from '@/components/Buttons.module.scss';
-
+import useCookie from '@/hooks/useCookie';
 import { lightAuthCheck } from '@/lib/authCheck';
-import useCookie from '@/lib/useCookie';
 
 import { getLobby, WSLOBBY_URL}  from '@/lib/lobby';
 import ws from 'ws';

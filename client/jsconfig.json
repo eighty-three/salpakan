@@ -3,11 +3,13 @@
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["src/components/*"],
-      "@/styles/*": ["src/styles/*"],
-      "@/lib/*": ["src/lib/*"],
       "@/pages/*": ["src/pages/*"],
+      "@/styles/*": ["src/styles/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/reducers/*": ["src/reducers/*"],
+      "@/contexts/*": ["src/contexts/*"],
+      "@/lib/*": ["src/lib/*"],
       "@/sounds/*": ["public/sounds/*"]
     }
   }
 }
-

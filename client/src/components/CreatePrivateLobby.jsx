@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import styles from './Buttons.module.scss';
 
+import useButton from '@/hooks/useButton';
 import { createLobby } from '@/lib/lobby';
-import useButton from '@/lib/useButton';
 
 const propTypes = {
   cookieValue: PropTypes.string

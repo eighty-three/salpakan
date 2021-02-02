@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import styles from './Buttons.module.scss';
+
+import useButton from '@/hooks/useButton';
+
 const propTypes = {
   onClickFn: PropTypes.func
 };
-
-import styles from './Buttons.module.scss';
-import useButton from '@/lib/useButton';
 
 const Surrender = (props) => {
   const {

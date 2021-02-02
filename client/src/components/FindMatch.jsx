@@ -3,17 +3,17 @@ import Router from 'next/router';
 
 import styles from './Buttons.module.scss';
 
-import useButton from '@/lib/useButton';
+import useButton from '@/hooks/useButton';
+import useDelay from '@/hooks/useDelay';
 
 import ws from 'ws';
 const WS = global.WebSocket || ws;
 import { WS_HOST } from '@/lib/host';
-import useDelay from '@/lib/useDelay';
 
 const FindMatch = () => {
   const [buttonState, setButtonState] = useButton('Find Match');
-  const [socket, setSocket] = useState(null);
   const [delay, clearDelay] = useDelay(60);
+  const [socket, setSocket] = useState(null);
 
   // proper cleanup after match is found
   useEffect(() => {

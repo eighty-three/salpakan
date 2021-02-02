@@ -3,18 +3,16 @@ import Head from 'next/head';
 import PropTypes from 'prop-types';
 
 import styles from './index.module.css';
-
 import Layout, { siteTitle } from '@/components/Layout';
-
 import FindMatch from '@/components/FindMatch';
 import CreatePrivateLobby from '@/components/CreatePrivateLobby';
 
+import useCookie from '@/hooks/useCookie';
+import useDelay from '@/hooks/useDelay';
 import { lightAuthCheck } from '@/lib/authCheck';
-import useCookie from '@/lib/useCookie';
 
 import { WS_HOST } from '@/lib/host';
 import ws from 'ws';
-import useDelay from '@/lib/useDelay';
 const WS = global.WebSocket || ws;
 
 const propTypes = {
