@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useContext, useReducer } from 'react';
 
 import styles from './DropTarget.module.scss';
-
 import Piece from './Piece';
 import DropTarget from './DropTarget';
 import Square from './Square';
 
-import DragReducer from '@/lib/DragReducer';
-import GameStateContext from '@/lib/GameStateContext';
+import DragReducer from '@/reducers/DragReducer';
 import {checkDirection} from '@/lib/game';
+import GameStateContext from '@/contexts/GameStateContext';
 
 const Pieces = () => {
   const [gameState] = useContext(GameStateContext);

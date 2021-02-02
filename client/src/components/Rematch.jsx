@@ -1,16 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const propTypes = {
-  id: PropTypes.string
-};
-
 import styles from './Buttons.module.scss';
+
+import useButton from '@/hooks/useButton';
 
 import { WS_HOST } from '@/lib/host';
 import ws from 'ws';
-import useButton from '@/lib/useButton';
 const WS = global.WebSocket || ws;
+
+const propTypes = {
+  id: PropTypes.string
+};
 
 const Rematch = (props) => {
   const {

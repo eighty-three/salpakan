@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import styles from './index.module.css';
 import Countdown from './Countdown';
 
-import TurnChangeReducer from '@/lib/TurnChangeReducer';
-import GameStateContext from '@/lib/GameStateContext';
+import TurnChangeReducer from '@/reducers/TurnChangeReducer';
+import GameStateContext from '@/contexts/GameStateContext';
 
 const propTypes = {
   playerNum: PropTypes.string

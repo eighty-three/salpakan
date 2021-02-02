@@ -1,25 +1,22 @@
-import React, { useState, useEffect, useReducer, useRef } from 'react';
+import React, { useState, useEffect, useReducer, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 import styles from './index.module.scss';
-
 import Player from './Player';
 import Setup from './Setup';
 import Board from './Board';
 import Rematch from '../Rematch';
 import Surrender from '../Surrender';
-
 import ON_MOVE from '@/sounds/on_move.mp3';
 import ON_VS from '@/sounds/on_vs.mp3';
 
-import SoundContext from '@/lib/SoundContext';
-import GameStateContext from '@/lib/GameStateContext';
-import GameStateReducer from '@/lib/GameStateReducer';
+import useDelay from '@/hooks/useDelay';
+import GameStateReducer from '@/reducers/GameStateReducer';
+import GameStateContext from '@/contexts/GameStateContext';
+import SoundContext from '@/contexts/SoundContext';
 
 import { WSGAME_URL }  from '@/lib/game';
 import ws from 'ws';
-import {useCallback} from 'react';
-import useDelay from '@/lib/useDelay';
 const WS = global.WebSocket || ws;
 
 const propTypes = {

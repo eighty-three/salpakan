@@ -6,7 +6,7 @@ import playerInfoStyle from './PlayerInfo.module.css';
 import MatchClock from './MatchClock';
 import PlayerInfo from './PlayerInfo';
 
-import GameStateContext from '@/lib/GameStateContext';
+import GameStateContext from '@/contexts/GameStateContext';
 
 const propTypes = {
   playerNum: PropTypes.string,
