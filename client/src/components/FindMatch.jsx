@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Router from 'next/router';
 
 import styles from './Buttons.module.scss';
@@ -11,37 +11,59 @@ import { WS_HOST } from '@/lib/host';
 
 const FindMatch = () => {
   const [buttonState, setButtonState] = useButton('Find Match');
+  const timeOut = useRef(null);
+  const [socket, setSocket] = useState(null);
+
+  // proper cleanup after match is found
+  useEffect(() => {
+    return () => {
+      if (timeOut.current) {
+        clearTimeout(timeOut.current);
+      }
+
+      if (socket) {
+        socket.close();
+      }
+    };
+  }, []);
 
   const onClickFn = () => {
     setButtonState({ disabled: true, text: 'Finding...' });
 
-    const socket = new WS(`${WS_HOST}/ws/matchmaking`);
+    const socketCn = new WS(`${WS_HOST}/ws/matchmaking`);
 
-    socket.onopen = () => {
-      socket.send(JSON.stringify({ type: 'keepalive', message: 'ping' }));
+    socketCn.onclose = () => {
+      clearTimeout(timeOut.current);
     };
 
-    socket.onmessage = async (message) => {
+    socketCn.onopen = () => {
+      setSocket(socketCn);
+      socketCn.send(JSON.stringify({ type: 'keepalive', message: 'ping' }));
+    };
+
+    socketCn.onmessage = async (message) => {
       const data = message.data;
 
       // room name cannot be 'pong' because of schema (10 characters length)
       if (data !== 'pong') {
-        socket.close();
+        clearTimeout(timeOut.current);
+
+        socketCn.close();
         setButtonState({ disabled: true, text: 'Match found!' });
         Router.push(`/game/${data}`);
       } else {
 
         // send back a 'ping' after a minute
         const delay = () => new Promise(resolve => {
-          setTimeout(resolve, 60000);
+          timeOut.current = setTimeout(resolve, 60000);
         });
 
         await delay();
-        socket.send(JSON.stringify({ type: 'keepalive', message: 'ping' }));
+        socketCn.send(JSON.stringify({ type: 'keepalive', message: 'ping' }));
       }
     };
 
-    socket.onerror = () => {
+    socketCn.onerror = () => {
       setButtonState({ disabled: true , text: 'Please try again' });
     };
   };
