@@ -10,28 +10,20 @@ const propTypes = {
   cookieValue: PropTypes.string
 };
 
-const CreatePrivateLobby = (props) => {
-  const {
-    cookieValue
-  } = props;
-
+const CreatePrivateLobby = () => {
   const [buttonState, setButtonState] = useButton('Create Private Lobby');
 
-  const onClickFn = async (auth) => {
-    if (auth) {
-      setButtonState({ disabled: true, text: 'Creating...' });
+  const onClickFn = async () => {
+    setButtonState({ disabled: true, text: 'Creating...' });
 
-      const req = await createLobby();
-      if (req?.error) setButtonState({ disabled: false, text: 'Please try again' });
-    } else {
-      setButtonState({ disabled: false, text: 'Please try again' });
-    }
+    const req = await createLobby();
+    if (req?.error) setButtonState({ disabled: false, text: 'Please try again' });
   };
 
   return (
     <div className={styles.container}>
       <button
-        onClick={() => onClickFn(cookieValue)}
+        onClick={onClickFn}
         disabled={buttonState.disabled}
         className={`${styles.button} ${styles.l}`}
       >
