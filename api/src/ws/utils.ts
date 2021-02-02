@@ -1,17 +1,27 @@
 import { performance } from 'perf_hooks';
 import { StringDecoder } from 'string_decoder';
 
-import { IRoom, TPlayer } from '../game/types';
-import { ICount } from '../game/types';
+import { IRoom, TPlayer, ICount, IPlayer } from '../game/types';
 
 const decoder = new StringDecoder('utf8');
 
 export const decode = (buf: ArrayBuffer): string => decoder.write(Buffer.from(buf));
 
+
+/* There's apparently a 'Deep Partial' so I can just use that
+ * and then refactor connections into `ICount` but I probably
+ * don't need to go ham on the types
+ */
+type TPartialPlayers = { [K in TPlayer]: Pick<IPlayer, 'name' | 'time'> };
+interface IGameInfo extends TPartialPlayers {
+  winner: string | null;
+  connections: string[];
+}
+
 /* Refactored into its own function because
  * these properties are the most queried
  */
-export const getGameInfo = (room: IRoom) => {
+export const getGameInfo = (room: IRoom): IGameInfo => {
   return {
     p1: {
       name: room.p1.name,
