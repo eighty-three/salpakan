@@ -24,7 +24,7 @@ const FindMatch = () => {
         socket.close();
       }
     };
-  }, []);
+  }, [socket]);
 
   const onClickFn = () => {
     setButtonState({ disabled: true, text: 'Finding...' });
