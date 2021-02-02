@@ -77,14 +77,10 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
 
   const room = gameStates[socket.url];
 
-  if (!room) {
-    if (data.type === 'time') {
-      return;
-    } else {
-      socket.close();
-      return;
-    }
-  }
+  /* Because of delays caused by a slow network, there's a chance that the client
+   * would still send messages that aren't supposed to be sent anymore.
+   */
+  if (room.winner) return;
 
   const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
   const opponent = (socket.cn === room.p1.name) ? 'p2' : 'p1';
