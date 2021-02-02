@@ -8,6 +8,7 @@ import { cleanBoards, checkMove, checkIfLegal, removeUnknownValues } from '../ga
 import { decode, refreshTime, getGameInfo } from './utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
+import {nanoid} from 'nanoid';
 
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
   const upgradeAborted = {aborted: false};
@@ -114,12 +115,22 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
       break;
     }
 
-    case 'afk':
-      socket.unsubscribeAll();
-      socket.close();
-      delete gameStates[socket.url];
-      await deleteGame(socket.url);
+    case 'afk': {
+      room.winner = room.p1.name;
+      const { fixedWinnerBoard, fixedLoserBoard } = removeUnknownValues(room.p1.board, room.p2.board);
+
+      /* nanoid(20) is used to generate a unique string as a way of declaring that there is no winner
+       *
+       * I could set it to `null` or false but I'd have to rework the entire structure of the Game
+       * component because of how much it all relies on the winner being falsy
+       *
+       * Collisions are nigh impossible + the stored row in the database will get deleted in some
+       * 2 hours anyway, so it's not really a big deal, just that it indicates code smell...
+       */
+      await storeGame(socket.url, fixedWinnerBoard, fixedLoserBoard, nanoid(20));
+
       break;
+    }
 
     case 'move': {
       if (player === room.turn) {
