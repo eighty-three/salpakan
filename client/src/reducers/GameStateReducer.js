@@ -35,30 +35,30 @@ const GameStateReducer = (state, action) => {
     }
 
     case 'onPieceSetup': {
-      const fixedBoard = {...state.board};
-      const originValue = fixedBoard[action.payload.origin];
-      const destValue = fixedBoard[action.payload.destination];
+      const board = {...state.board};
+      const originValue = board[action.payload.origin];
+      const destValue = board[action.payload.destination];
 
-      const board = {
-        ...fixedBoard,
+      const fixedBoard = {
+        ...board,
         [action.payload.origin]: destValue,
         [action.payload.destination]: originValue
       };
 
-      /* In the `board` declaration above, what basically happens with
+      /* In the `fixedBoard` declaration above, what basically happens with
        * the origin and the destination is that they swap values.
        *
        * And then if `destValue` doesn't exist, it means the destination
        * was an empty space. Its key shouldn't remain in the new board
        */
-      if (!destValue) delete board[action.payload.origin];
+      if (!destValue) delete fixedBoard[action.payload.origin];
 
       action.sound.move.play();
 
       return {
         socket: state.socket,
         gameInfo: state.gameInfo,
-        board,
+        board: fixedBoard,
         turn: state.turn,
         player: state.player
       };
