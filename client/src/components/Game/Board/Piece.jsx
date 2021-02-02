@@ -49,7 +49,6 @@ const Piece = (props) => {
 
   useEffect(() => {
     changePieceState({ type: 'revertState' });
-    return () => changePieceState({ type: 'cleanup' });
   }, [pieceState.hasDropped]);
 
   const dragStart = (e) => {

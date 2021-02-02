@@ -2,14 +2,6 @@ import { getCursorCoordinates } from '@/lib/drag';
 
 const PieceStateReducer = (state, action) => {
   switch (action.type) {
-    case 'cleanup': {
-      return {
-        style: null,
-        isDragging: null,
-        hasDropped: false
-      };
-    }
-
     case 'revertState': {
       // Return the piece to its initial state
       return {
