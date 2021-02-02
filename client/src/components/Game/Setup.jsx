@@ -4,16 +4,13 @@ import styles from './Setup.module.css';
 import Countdown from './MatchClock/Countdown';
 
 import GameStateContext from '@/lib/GameStateContext';
+import useButton from '@/lib/useButton';
 
 const Setup = () => {
   const [gameState, dispatch] = useContext(GameStateContext);
   const [ time, setTime ] = useState(gameState.gameInfo?.time);
   const [ afk, setAfk ] = useState(false);
-  const [ disabled, setDisabled ] = useState(true);
-
-  useEffect(() => {
-    setDisabled(false);
-  }, []);
+  const [buttonState, setButtonState] = useButton('Submit Board');
 
   useEffect(() => {
     setTime(gameState.gameInfo?.time);
@@ -21,7 +18,7 @@ const Setup = () => {
 
   useEffect(() => {
     const bool = (gameState.gameInfo?.setup) ? true : false;
-    setDisabled(bool);
+    setButtonState({...buttonState, disabled: bool});
   }, [gameState.gameInfo?.setup]);
 
   const countDown = async () => {
@@ -35,7 +32,7 @@ const Setup = () => {
 
   const onClickFn = () => {
     if (!gameState.gameInfo?.setup) {
-      setDisabled(true);
+      setButtonState({...buttonState, disabled: true});
       dispatch({ type: 'onReady' });
       gameState.socket.send(JSON.stringify({ type: 'ready', message: gameState.board }));
     }
@@ -45,8 +42,8 @@ const Setup = () => {
     <div className={styles.container}>
       { gameState.gameInfo &&
         <>
-          <button className={styles.button} onClick={onClickFn} disabled={disabled}>
-            Submit board
+          <button className={styles.button} onClick={onClickFn} disabled={buttonState.disabled}>
+            {buttonState.text}
           </button>
           <div className={styles.clock}>
             <Countdown time={time} counter={countDown} />
