@@ -19,6 +19,7 @@ import GameStateReducer from '@/lib/GameStateReducer';
 import { WSGAME_URL }  from '@/lib/game';
 import ws from 'ws';
 import {useCallback} from 'react';
+import useDelay from '@/lib/useDelay';
 const WS = global.WebSocket || ws;
 
 const propTypes = {
@@ -47,7 +48,7 @@ const Game = (props) =>{
 
   const moveRef = useRef();
   const vsRef = useRef();
-  const timeOut = useRef(null);
+  const [delay, clearDelay] = useDelay(5);
 
   useEffect(() => {
     let gameSocket;
@@ -111,15 +112,11 @@ const Game = (props) =>{
 
       countSocket.onmessage = async (message) => {
         const res = JSON.parse(message.data);
-        clearTimeout(timeOut.current);
+        clearDelay();
 
         if (res.connections.length !== connections.length) {
           setConnections(res.connections);
         }
-
-        const delay = () => new Promise(resolve => {
-          timeOut.current = setTimeout(resolve, 5000);
-        });
 
         await delay();
 
@@ -129,11 +126,13 @@ const Game = (props) =>{
       };
 
       countSocket.onclose = () => {
-        clearTimeout(timeOut.current);
+        clearDelay();
       };
     }
 
     return () => {
+      clearDelay();
+
       if (state.ongoing) {
         countSocket.close();
       }
