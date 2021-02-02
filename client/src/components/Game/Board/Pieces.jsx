@@ -12,14 +12,28 @@ import GameStateContext from '@/contexts/GameStateContext';
 const Pieces = () => {
   const [gameState] = useContext(GameStateContext);
   const [ board, setBoard ] = useState({});
-
-  /* `winner` key is purely for UX, so pieces can't be moved
-   * or `DropTarget` can't be dropped on anymore on game end
-   */
   const initialState = {
+    /* The `draggable` key, when set to false, adds the
+     * event handlers to DropTarget, enabling the proper drag
+     * and drop behaviour
+     */
     draggable: false,
+
+    /* The `css` key adds `styles.top` (sets z-index to 99)
+     * to let the DropTarget be on top, enabling 'mousemove'
+     * event inside DropTarget.
+     */
     css: styles.target,
+
+    /* The `winner` key is purely for UX, so pieces can't be moved
+     * or `DropTarget` can't be dropped on anymore on game end
+     */
     winner: (gameState.gameInfo?.winner) ? true : false,
+
+    /* The `setter` key is the setState function from the piece
+     * that activated the drag event, ensuring only that specific
+     * piece has its state changed when dragging around.
+     */
     setter: null
   };
 

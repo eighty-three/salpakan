@@ -11,6 +11,7 @@ const PieceStateReducer = (state, action) => {
     }
 
     case 'revertState': {
+      // Return the piece to its initial state
       return {
         style: { visibility: 'visible' },
         isDragging: state.isDragging,
@@ -19,6 +20,7 @@ const PieceStateReducer = (state, action) => {
     }
 
     case 'revertPosition': {
+      // Removes the `transform` in style
       return {
         style: { visibility: 'visible' },
         isDragging: state.isDragging,
@@ -27,6 +29,9 @@ const PieceStateReducer = (state, action) => {
     }
 
     case 'hidePiece': {
+      /* Purely for UX. Hides the flickering of the piece
+       * when changing its position during setup.
+       */
       return {
         style: { visibility: 'hidden' },
         isDragging: state.isDragging,
@@ -35,6 +40,7 @@ const PieceStateReducer = (state, action) => {
     }
 
     case 'snapToCursor': {
+      // Sets the center of the piece's position to cursor
       return {
         style: {
           visibility: 'visible',
@@ -47,6 +53,11 @@ const PieceStateReducer = (state, action) => {
     }
 
     case 'dragStart': {
+      /* For when the user is still dragging the piece
+       * even if it's not allowed anymore, for example,
+       * if the time runs out both in game or in setup,
+       * or if the opponent already surrendered
+       */
       if (!action.payload?.target?.parentNode) {
         return {
           style: null,
@@ -57,6 +68,7 @@ const PieceStateReducer = (state, action) => {
 
       const [x, y] = getCursorCoordinates(action.payload);
 
+      // Sets the center of the piece's position to cursor
       return {
         style: {
           visibility: 'visible',
@@ -69,6 +81,11 @@ const PieceStateReducer = (state, action) => {
     }
 
     case 'dragging': {
+      /* For when the user is still dragging the piece
+       * even if it's not allowed anymore, for example,
+       * if the time runs out both in game or in setup,
+       * or if the opponent already surrendered
+       */
       if (!action.payload?.target?.parentNode) {
         return {
           style: null,
@@ -79,6 +96,7 @@ const PieceStateReducer = (state, action) => {
 
       const [x, y] = getCursorCoordinates(action.payload);
 
+      // Sets the center of the piece's position to cursor
       return {
         style: {
           visibility: 'visible',
@@ -91,6 +109,10 @@ const PieceStateReducer = (state, action) => {
     }
 
     case 'dropped': {
+      /* Sets `hasDropped` to false which would trigger
+       * useEffect for the dragged Piece, resetting its
+       * state
+       */
       return {
         style: state.style,
         isDragging: false,
