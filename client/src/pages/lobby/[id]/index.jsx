@@ -11,6 +11,7 @@ import { lightAuthCheck } from '@/lib/authCheck';
 
 import { getLobby, WSLOBBY_URL}  from '@/lib/lobby';
 import ws from 'ws';
+import useButton from '@/hooks/useButton';
 const WS = global.WebSocket || ws;
 
 const propTypes = {
@@ -36,11 +37,7 @@ const LobbyPage = (props) => {
    * making the button show up
    */
   const [isConnected, setConnection] = useState(true);
-  const [buttonState, setButtonState] = useState({
-    disabled: true,
-    text: 'Join Lobby'
-  });
-
+  const [buttonState, setButtonState] = useButton('Join Lobby');
   useCookie(cookieValue);
 
   // try to connect to the WS server if the user has a cookieValue
@@ -70,10 +67,6 @@ const LobbyPage = (props) => {
         socket.close();
       }
     };
-  }, []);
-
-  useEffect(() => {
-    setButtonState({disabled: false, text: buttonState.text});
   }, []);
 
   /* Otherwise, join the lobby manually.
