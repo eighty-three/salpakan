@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 
+import styles from './index.module.css';
 import Layout, { siteTitle } from '@/components/Layout';
 import Game from '@/components/Game';
 
@@ -29,7 +30,7 @@ const GamePage = (props) => {
       <section>
         { !state.error
           ? (<Game id={id} state={state} />)
-          : (<h1>Game not found</h1>)
+          : (<h1 className={styles.textCenter}>Game not found</h1>)
         }
       </section>
     </Layout>

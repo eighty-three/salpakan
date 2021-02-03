@@ -3,7 +3,8 @@ import Router from 'next/router';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
-import styles from '@/components/Buttons.module.scss';
+import styles from './index.module.css';
+import buttonStyle from '@/components/Buttons.module.scss';
 import Layout, { siteTitle } from '@/components/Layout';
 
 import useCookie from '@/hooks/useCookie';
@@ -101,27 +102,29 @@ const LobbyPage = (props) => {
       <Head>
         <title>{siteTitle}</title>
       </Head>
-      <section className={styles.container}>
+      <section>
         { lobbyFound
-          ? (<h1>{text}</h1>)
-          : (<h1>Lobby not found</h1>)
+          ? (<h1 className={styles.textCenter}>{text}</h1>)
+          : (<h1 className={styles.textCenter}>Lobby not found</h1>)
         }
 
-        {/* Only show the button if there's a lobby found
+        <div className={buttonStyle.container}>
+          {/* Only show the button if there's a lobby found
           * and if the socket is not connected. It prevents
           * the button from showing when there's no actual
           * lobby and if the user is already connected (so
           * he doesn't have to join
           */}
-        {(isConnected === false) && lobbyFound &&
+          {(isConnected === false) && lobbyFound &&
           <button
             onClick={onClickFn}
             disabled={buttonState.disabled}
-            className={`${styles.button} ${styles.l}`}
+            className={`${buttonStyle.button} ${buttonStyle.l}`}
           >
             {buttonState.text}
           </button>
-        }
+          }
+        </div>
       </section>
     </Layout>
   );
