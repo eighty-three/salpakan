@@ -30,7 +30,18 @@
             "ignoredNodes": ["TemplateLiteral"]
           }
         ],
-
+        "array-bracket-spacing": [
+            "error",
+            "never"
+        ],
+        "object-curly-spacing": [
+          "error",
+          "always",
+          {
+            "arraysInObjects": false,
+            "objectsInObjects": false
+          }
+        ],
         "linebreak-style": [
             "error",
             "unix"
