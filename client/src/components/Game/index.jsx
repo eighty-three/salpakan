@@ -168,6 +168,17 @@ const Game = (props) =>{
             <GameStateContext.Provider value={[gameState, dispatch]}>
               <div className={styles.container}>
                 <div className={styles.setup}>
+                  {/*
+                    `gameState.turn === undefined` is used as a check instead of the
+                    usual falsey values (or just plain `!gameState.turn`) because
+                    `gameState.turn === null` is used for when no one should have a turn
+                    but the clocks should still show. Explicitly comparing it to `undefined`
+                    is used to mean that the game hasn't started yet, that is, it's still
+                    in the setup phase, or if the game has ended already
+
+                    In the conditional below, it's checking for `undefined` and if there is
+                    no winner yet, that is, if the game is still in the setup phase
+                  */}
                   {(gameState.turn === undefined && !gameState.gameInfo?.winner) &&
                     <Setup/>
                   }
