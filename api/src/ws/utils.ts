@@ -1,12 +1,9 @@
-import { performance } from 'perf_hooks';
 import { StringDecoder } from 'string_decoder';
-
-import { IRoom, TPlayer, ICount, IPlayer } from '../game/types';
-
 const decoder = new StringDecoder('utf8');
-
 export const decode = (buf: ArrayBuffer): string => decoder.write(Buffer.from(buf));
 
+import { performance } from 'perf_hooks';
+import { IGameStates, IRoom, TPlayer, ICount, IPlayer } from '../game/types';
 
 /* There's apparently a 'Deep Partial' so I can just use that
  * and then refactor connections into `ICount` but I probably
@@ -80,4 +77,36 @@ export const refreshPublishTime = (
   }
 
   return false;
+};
+
+
+export enum WS_RESPONSE_CODE {
+  CONTINUE = 4000,
+  GAME_NOT_FOUND,
+  NOT_IN_LIST
+}
+
+interface IResponse {
+  code: WS_RESPONSE_CODE,
+  reason?: string
+}
+
+export const connectionHandler = (
+  gameStates: IGameStates,
+  roomName: string,
+  user: string | undefined
+): IResponse => {
+  const response: IResponse = {
+    code: WS_RESPONSE_CODE.CONTINUE
+  };
+
+  if (!gameStates[roomName]) {
+    response.code = WS_RESPONSE_CODE.GAME_NOT_FOUND;
+    response.reason= 'Game not found';
+  } else if (!user || !gameStates[roomName].playerList.includes(user)) {
+    response.code = WS_RESPONSE_CODE.NOT_IN_LIST;
+    response.reason= 'The game is currently ongoing';
+  }
+
+  return response;
 };

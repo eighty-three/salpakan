@@ -5,7 +5,7 @@ import { performance } from 'perf_hooks';
 import { getUsername } from '@authMiddleware/authToken';
 import { deleteGame, storeGame } from '../game/model';
 import { cleanBoards, checkMove, checkIfLegal, removeUnknownValues } from '../game/utils';
-import { decode, refreshTime, getGameInfo } from './utils';
+import { decode, refreshTime, getGameInfo, connectionHandler, WS_RESPONSE_CODE } from './utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
 
@@ -14,11 +14,7 @@ export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
   const cn = await getUsername(req.getHeader('cookie'));
   const url = req.getParameter(0);
 
-  if (
-    cn
-    && gameStates[url]?.playerList.includes(cn)
-    && req.getHeader('origin') === config.CLIENT_HOST
-  ) {
+  if (req.getHeader('origin') === config.CLIENT_HOST) {
     res.upgrade(
       { cn, url },
       req.getHeader('sec-websocket-key'),
@@ -36,6 +32,13 @@ export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
 export const open: IOpen<Promise<void>> = async (socket) => {
   socket.subscribe(socket.url);
   const room = gameStates[socket.url];
+
+  const { code, reason } = connectionHandler(gameStates, socket.url, socket.cn);
+  if (code !== WS_RESPONSE_CODE.CONTINUE) {
+    socket.end(code, reason);
+    return;
+  }
+
   const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
   const turn = (room.turn === 'p1') ? 'p1' : 'p2';
 
