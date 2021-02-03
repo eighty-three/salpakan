@@ -133,6 +133,7 @@ export const removeUnknownValues = (
  * @returns {boolean} true if legal, false otherwise
  */
 export const checkIfLegal = (
+  board: IBoard,
   origin: TCoordinate,
   destination: TCoordinate
 ): boolean => {
@@ -167,7 +168,16 @@ export const checkIfLegal = (
       ((Math.abs(originRow - destRow) === 1) && (originCol - destCol === 0))
       || ((originRow - destRow === 0) && (Math.abs(originCol - destCol) === 1))
     ) {
-      return true;
+
+      /* If move is legal, check if `origin` is a piece owned by the player,
+       * and if `destination` is not occupied by a piece owned by the player.
+       * The checks are done like so because in the client-side, if the player
+       * knows the value of a piece, he owns it. Otherwise, it should only show
+       * `{ name: 'unknown' }`
+       */
+      if (board[origin]?.value && !board[destination]?.value) {
+        return true;
+      }
     }
 
     return false;
