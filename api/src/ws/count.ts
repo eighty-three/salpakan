@@ -20,7 +20,7 @@ export const count: ICount = {
  * very very very insignificant
  */
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
-  const upgradeAborted = {aborted: false};
+  const upgradeAborted = { aborted: false };
 
   // get decoded token inside cookie
   const user = await getUsername(req.getHeader('cookie'));

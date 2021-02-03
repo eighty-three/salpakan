@@ -23,8 +23,8 @@ const DropTarget = (props) => {
   const onDrop = (e) => {
     e.preventDefault();
 
-    const [ sW, sH ] = getSquareDimensions(e);
-    const [ x, y ] = getCurrentCoordinates(e);
+    const [sW, sH] = getSquareDimensions(e);
+    const [x, y] = getCurrentCoordinates(e);
     const col = Math.ceil(x/sW);
     const row = Math.ceil(y/sH);
 

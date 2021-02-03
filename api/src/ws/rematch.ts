@@ -14,7 +14,7 @@ interface IConnections {
 const connections: IConnections = {};
 
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
-  const upgradeAborted = {aborted: false};
+  const upgradeAborted = { aborted: false };
   const cn = await getUsername(req.getHeader('cookie'));
   const url = req.getParameter(0);
 

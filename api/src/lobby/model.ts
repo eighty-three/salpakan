@@ -12,7 +12,7 @@ export const createLobby = async (
 
   const expiry = Math.floor(Date.now() / 1000) + 600; // 10 minutes
 
-  query.values = [ roomName, expiry ];
+  query.values = [roomName, expiry];
   await db.none(query);
 };
 
@@ -25,7 +25,7 @@ export const getLobby = async (
 
   const currentTime = Math.floor(Date.now() / 1000);
 
-  query.values = [ roomName, currentTime ];
+  query.values = [roomName, currentTime];
   return await db.oneOrNone(query);
 };
 
@@ -36,7 +36,7 @@ export const deleteLobby = async (
     DELETE FROM lobbies WHERE name=$1'
   });
 
-  query.values = [ roomName ];
+  query.values = [roomName];
   await db.none(query);
 };
 
@@ -47,6 +47,6 @@ export const deleteLobbies = async (): Promise<IName[]|null> => {
 
   const currentTime = Math.floor(Date.now() / 1000);
 
-  query.values = [ currentTime ];
+  query.values = [currentTime];
   return await db.manyOrNone(query);
 };

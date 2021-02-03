@@ -3,15 +3,15 @@ import config from '@utils/config';
 import { performance } from 'perf_hooks';
 
 import { getUsername } from '@authMiddleware/authToken';
-import { deleteGame, storeGame } from '../game/model';
+import { storeGame } from '../game/model';
 import { cleanBoards, checkMove, checkIfLegal, removeUnknownValues } from '../game/utils';
 import { decode, refreshTime, getGameInfo } from './utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
-import {nanoid} from 'nanoid';
+import { nanoid } from 'nanoid';
 
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
-  const upgradeAborted = {aborted: false};
+  const upgradeAborted = { aborted: false };
   const cn = await getUsername(req.getHeader('cookie'));
   const url = req.getParameter(0);
 
@@ -181,7 +181,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
 
           socket.publish(socket.url, JSON.stringify({
             type: 'onSocketMessageMove',
-            data: {...gameInfo, lastMove: coordinates},
+            data: { ...gameInfo, lastMove: coordinates },
             board: coordinates,
             result,
             turn: room.turn

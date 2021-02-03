@@ -6,7 +6,7 @@ const propTypes = {
   error: PropTypes.string
 };
 
-const Custom404 = ({statusCode, error}) => {
+const Custom404 = ({ statusCode, error }) => {
   return (
     statusCode
       ? <h1 className={'text-center'}>{statusCode} - {error}</h1>

@@ -16,11 +16,11 @@ const TurnChangeReducer = (state, action) => {
     }
 
     case 'time': {
-      return {...state, player: { ...state.player, time: action.payload.time }};
+      return { ...state, player: { ...state.player, time: action.payload.time }};
     }
 
     case 'pause': {
-      return {...state, turn: null, player: { ...state.player, turn: null }};
+      return { ...state, turn: null, player: { ...state.player, turn: null }};
     }
   }
 };

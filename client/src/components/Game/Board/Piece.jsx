@@ -26,7 +26,7 @@ const Piece = (props) => {
     owner
   } = props;
 
-  const [ gameState, dispatch ] = useContext(GameStateContext);
+  const [gameState, dispatch] = useContext(GameStateContext);
   const { move } = useContext(SoundContext);
 
   const initialPieceState = {
@@ -45,7 +45,7 @@ const Piece = (props) => {
     hasDropped: false
   };
 
-  const [ pieceState, changePieceState ] = useReducer(PieceStateReducer, initialPieceState);
+  const [pieceState, changePieceState] = useReducer(PieceStateReducer, initialPieceState);
 
   useEffect(() => {
     changePieceState({ type: 'revertState' });
@@ -94,8 +94,8 @@ const Piece = (props) => {
   const touchEnd = (e) => {
     e.preventDefault();
     if (pieceState.isDragging) {
-      const [ sW, sH ] = getSquareDimensions(e);
-      const [ x, y ] = getCurrentCoordinates(e);
+      const [sW, sH] = getSquareDimensions(e);
+      const [x, y] = getCurrentCoordinates(e);
       const col = Math.ceil(x/sW);
       const row = Math.ceil(y/sH);
 

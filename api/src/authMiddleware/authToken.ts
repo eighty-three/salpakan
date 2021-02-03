@@ -26,7 +26,7 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
       const username = decoded.username as string;
       const user = await account.checkUsername(username);
       if (!user) {
-        res.status(401).json({error: 'You are not authenticated'});
+        res.status(401).json({ error: 'You are not authenticated' });
         return;
       }
     }

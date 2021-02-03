@@ -10,8 +10,8 @@ const GameStateReducer = (state, action) => {
 
       return {
         socket: state.socket,
-        gameInfo: {...action.payload.data},
-        board: {...action.payload.board, ...state.board},
+        gameInfo: { ...action.payload.data },
+        board: { ...action.payload.board, ...state.board },
         turn: action.payload.turn,
         player: state.player
       };
@@ -35,7 +35,7 @@ const GameStateReducer = (state, action) => {
     }
 
     case 'onPieceSetup': {
-      const board = {...state.board};
+      const board = { ...state.board };
       const originValue = board[action.payload.origin];
       const destValue = board[action.payload.destination];
 
@@ -68,7 +68,7 @@ const GameStateReducer = (state, action) => {
       // For when the user submits his setup
       return {
         socket: state.socket,
-        gameInfo: {...state.gameInfo, setup: true},
+        gameInfo: { ...state.gameInfo, setup: true },
         board: state.board,
         turn: state.turn,
         player: state.player
@@ -110,7 +110,7 @@ const GameStateReducer = (state, action) => {
 
       return {
         socket: state.socket,
-        gameInfo: {...action.payload.data},
+        gameInfo: { ...action.payload.data },
         board: action.payload.board,
         turn: action.payload.turn,
         player: action.payload.player
@@ -142,14 +142,14 @@ const GameStateReducer = (state, action) => {
       return (action.payload.data.winner)
         ? {
           socket: state.socket,
-          gameInfo: {...action.payload.data},
+          gameInfo: { ...action.payload.data },
           board: action.payload.board,
           turn: state.turn,
           player: state.player
         } : {
           socket: state.socket,
-          gameInfo: {...action.payload.data},
-          board: {...action.payload.board, ...state.board},
+          gameInfo: { ...action.payload.data },
+          board: { ...action.payload.board, ...state.board },
           turn: state.turn,
           player: state.player
         };
@@ -162,7 +162,7 @@ const GameStateReducer = (state, action) => {
        */
       return {
         socket: state.socket,
-        gameInfo: {...action.payload.data},
+        gameInfo: { ...action.payload.data },
         board: state.board,
         turn: action.payload.turn,
         player: state.player
@@ -173,7 +173,7 @@ const GameStateReducer = (state, action) => {
       // Game end, show the whole board and set the winner
       return {
         socket: state.socket,
-        gameInfo: {...action.payload.data},
+        gameInfo: { ...action.payload.data },
         board: action.payload.board,
         turn: state.turn,
         player: state.player
@@ -184,14 +184,14 @@ const GameStateReducer = (state, action) => {
       if (action.payload.data.winner) {
         return {
           socket: state.socket,
-          gameInfo: {...action.payload.data},
+          gameInfo: { ...action.payload.data },
           board: action.payload.board,
           turn: state.turn,
           player: state.player
         };
       }
 
-      const fixedBoard = {...state.board};
+      const fixedBoard = { ...state.board };
 
       // if result === 1, the attacker should be placed in its destination
       if (action.payload.result === 1) {
@@ -222,8 +222,8 @@ const GameStateReducer = (state, action) => {
 
       return {
         socket: state.socket,
-        gameInfo: {...action.payload.data},
-        board: {...fixedBoard},
+        gameInfo: { ...action.payload.data },
+        board: { ...fixedBoard },
         turn: action.payload.turn,
         player: state.player
       };
