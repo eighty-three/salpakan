@@ -88,6 +88,34 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
 
   switch (data.type) {
     case 'ready': {
+
+      /* When the user opens two instances of the same room,
+       * he can submit a board in the first instance, change up
+       * the position in the second, and then submit it again
+       *
+       * This sends back the first board sent by the user,
+       * ignoring the second board sent
+       *
+       * However, for when a user send his board in the first instance while
+       * he modifies the board in the second without resubmitting it, it
+       * still modifies the board state in the client
+       *
+       * While it can probably be fixed by reworking the whole structure of
+       * what gets published by the WebSocket server and how the received board
+       * gets processed in the client, it doesn't really matter because of the
+       * checkIfLegal function used both in the client and the server, preventing
+       * any form of cheating or what have you. The 'illegal' moves will just
+       * end up being ignored.
+       */
+      if (room[player].start) {
+        socket.send(JSON.stringify({
+          type: 'onSocketMessageReadyResubmit',
+          board: room[player].board,
+        }));
+
+        return;
+      }
+
       room[player].start = true;
       room[player].board = data.message;
 
