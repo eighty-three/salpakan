@@ -128,6 +128,21 @@ const GameStateReducer = (state, action) => {
       };
     }
 
+    case 'onSocketMessageReadyResubmit': {
+      /* For when the user resubmits the board
+       *
+       * It reverts back the board to the board first sent,
+       * instead of what is currently in the client
+       */
+      return {
+        socket: state.socket,
+        gameInfo: state.gameInfo,
+        board: action.payload.board,
+        turn: state.turn,
+        player: state.player
+      };
+    }
+
     case 'onSocketMessageTime': {
       /* Because of the disparity in time in the server and the client,
        * even if the time has ran out for the user, while it triggers a
