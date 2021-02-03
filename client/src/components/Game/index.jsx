@@ -164,7 +164,7 @@ const Game = (props) =>{
       {/* Actual content */}
       { gameState?.board
         ? (
-          <SoundContext.Provider value={{move: moveRef.current, vs: vsRef.current}}>
+          <SoundContext.Provider value={{ move: moveRef.current, vs: vsRef.current }}>
             <GameStateContext.Provider value={[gameState, dispatch]}>
               <div className={styles.container}>
                 <div className={styles.setup}>

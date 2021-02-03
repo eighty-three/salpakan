@@ -9,7 +9,7 @@ import Layout, { siteTitle } from '@/components/Layout';
 import useCookie from '@/hooks/useCookie';
 import { lightAuthCheck } from '@/lib/authCheck';
 
-import { getLobby, WSLOBBY_URL}  from '@/lib/lobby';
+import { getLobby, WSLOBBY_URL }  from '@/lib/lobby';
 import ws from 'ws';
 import useButton from '@/hooks/useButton';
 const WS = global.WebSocket || ws;

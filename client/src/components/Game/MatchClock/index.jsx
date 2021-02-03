@@ -29,7 +29,7 @@ const Player = (props) => {
     }
   };
 
-  const [ state, dispatch ] = useReducer(TurnChangeReducer, initialState);
+  const [state, dispatch] = useReducer(TurnChangeReducer, initialState);
 
   useEffect(() => {
     if (gameState.turn) {
@@ -47,7 +47,7 @@ const Player = (props) => {
 
   const fn = (time, turn) => {
     if (turn && time > 0) {
-      dispatch({ type: 'time', payload: { time: time - 1 } });
+      dispatch({ type: 'time', payload: { time: time - 1 }});
     } else if (time <= 0) {
       gameState.socket.send(JSON.stringify({ type: 'time', message: playerNum }));
     }

@@ -67,8 +67,8 @@ export const cleanBoards = (
   b1: IBoard,
   b2: IBoard
 ): { board1: IBoard, board2: IBoard, bothBoards: IBoard } => {
-  const cleanB1: IBoard = {...b1};
-  const cleanB2: IBoard = {...b2};
+  const cleanB1: IBoard = { ...b1 };
+  const cleanB2: IBoard = { ...b2 };
   const bothBoards: IBoard = {};
 
   for (const key in b1) {
@@ -97,8 +97,8 @@ export const removeUnknownValues = (
   winnerBoard: IBoard,
   loserBoard: IBoard
 ): { fixedWinnerBoard: IBoard, fixedLoserBoard: IBoard } => {
-  const fixedWinnerBoard: IBoard = {...winnerBoard};
-  const fixedLoserBoard: IBoard = {...loserBoard};
+  const fixedWinnerBoard: IBoard = { ...winnerBoard };
+  const fixedLoserBoard: IBoard = { ...loserBoard };
 
   for (const key in fixedWinnerBoard) {
     if (fixedWinnerBoard[key as TCoordinate]?.name === 'unknown') {

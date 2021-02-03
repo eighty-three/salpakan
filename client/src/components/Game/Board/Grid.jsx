@@ -3,8 +3,8 @@ import React from 'react';
 import styles from './Grid.module.scss';
 
 const Grid = () => {
-  const columns = [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' ];
-  const rows = [ '1', '2', '3', '4', '5', '6', '7', '8' ];
+  const columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+  const rows = ['1', '2', '3', '4', '5', '6', '7', '8'];
 
   return (
     <>

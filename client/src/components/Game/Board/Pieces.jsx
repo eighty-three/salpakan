@@ -6,12 +6,12 @@ import DropTarget from './DropTarget';
 import Square from './Square';
 
 import DragReducer from '@/reducers/DragReducer';
-import {checkDirection} from '@/lib/game';
+import { checkDirection } from '@/lib/game';
 import GameStateContext from '@/contexts/GameStateContext';
 
 const Pieces = () => {
   const [gameState] = useContext(GameStateContext);
-  const [ board, setBoard ] = useState({});
+  const [board, setBoard] = useState({});
   const initialState = {
     /* The `draggable` key, when set to false, adds the
      * event handlers to DropTarget, enabling the proper drag
@@ -37,7 +37,7 @@ const Pieces = () => {
     setter: null
   };
 
-  const [ state, dispatch ] = useReducer(DragReducer, initialState);
+  const [state, dispatch] = useReducer(DragReducer, initialState);
 
   useEffect(() => {
     setBoard(gameState.board);

@@ -16,7 +16,7 @@ const useButton = (buttonText) => {
 
   // enables it on mount
   useEffect(() => {
-    setButtonState({...buttonState, disabled: false });
+    setButtonState({ ...buttonState, disabled: false });
   }, []);
 
   return [buttonState, setButtonState];

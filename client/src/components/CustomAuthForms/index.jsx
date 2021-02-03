@@ -29,7 +29,7 @@ const CustomAuthForms = (props) => {
     router
   } = props;
 
-  const [ buttonState, setButtonState ] = useState({ disabled: false, text: 'Submit' });
+  const [buttonState, setButtonState] = useState({ disabled: false, text: 'Submit' });
 
   useEffect(() => {
     setButtonState({ ...buttonState, text: title });

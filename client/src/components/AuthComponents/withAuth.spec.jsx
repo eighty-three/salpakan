@@ -25,7 +25,7 @@ describe('renders', () => {
   test('with username, protectRoute', async () => {
     // The data is supposed to be passed to the Auth Component via getServerSideProps
     // To simulate the process, currying is used
-    const data = { username, data: { props: { someProp } } };
+    const data = { username, data: { props: { someProp }}};
     const response = await withAuthComponent(TestComponent, 'protectRoute')(data);
     render(response);
 
@@ -35,7 +35,7 @@ describe('renders', () => {
   });
 
   test('with username, loggedIn', async () => {
-    const data = { username, data: { props: { someProp } } };
+    const data = { username, data: { props: { someProp }}};
     const response = await withAuthComponent(TestComponent, 'loggedIn')(data);
     render(response);
 
@@ -45,7 +45,7 @@ describe('renders', () => {
   });
 
   test('no username, protectRoute', async () => {
-    const data = { data: { props: { someProp } } };
+    const data = { data: { props: { someProp }}};
     const response = await withAuthComponent(TestComponent, 'protectRoute')(data);
     render(response);
 
@@ -55,7 +55,7 @@ describe('renders', () => {
   });
 
   test('no username, loggedIn', async () => {
-    const data = { data: { props: { someProp } } };
+    const data = { data: { props: { someProp }}};
     const response = await withAuthComponent(TestComponent, 'loggedIn')(data);
     render(response);
 

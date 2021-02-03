@@ -42,7 +42,7 @@ const Setup = () => {
 
   useEffect(() => {
     const bool = (gameState.gameInfo?.setup) ? true : false;
-    setButtonState({...buttonState, disabled: bool});
+    setButtonState({ ...buttonState, disabled: bool });
   }, [gameState.gameInfo?.setup]);
 
   const countDown = async () => {
@@ -56,7 +56,7 @@ const Setup = () => {
 
   const onClickFn = () => {
     if (!gameState.gameInfo?.setup) {
-      setButtonState({...buttonState, disabled: true});
+      setButtonState({ ...buttonState, disabled: true });
       dispatch({ type: 'onReady' });
       gameState.socket.send(JSON.stringify({ type: 'ready', message: gameState.board }));
     }

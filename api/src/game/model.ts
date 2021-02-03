@@ -40,7 +40,7 @@ export const startGame = async (
     INSERT INTO games (name, player1, player2, expiry) VALUES ($1, $2, $3, $4)'
   });
 
-  query.values= [ roomName, ...arr, expiry ];
+  query.values= [roomName, ...arr, expiry];
   await db.none(query);
 };
 
@@ -54,7 +54,7 @@ export const getGame = async (
 
   const currentTime = Math.floor(Date.now() / 1000);
 
-  query.values = [ roomName, currentTime ];
+  query.values = [roomName, currentTime];
   return await db.oneOrNone(query);
 };
 
@@ -70,7 +70,7 @@ export const storeGame = async (
     WHERE name=$1'
   });
 
-  query.values = [ roomName, winnerBoard, loserBoard, false, winner ];
+  query.values = [roomName, winnerBoard, loserBoard, false, winner];
   await db.none(query);
 };
 
@@ -81,7 +81,7 @@ export const deleteGame = async (
     DELETE FROM games WHERE name=$1'
   });
 
-  query.values = [ roomName ];
+  query.values = [roomName];
   await db.none(query);
 };
 
@@ -92,6 +92,6 @@ export const deleteGames = async (): Promise<IName[]|null> => {
 
   const currentTime = Math.floor(Date.now() / 1000);
 
-  query.values = [ currentTime ];
+  query.values = [currentTime];
   return await db.manyOrNone(query);
 };
