@@ -3,12 +3,11 @@ import config from '@utils/config';
 import { performance } from 'perf_hooks';
 
 import { getUsername } from '@authMiddleware/authToken';
-import { storeGame } from '../game/model';
+import { deleteGame, storeGame } from '../game/model';
 import { cleanBoards, checkMove, checkIfLegal, removeUnknownValues } from '../game/utils';
 import { decode, refreshTime, getGameInfo } from './utils';
 
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
-import { nanoid } from 'nanoid';
 
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
   const upgradeAborted = { aborted: false };
@@ -81,12 +80,19 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
   /* Because of delays caused by a slow network, there's a chance that the client
    * would still send messages that aren't supposed to be sent anymore.
    */
-  if (room.winner) return;
+  if (!room || room.winner) return;
 
   const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
   const opponent = (socket.cn === room.p1.name) ? 'p2' : 'p1';
 
   switch (data.type) {
+    case 'afk': {
+      delete gameStates[socket.url];
+      await deleteGame(socket.url);
+
+      break;
+    }
+
     case 'ready': {
 
       /* When the user opens two instances of the same room,
@@ -139,23 +145,6 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
           turn: 'p1'
         }));
       }
-
-      break;
-    }
-
-    case 'afk': {
-      room.winner = room.p1.name;
-      const { fixedWinnerBoard, fixedLoserBoard } = removeUnknownValues(room.p1.board, room.p2.board);
-
-      /* nanoid(20) is used to generate a unique string as a way of declaring that there is no winner
-       *
-       * I could set it to `null` or false but I'd have to rework the entire structure of the Game
-       * component because of how much it all relies on the winner being falsy
-       *
-       * Collisions are nigh impossible + the stored row in the database will get deleted in some
-       * 2 hours anyway, so it's not really a big deal, just that it indicates code smell...
-       */
-      await storeGame(socket.url, fixedWinnerBoard, fixedLoserBoard, nanoid(20));
 
       break;
     }
