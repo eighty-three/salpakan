@@ -39,9 +39,10 @@ const Game = (props) =>{
   };
 
   const [gameState, dispatch] = useReducer(GameStateReducer, initialState);
-  const [connections, setConnections] = useState([]);
-  const [gameSocketCn, retryGameSocket] = useState(true);
-  const [countSocketCn, retryCountSocket] = useState(true);
+  const [connections, setConnections] = useState({ list: [], retry: true });
+
+  const initialText = 'Connecting to the game...';
+  const [text, setText] = useState(initialText);
 
   const moveRef = useRef();
   const vsRef = useRef();
@@ -50,15 +51,12 @@ const Game = (props) =>{
   useEffect(() => {
     let gameSocket;
     let isMounted = true;
-    if (state?.ongoing) {
+
+    if (state.ongoing) {
       gameSocket = new WS(`${WSGAME_URL}/${id}`);
 
       gameSocket.onopen = () => {
         dispatch({ type: 'onSocketConnect', payload: { socket: gameSocket }});
-      };
-
-      gameSocket.onerror = () => {
-        retryGameSocket(!gameSocketCn);
       };
 
       gameSocket.onmessage = async (message) => {
@@ -81,38 +79,32 @@ const Game = (props) =>{
           dispatch({ type: 'onSocketClose' });
         }
       };
+
     } else {
       dispatch({ type: 'onGameEnd', payload: state });
     }
 
     return () => {
-      if (state.ongoing) {
-        isMounted = false;
+      isMounted = false;
+
+      if (state.ongoing && gameSocket.readyState === 1) {
         gameSocket.close();
       }
     };
-
-  /* gameSocketCn (and countSocketCn below) is added
-   * to the dependency array to make the socket reconnect
-   * in case of errors
-   */
-  }, [gameSocketCn]);
+  }, []);
 
   useEffect(() => {
     let countSocket;
-    if (state?.ongoing) {
+    let isMounted = true;
+    if (state.ongoing) {
       countSocket = new WS(`${WSGAME_URL}/count/${id}`);
-
-      countSocket.onerror = () => {
-        retryCountSocket(!countSocketCn);
-      };
 
       countSocket.onmessage = async (message) => {
         const res = JSON.parse(message.data);
         clearDelay();
 
-        if (res.connections.length !== connections.length) {
-          setConnections(res.connections);
+        if (res.connections.length !== connections.list.length) {
+          setConnections({ list: res.connections, retry: !connections.retry });
         }
 
         await delay();
@@ -122,28 +114,35 @@ const Game = (props) =>{
         }));
       };
 
-      countSocket.onclose = () => {
-        clearDelay();
+      countSocket.onclose = (message) => {
+        if (isMounted) {
+          if (message.code > 4000) {
+            setText(message.reason);
+          }
+
+          clearDelay();
+        }
       };
     }
 
     return () => {
       clearDelay();
+      isMounted = false;
 
-      if (state.ongoing) {
+      if (state.ongoing && countSocket.readyState === 1) {
         countSocket.close();
       }
     };
 
-  /* if the array is used for the connections, useEffect will
-   * loop indefinitely, hence stringify
+  /* If the array is used for the connections, useEffect
+   * will loop indefinitely, hence stringify
    */
-  }, [JSON.stringify(connections), countSocketCn]);
+  }, [connections.retry]);
 
   const surrenderFn = useCallback(
-    (socket) => {
-      if (socket) {
-        socket.send(JSON.stringify({
+    (socketCn) => {
+      if (socketCn) {
+        socketCn.send(JSON.stringify({
           type: 'surrender'
         }));
       }
@@ -185,7 +184,7 @@ const Game = (props) =>{
                 </div>
                 <div className={styles.p1}>
                   <Player
-                    connections={connections}
+                    connections={connections.list}
                     playerNum={'p1'}
                   />
                 </div>
@@ -194,7 +193,7 @@ const Game = (props) =>{
                 </div>
                 <div className={styles.p2}>
                   <Player
-                    connections={connections}
+                    connections={connections.list}
                     playerNum={'p2'}
                   />
                 </div>
@@ -212,7 +211,7 @@ const Game = (props) =>{
             </GameStateContext.Provider>
           </SoundContext.Provider>
         ) : (
-          <h1 className={styles.textCenter}>Connecting to the game...</h1>
+          <h1 className={styles.textCenter}>{text}</h1>
         )
       }
     </>
