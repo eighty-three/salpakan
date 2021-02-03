@@ -139,7 +139,9 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
           destination: data.message.d
         };
 
-        if (!checkIfLegal(coordinates.origin, coordinates.destination)) {
+        refreshTime(room, player);
+
+        if (!checkIfLegal(room[player].board, coordinates.origin, coordinates.destination)) {
           const gameInfo = getGameInfo(room);
 
           socket.send(JSON.stringify({
@@ -150,9 +152,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
         } else {
           const result = checkMove(gameStates, socket.url, player, data.message.o, data.message.d);
 
-          refreshTime(room, player);
           room.turn = opponent;
-
           const gameInfo = getGameInfo(room);
 
           if (gameInfo.winner) {
