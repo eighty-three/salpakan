@@ -141,9 +141,9 @@ const Game = (props) =>{
   }, [connections.retry]);
 
   const surrenderFn = useCallback(
-    (socketCn) => {
-      if (socketCn) {
-        socketCn.send(JSON.stringify({
+    () => {
+      if (gameState.socket) {
+        gameState.socket.send(JSON.stringify({
           type: 'surrender'
         }));
       }
@@ -203,7 +203,7 @@ const Game = (props) =>{
                     <>
                       {(gameState.gameInfo?.winner)
                         ? (<Rematch id={id} />)
-                        : (<Surrender onClickFn={() => surrenderFn(gameState.socket)} />)
+                        : (<Surrender onClickFn={surrenderFn} />)
                       }
                     </>
                   }
