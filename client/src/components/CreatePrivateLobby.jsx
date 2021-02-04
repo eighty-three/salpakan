@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import styles from './Buttons.module.scss';
+import buttonStyle from '@/styles/Buttons.module.scss';
 
 import useButton from '@/hooks/useButton';
 import { createLobby } from '@/lib/lobby';
@@ -21,11 +21,11 @@ const CreatePrivateLobby = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={buttonStyle.container}>
       <button
         onClick={onClickFn}
         disabled={buttonState.disabled}
-        className={`${styles.button} ${styles.l}`}
+        className={`${buttonStyle.button} ${buttonStyle.l}`}
       >
         {buttonState.text}
       </button>
