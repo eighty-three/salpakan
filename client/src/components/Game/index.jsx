@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useReducer, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
+import utilStyles from '@/styles/utilStyles.module.scss';
 import styles from './index.module.scss';
 import Player from './Player';
 import Setup from './Setup';
@@ -211,7 +212,7 @@ const Game = (props) =>{
             </GameStateContext.Provider>
           </SoundContext.Provider>
         ) : (
-          <h1 className={styles.textCenter}>{text}</h1>
+          <h1 className={utilStyles.textCenter}>{text}</h1>
         )
       }
     </>
