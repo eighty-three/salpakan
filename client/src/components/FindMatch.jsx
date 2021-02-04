@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Router from 'next/router';
 
-import styles from './Buttons.module.scss';
+import buttonStyle from '@/styles/Buttons.module.scss';
 
 import useButton from '@/hooks/useButton';
 import useDelay from '@/hooks/useDelay';
@@ -61,11 +61,11 @@ const FindMatch = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={buttonStyle.container}>
       <button
         onClick={onClickFn}
         disabled={buttonState.disabled}
-        className={`${styles.button} ${styles.l}`}
+        className={`${buttonStyle.button} ${buttonStyle.l}`}
       >
         {buttonState.text}
       </button>

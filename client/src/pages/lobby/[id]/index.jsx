@@ -4,7 +4,7 @@ import Head from 'next/head';
 import PropTypes from 'prop-types';
 
 import styles from './index.module.css';
-import buttonStyle from '@/components/Buttons.module.scss';
+import buttonStyle from '@/styles/Buttons.module.scss';
 import Layout, { siteTitle } from '@/components/Layout';
 
 import useCookie from '@/hooks/useCookie';
