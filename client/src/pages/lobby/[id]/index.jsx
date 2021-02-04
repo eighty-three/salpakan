@@ -3,7 +3,7 @@ import Router from 'next/router';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 
-import styles from './index.module.css';
+import utilStyles from '@/styles/utilStyles.module.scss';
 import buttonStyle from '@/styles/Buttons.module.scss';
 import Layout, { siteTitle } from '@/components/Layout';
 
@@ -104,8 +104,8 @@ const LobbyPage = (props) => {
       </Head>
       <section>
         { lobbyFound
-          ? (<h1 className={styles.textCenter}>{text}</h1>)
-          : (<h1 className={styles.textCenter}>Lobby not found</h1>)
+          ? (<h1 className={utilStyles.textCenter}>{text}</h1>)
+          : (<h1 className={utilStyles.textCenter}>Lobby not found</h1>)
         }
 
         <div className={buttonStyle.container}>
