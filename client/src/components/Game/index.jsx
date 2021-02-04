@@ -135,8 +135,8 @@ const Game = (props) =>{
       }
     };
 
-  /* If the array is used for the connections, useEffect
-   * will loop indefinitely, hence stringify
+  /* If the connections array is used for the dependencies
+   * useEffect will loop indefinitely
    */
   }, [connections.retry]);
 
