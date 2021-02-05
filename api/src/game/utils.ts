@@ -1,55 +1,56 @@
 import { IBoard, IGameStates, TPlayer, TCoordinate } from './types';
 
+export const player1Board = {
+  A1: { name: 'spy', value: 99 },
+  B1: { name: 'spy', value: 99 },
+  C1: { name: 'flag', value: 1 },
+  D1: { name: 'private', value: 2 },
+  E1: { name: 'private', value: 2 },
+  F1: { name: 'private', value: 2 },
+  G1: { name: 'private', value: 2 },
+  H1: { name: 'private', value: 2 },
+  I1: { name: 'private', value: 2 },
+  A2: { name: 'sergeant', value: 3 },
+  B2: { name: 'lt2', value: 4 },
+  C2: { name: 'lt1', value: 5 },
+  D2: { name: 'captain', value: 6 },
+  E2: { name: 'major', value: 7 },
+  F2: { name: 'ltcol', value: 8 },
+  G2: { name: 'colonel', value: 9 },
+  H2: { name: 'gen1', value: 10 },
+  I2: { name: 'gen2', value: 11 },
+  A3: { name: 'gen3', value: 12 },
+  B3: { name: 'gen4', value: 13 },
+  C3: { name: 'gen5', value: 14 }
+};
+
+
+export const player2Board = {
+  A8: { name: 'spy', value: 99 },
+  B8: { name: 'spy', value: 99 },
+  C8: { name: 'flag', value: 1 },
+  D8: { name: 'private', value: 2 },
+  E8: { name: 'private', value: 2 },
+  F8: { name: 'private', value: 2 },
+  G8: { name: 'private', value: 2 },
+  H8: { name: 'private', value: 2 },
+  I8: { name: 'private', value: 2 },
+  A7: { name: 'sergeant', value: 3 },
+  B7: { name: 'lt2', value: 4 },
+  C7: { name: 'lt1', value: 5 },
+  D7: { name: 'captain', value: 6 },
+  E7: { name: 'major', value: 7 },
+  F7: { name: 'ltcol', value: 8 },
+  G7: { name: 'colonel', value: 9 },
+  H7: { name: 'gen1', value: 10 },
+  I7: { name: 'gen2', value: 11 },
+  A6: { name: 'gen3', value: 12 },
+  B6: { name: 'gen4', value: 13 },
+  C6: { name: 'gen5', value: 14 }
+};
+
 export const getInitialBoardState = (player: TPlayer): IBoard => {
-  const player1Board = {
-    A1: { name: 'spy', value: 99 },
-    B1: { name: 'spy', value: 99 },
-    C1: { name: 'flag', value: 1 },
-    D1: { name: 'private', value: 2 },
-    E1: { name: 'private', value: 2 },
-    F1: { name: 'private', value: 2 },
-    G1: { name: 'private', value: 2 },
-    H1: { name: 'private', value: 2 },
-    I1: { name: 'private', value: 2 },
-    A2: { name: 'sergeant', value: 3 },
-    B2: { name: 'lt2', value: 4 },
-    C2: { name: 'lt1', value: 5 },
-    D2: { name: 'captain', value: 6 },
-    E2: { name: 'major', value: 7 },
-    F2: { name: 'ltcol', value: 8 },
-    G2: { name: 'colonel', value: 9 },
-    H2: { name: 'gen1', value: 10 },
-    I2: { name: 'gen2', value: 11 },
-    A3: { name: 'gen3', value: 12 },
-    B3: { name: 'gen4', value: 13 },
-    C3: { name: 'gen5', value: 14 }
-  };
-
-  const player2Board = {
-    A8: { name: 'spy', value: 99 },
-    B8: { name: 'spy', value: 99 },
-    C8: { name: 'flag', value: 1 },
-    D8: { name: 'private', value: 2 },
-    E8: { name: 'private', value: 2 },
-    F8: { name: 'private', value: 2 },
-    G8: { name: 'private', value: 2 },
-    H8: { name: 'private', value: 2 },
-    I8: { name: 'private', value: 2 },
-    A7: { name: 'sergeant', value: 3 },
-    B7: { name: 'lt2', value: 4 },
-    C7: { name: 'lt1', value: 5 },
-    D7: { name: 'captain', value: 6 },
-    E7: { name: 'major', value: 7 },
-    F7: { name: 'ltcol', value: 8 },
-    G7: { name: 'colonel', value: 9 },
-    H7: { name: 'gen1', value: 10 },
-    I7: { name: 'gen2', value: 11 },
-    A6: { name: 'gen3', value: 12 },
-    B6: { name: 'gen4', value: 13 },
-    C6: { name: 'gen5', value: 14 }
-  };
-
-  return (player === 'p1') ? player1Board : player2Board;
+  return (player === 'p1') ? { ...player1Board } : { ...player2Board };
 };
 
 /**
@@ -128,6 +129,7 @@ export const removeUnknownValues = (
  * checks two coordinates, e.g., `A1` and `B1`, to know if
  * movement between them is possible
  *
+ * @board {IBoard} board The board of the player making the move
  * @param {TCoordinate} origin The coordinate where the move comes from
  * @param {TCoordinate} destination The coordinate where the move is going to
  * @returns {boolean} true if legal, false otherwise
