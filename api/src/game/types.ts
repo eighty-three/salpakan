@@ -20,6 +20,7 @@ export interface IRoom extends TPlayers {
   winner: string | null;
   connections: ICount;
   flagOnLastRow?: string;
+  bot: boolean
 }
 
 export interface IPlayer {

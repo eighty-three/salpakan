@@ -1,14 +1,23 @@
 import db from '@utils/db';
 import { PreparedStatement as PS } from 'pg-promise';
 import { IGameStates, IGame, IBoard, IName } from './types';
-import { getInitialBoardState } from './utils';
+import { getInitialBoardState, player2Board } from './utils';
+import { randomizeBoard } from './bot';
 
 export const startGame = async (
   gameStates: IGameStates,
   roomName: string,
-  connections: string[]
+  connections: string[],
+  bot?: boolean
 ): Promise<void> => {
   const arr = connections.slice();
+
+  /* Multiple checks for if bot game
+   *
+   * p2.board initializes a randomized board state
+   * p2.start is set to true immediately
+   * The `bot` key is to explicitly state that it's a bot game
+   */
 
   // deciseconds used for all time values in gameStates
   gameStates[roomName] = {
@@ -21,9 +30,9 @@ export const startGame = async (
     },
     p2: {
       name: arr[1],
-      board: getInitialBoardState('p2'),
+      board: (!bot) ? getInitialBoardState('p2') : randomizeBoard('p2', player2Board),
       time: 6000,
-      start: false
+      start: (!bot) ? false : true
     },
     board: {},
     turn: 'p1',
@@ -31,7 +40,8 @@ export const startGame = async (
     lastMove: 0,
     winner: null,
     time: Math.floor(Date.now() / 100) + 1200, // 2 minutes setup time
-    connections: { list: [], lastPublished: 0 }
+    connections: { list: [], lastPublished: 0 },
+    bot: !!bot
   };
 
   const expiry = Math.floor(Date.now() / 1000) + 7200; // 2 hours till game expire
