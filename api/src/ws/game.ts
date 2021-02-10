@@ -1,270 +1,121 @@
-import { gameStates } from './index';
-import config from '@utils/config';
 import { performance } from 'perf_hooks';
-
+import config from '@utils/config';
 import { getUsername } from '@authMiddleware/authToken';
-import { deleteGame, storeGame } from '../game/model';
-import { cleanBoards, checkMove, checkIfLegal, removeUnknownValues } from '../game/utils';
-import { decode, refreshTime, getGameInfo, connectionHandler, WS_RESPONSE_CODE } from './utils';
-
-import { IUpgrade, IOpen, IClose, IMessage } from './types';
+import { gameStates } from './index';
+import { cleanBoards, checkMove, checkIfLegal } from '../game/utils';
+import { deleteGame } from '../game/model';
+import { getMove } from '../game/bot';
+import { decode, refreshTime, declareWinner, connectionHandler, handshakeHandler } from './utils';
+import SendSocketMessage from './socketMessages';
+import { IUpgrade, IOpen, IClose, IMessage, WS_RESPONSE_CODE } from './types';
 
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
-  const upgradeAborted = { aborted: false };
   const cn = await getUsername(req.getHeader('cookie'));
   const url = req.getParameter(0);
 
-  if (req.getHeader('origin') === config.CLIENT_HOST) {
-    res.upgrade(
-      { cn, url },
-      req.getHeader('sec-websocket-key'),
-      req.getHeader('sec-websocket-protocol'),
-      req.getHeader('sec-websocket-extensions'),
-      context
-    );
-  } else {
-    res.onAborted(() => { upgradeAborted.aborted = true; });
-    res.writeStatus('400 Bad Request');
-    res.end();
-  }
+  const checks = [(req.getHeader('origin') === config.CLIENT_HOST)];
+  const handshake = { req, res, context };
+  handshakeHandler({ cn, url }, checks, handshake);
 };
 
-export const open: IOpen<Promise<void>> = async (socket) => {
-  socket.subscribe(socket.url);
-  const room = gameStates[socket.url];
-
+export const open: IOpen<void> = (socket) => {
   const { code, reason } = connectionHandler(gameStates, socket.url, socket.cn);
   if (code !== WS_RESPONSE_CODE.CONTINUE) {
     socket.end(code, reason);
     return;
   }
 
-  const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
-  const turn = (room.turn === 'p1') ? 'p1' : 'p2';
+  const room = gameStates[socket.url];
+  socket.subscribe(socket.url);
 
-  let gameInfo, ongoingTurn;
-  if (room.start) {
-    refreshTime(room, turn);
-    gameInfo = getGameInfo(room);
-    ongoingTurn = turn;
-  } else {
-    gameInfo = {
-      time: room.time - Math.floor(Date.now() / 100),
-      player,
-      setup: (room[player].start)
-    };
-
-    ongoingTurn = undefined;
-  }
-
-  socket.send(JSON.stringify({
-    type: 'onSocketOpen',
-    data: gameInfo,
-    board: room[player].board,
-    turn: ongoingTurn,
-    player
-  }));
+  if (room.start) refreshTime(room, room.turn);
+  SendSocketMessage.FOR_SOCKET_OPEN(socket, room);
 };
 
 export const close: IClose<void> = (socket) => {
   const room = gameStates[socket.url];
-
-  if (room?.start) {
-    const turn = (room.turn === 'p1') ? 'p1' : 'p2';
-    refreshTime(room, turn);
-  }
+  if (room?.start) refreshTime(room, room.turn);
 };
 
 export const message: IMessage<Promise<void>> = async (socket, message) => {
-  const data = JSON.parse(decode(message));
-
   const room = gameStates[socket.url];
-
   /* Because of delays caused by a slow network, there's a chance that the client
    * would still send messages that aren't supposed to be sent anymore.
    */
   if (!room || room.winner) return;
 
+  const data = JSON.parse(decode(message));
   const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
   const opponent = (socket.cn === room.p1.name) ? 'p2' : 'p1';
 
   switch (data.type) {
-    case 'afk': {
-      delete gameStates[socket.url];
-      await deleteGame(socket.url);
-
-      break;
-    }
-
     case 'ready': {
-
       /* When the user opens two instances of the same room,
        * he can submit a board in the first instance, change up
        * the position in the second, and then submit it again
        *
        * This sends back the first board sent by the user,
-       * ignoring the second board sent
-       *
-       * However, for when a user send his board in the first instance while
-       * he modifies the board in the second without resubmitting it, it
-       * still modifies the board state in the client
-       *
-       * While it can probably be fixed by reworking the whole structure of
-       * what gets published by the WebSocket server and how the received board
-       * gets processed in the client, it doesn't really matter because of the
-       * checkIfLegal function used both in the client and the server, preventing
-       * any form of cheating or what have you. The 'illegal' moves will just
-       * end up being ignored.
+       * ignoring the second board sent. Any other discrepancies
+       * is dealt with by checkIfLegal in the client
        */
       if (room[player].start) {
-        socket.send(JSON.stringify({
-          type: 'onSocketMessageReadyResubmit',
-          board: room[player].board,
-        }));
-
+        SendSocketMessage.FOR_SETUP_BUG(socket, room, player);
         return;
       }
 
       room[player].start = true;
       room[player].board = data.message;
 
-      if (
-        room.p1.start
-        && room.p2.start
-      ) {
+      if (room.p1.start && room.p2.start) {
         room.start = true;
         room.lastMove = performance.now() / 100;
-
-        const { board1, board2, bothBoards } = cleanBoards(room.p1.board, room.p2.board);
-        room.board = bothBoards;
-        room.p1.board = board1;
-        room.p2.board = board2;
-
-        const gameInfo = getGameInfo(room);
-        socket.publish(socket.url, JSON.stringify({
-          type: 'onGameStart',
-          data: gameInfo,
-          board: room.board,
-          turn: 'p1'
-        }));
+        cleanBoards(room.p1.board, room.p2.board, gameStates, socket.url);
+        SendSocketMessage.FOR_GAME_START(socket, room);
       }
-
       break;
     }
 
     case 'move': {
-      if (player === room.turn) {
-        const coordinates = {
-          origin: data.message.o,
-          destination: data.message.d
-        };
-
-        refreshTime(room, player);
-
-        if (!checkIfLegal(room[player].board, coordinates.origin, coordinates.destination)) {
-          const gameInfo = getGameInfo(room);
-
-          socket.send(JSON.stringify({
-            type: 'onSocketMessageBug',
-            data: gameInfo,
-            turn: player
-          }));
-        } else {
-          const result = checkMove(gameStates, socket.url, player, data.message.o, data.message.d);
-
-          room.turn = opponent;
-          const gameInfo = getGameInfo(room);
-
-          if (gameInfo.winner) {
-            const { winnerBoard, loserBoard } = (gameInfo.winner === room.p1.name) ? {
-              winnerBoard: room.p1.board,
-              loserBoard: room.p2.board
-            } : {
-              winnerBoard: room.p2.board,
-              loserBoard: room.p1.board
-            };
-
-            const { fixedWinnerBoard, fixedLoserBoard } = removeUnknownValues(winnerBoard, loserBoard);
-            room.board = { ...fixedWinnerBoard, ...fixedLoserBoard };
-
-            await storeGame(socket.url, fixedWinnerBoard, fixedLoserBoard, gameInfo.winner);
-
-            socket.publish(socket.url, JSON.stringify({
-              type: 'onSocketMessageMove',
-              data: gameInfo,
-              board: room.board,
-              turn: room.turn
-            }));
-
-            return;
-          }
-
-          socket.publish(socket.url, JSON.stringify({
-            type: 'onSocketMessageMove',
-            data: { ...gameInfo, lastMove: coordinates },
-            board: coordinates,
-            result,
-            turn: room.turn
-          }));
-        }
+      if (player !== room.turn) return;
+      if (!checkIfLegal(room[player].board, data.message)) {
+        SendSocketMessage.FOR_MOVE_BUG(socket, room, player);
+        return;
       }
 
+      refreshTime(room, player);
+
+      const result = checkMove(gameStates, socket.url, player, data.message);
+      room.turn = opponent;
+      if (room.winner) await declareWinner(gameStates, socket.url, room.winner);
+      SendSocketMessage.FOR_MOVE(socket, room, result, data.message);
+
+      if (room.bot) {
+        const botMove = getMove(room.p2.board);
+        const botMoveResult = checkMove(gameStates, socket.url, 'p2', botMove);
+        room.turn = 'p1';
+        if (room.winner) await declareWinner(gameStates, socket.url, room.winner);
+        SendSocketMessage.FOR_BOT_MOVE(socket, room, botMoveResult, botMove);
+      }
+      break;
+    }
+
+    case 'afk': {
+      delete gameStates[socket.url];
+      await deleteGame(socket.url);
       break;
     }
 
     case 'time': {
       refreshTime(room, data.message);
-
-      const gameInfo = getGameInfo(room);
-
-      if (gameInfo.winner) {
-        const { winnerBoard, loserBoard } = (gameInfo.winner === room.p1.name) ? {
-          winnerBoard: room.p1.board,
-          loserBoard: room.p2.board
-        } : {
-          winnerBoard: room.p2.board,
-          loserBoard: room.p1.board
-        };
-
-        const { fixedWinnerBoard, fixedLoserBoard } = removeUnknownValues(winnerBoard, loserBoard);
-        room.board = { ...fixedWinnerBoard, ...fixedLoserBoard };
-
-        await storeGame(socket.url, fixedWinnerBoard, fixedLoserBoard, gameInfo.winner);
-      }
-
-      socket.publish(socket.url, JSON.stringify({
-        type: 'onSocketMessageTime',
-        data: gameInfo,
-        board: room.board
-      }));
-
+      if (room.winner) await declareWinner(gameStates, socket.url, room.winner);
+      SendSocketMessage.FOR_TIME(socket, room);
       break;
     }
 
     case 'surrender': {
       room.winner = room[opponent].name;
-      const gameInfo = getGameInfo(room);
-
-      const { winnerBoard, loserBoard } = (gameInfo.winner === room.p1.name) ? {
-        winnerBoard: room.p1.board,
-        loserBoard: room.p2.board
-      } : {
-        winnerBoard: room.p2.board,
-        loserBoard: room.p1.board
-      };
-
-      const { fixedWinnerBoard, fixedLoserBoard } = removeUnknownValues(winnerBoard, loserBoard);
-      room.board = { ...fixedWinnerBoard, ...fixedLoserBoard };
-
-      await storeGame(socket.url, fixedWinnerBoard, fixedLoserBoard, room.winner);
-
-      socket.publish(socket.url, JSON.stringify({
-        type: 'onSocketMessageSurrender',
-        data: gameInfo,
-        board: room.board,
-        turn: room.turn
-      }));
-
+      await declareWinner(gameStates, socket.url, room.winner);
+      SendSocketMessage.FOR_WINNER(socket, room);
       break;
     }
   }
