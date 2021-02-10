@@ -3,17 +3,12 @@ const decoder = new StringDecoder('utf8');
 export const decode = (buf: ArrayBuffer): string => decoder.write(Buffer.from(buf));
 
 import { performance } from 'perf_hooks';
-import { IGameStates, IRoom, TPlayer, ICount, IPlayer } from '../game/types';
+import { nanoid } from 'nanoid';
+import { removeUnknownValues } from '../game/utils';
+import { storeGame } from '../game/model';
 
-/* There's apparently a 'Deep Partial' so I can just use that
- * and then refactor connections into `ICount` but I probably
- * don't need to go ham on the types
- */
-type TPartialPlayers = { [K in TPlayer]: Pick<IPlayer, 'name' | 'time'> };
-interface IGameInfo extends TPartialPlayers {
-  winner: string | null;
-  connections: string[];
-}
+import { IGameStates, IRoom, TPlayer, ICount } from '../game/types';
+import { IGameInfo, IResponse, WS_RESPONSE_CODE, IHandshake } from './types';
 
 /* Refactored into its own function because
  * these properties are the most queried
@@ -29,8 +24,29 @@ export const getGameInfo = (room: IRoom): IGameInfo => {
       time: room.p2.time
     },
     winner: room.winner,
-    connections: room.connections.list
+    connections: room.connections.list,
+    bot: room.bot
   };
+};
+
+export const declareWinner = async (
+  gameStates: IGameStates,
+  roomName: string,
+  winner: string
+): Promise<void> => {
+  const room = gameStates[roomName];
+  const { winnerBoard, loserBoard } = (winner === room.p1.name) ? {
+    winnerBoard: room.p1.board,
+    loserBoard: room.p2.board
+  } : {
+    winnerBoard: room.p2.board,
+    loserBoard: room.p1.board
+  };
+
+  const { fixedWinnerBoard, fixedLoserBoard } = removeUnknownValues(winnerBoard, loserBoard);
+  gameStates[roomName].board = { ...fixedWinnerBoard, ...fixedLoserBoard };
+
+  await storeGame(roomName, fixedWinnerBoard, fixedLoserBoard, winner);
 };
 
 export const refreshTime = (room: IRoom, player: TPlayer): void => {
@@ -79,26 +95,12 @@ export const refreshPublishTime = (
   return false;
 };
 
-
-export enum WS_RESPONSE_CODE {
-  CONTINUE = 4000,
-  GAME_NOT_FOUND,
-  NOT_IN_LIST
-}
-
-interface IResponse {
-  code: WS_RESPONSE_CODE,
-  reason?: string
-}
-
 export const connectionHandler = (
   gameStates: IGameStates,
   roomName: string,
   user: string | undefined
 ): IResponse => {
-  const response: IResponse = {
-    code: WS_RESPONSE_CODE.CONTINUE
-  };
+  const response: IResponse = { code: WS_RESPONSE_CODE.CONTINUE };
 
   if (!gameStates[roomName]) {
     response.code = WS_RESPONSE_CODE.GAME_NOT_FOUND;
@@ -109,4 +111,29 @@ export const connectionHandler = (
   }
 
   return response;
+};
+
+export const handshakeHandler = (
+  passedData: { [key: string]: any },
+  checks: boolean[],
+  handshake: IHandshake
+): void => {
+  const { req, res, context } = handshake;
+  const upgradeAborted = { aborted: false };
+
+  const check = checks.reduce((a, b) => (b) ? a : false, true);
+
+  if (check) {
+    res.upgrade(
+      passedData,
+      req.getHeader('sec-websocket-key'),
+      req.getHeader('sec-websocket-protocol'),
+      req.getHeader('sec-websocket-extensions'),
+      context
+    );
+  } else {
+    res.onAborted(() => { upgradeAborted.aborted = true; });
+    res.writeStatus('400 Bad Request');
+    res.end();
+  }
 };
