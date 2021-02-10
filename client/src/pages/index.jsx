@@ -6,6 +6,7 @@ import styles from './index.module.css';
 import Layout, { siteTitle } from '@/components/Layout';
 import FindMatch from '@/components/FindMatch';
 import CreatePrivateLobby from '@/components/CreatePrivateLobby';
+import PlayAgainstBot from '@/components/PlayAgainstBot';
 
 import useCookie from '@/hooks/useCookie';
 import useDelay from '@/hooks/useDelay';
@@ -67,6 +68,7 @@ const Home = (props) => {
 
         <FindMatch />
         <CreatePrivateLobby />
+        <PlayAgainstBot />
       </section>
     </Layout>
   );
