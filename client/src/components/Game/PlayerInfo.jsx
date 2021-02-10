@@ -23,7 +23,11 @@ const PlayerInfo = (props) => {
   return (
     <div className={styles.container}>
       <div className={styles.indicatorContainer}>
-        { ongoing &&
+        {/*
+          Should probably properly use a specific key
+          for determining bot games instead of doing this
+        */}
+        { ongoing && name !== 'Mr. Bot' &&
           <div className={`${styles.indicator} ${statusStyle}`}></div>
         }
       </div>
