@@ -202,7 +202,14 @@ const Game = (props) =>{
                   />
                 </div>
                 <div className={styles.button}>
-                  {(gameState.turn !== undefined && state?.ongoing) &&
+                  {/*
+                    Only show the Rematch and Surrender button
+                    if the user is a player, not a spectator
+                  */}
+                  {(gameState.turn !== undefined
+                    && state?.ongoing
+                    && gameState?.player
+                  ) &&
                     <>
                       {(gameState.gameInfo?.winner)
                         ? (<Rematch id={id} />)
