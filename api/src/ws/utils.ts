@@ -101,13 +101,20 @@ export const connectionHandler = (
   user: string | undefined
 ): IResponse => {
   const response: IResponse = { code: WS_RESPONSE_CODE.CONTINUE };
+  const inList = user || nanoid(20); // Random string if null
 
   if (!gameStates[roomName]) {
     response.code = WS_RESPONSE_CODE.GAME_NOT_FOUND;
     response.reason= 'Game not found';
-  } else if (!user || !gameStates[roomName].playerList.includes(user)) {
-    response.code = WS_RESPONSE_CODE.NOT_IN_LIST;
-    response.reason= 'The game is currently ongoing';
+  } else if (
+    /* If the game is still in its setup phase and
+     * the user isn't among the players
+     */
+    !gameStates[roomName].start
+    && !gameStates[roomName].playerList.includes(inList)
+  ) {
+    response.code = WS_RESPONSE_CODE.IN_SETUP;
+    response.reason= 'The game is currently in setup phase';
   }
 
   return response;
