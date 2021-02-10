@@ -1,53 +1,33 @@
-import { gameStates } from './index';
 import config from '@utils/config';
-
-import { IUpgrade, IOpen, IClose } from './types';
-
 import { getUsername } from '@authMiddleware/authToken';
+import { gameStates } from './index';
 import { startGame } from '../game/model';
 import { deleteLobby } from '../lobby/model';
-
-interface ILobbies {
-  [key: string]: {
-    connections: string[];
-  }
-}
+import { handshakeHandler } from './utils';
+import { IUpgrade, IOpen, IClose, ILobbies } from './types';
 
 export const lobbies: ILobbies = {};
 
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
-  const upgradeAborted = { aborted: false };
   const cn = await getUsername(req.getHeader('cookie'));
   const url = req.getParameter(0);
 
   if (!lobbies[url]) {
-    lobbies[url] = {
-      connections: [],
-    };
+    lobbies[url] = { connections: []};
   }
 
-  if (
-    cn
-    && !lobbies[url].connections.includes(cn)
-    && req.getHeader('origin') === config.CLIENT_HOST
-  ) {
-    res.upgrade(
-      { cn, url },
-      req.getHeader('sec-websocket-key'),
-      req.getHeader('sec-websocket-protocol'),
-      req.getHeader('sec-websocket-extensions'),
-      context
-    );
-  } else {
-    res.onAborted(() => { upgradeAborted.aborted = true; });
-    res.writeStatus('400 Bad Request');
-    res.end();
-  }
+  const checks = [
+    !!cn,
+    !!(cn && !lobbies[url].connections.includes(cn)),
+    (req.getHeader('origin') === config.CLIENT_HOST)
+  ];
+  const handshake = { req, res, context };
+  handshakeHandler({ cn, url }, checks, handshake);
 };
 
 export const open: IOpen<Promise<void>> = async (socket) => {
-  lobbies[socket.url].connections.push(socket.cn);
   socket.subscribe(`${socket.url}_pl`);
+  lobbies[socket.url].connections.push(socket.cn);
 
   if (lobbies[socket.url].connections.length > 1) {
     // start the game

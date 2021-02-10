@@ -1,28 +1,13 @@
 import config from '@utils/config';
-
-import { decode, refreshPublishTime } from './utils';
+import { getUsername } from '@authMiddleware/authToken';
+import { decode, refreshPublishTime, handshakeHandler } from './utils';
+import SendSocketMessage from './socketMessages';
 import { IUpgrade, IOpen, IClose, IMessage } from './types';
 import { ICount } from '../game/types';
 
-import { getUsername } from '@authMiddleware/authToken';
+export const count: ICount = { list: [], lastPublished: 0 };
 
-export const count: ICount = {
-  list: [],
-  lastPublished: 0
-};
-
-/* If the game ever reaches 1000 concurrent users I'll probably remove
- * all of these checks and just add a simple counter that adds the
- * incoming connection no matter what. The higher the actual users,
- * the less effect someone who wants to bother messing with the count
- * can actually manage. So for now, iterating over all the connections
- * is fine since looping over 50 (if I'm lucky) items some n times is
- * very very very insignificant
- */
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
-  const upgradeAborted = { aborted: false };
-
-  // get decoded token inside cookie
   const user = await getUsername(req.getHeader('cookie'));
 
   // get IP address (getRemoteAddress is unnecessary in deployment)
@@ -40,34 +25,21 @@ export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
     if (toDelete > -1) count.list.splice(toDelete, 1);
   }
 
-  if (
-    cn
-    && req.getHeader('origin') === config.CLIENT_HOST
-  ) {
-    res.upgrade(
-      { cn },
-      req.getHeader('sec-websocket-key'),
-      req.getHeader('sec-websocket-protocol'),
-      req.getHeader('sec-websocket-extensions'),
-      context
-    );
-  } else {
-    res.onAborted(() => { upgradeAborted.aborted = true; });
-    res.writeStatus('400 Bad Request');
-    res.end();
-  }
+  const checks = [
+    !!cn,
+    (req.getHeader('origin') === config.CLIENT_HOST)
+  ];
+  const handshake = { req, res, context };
+  handshakeHandler({ cn }, checks, handshake);
 };
 
-export const open: IOpen<Promise<void>> = async (socket) => {
+export const open: IOpen<void> = (socket) => {
   if (!count.list.includes(socket.cn)) {
     count.list.push(socket.cn);
   }
 
   socket.subscribe('count');
-  socket.publish('count', JSON.stringify({
-    message: count.list.length
-  }));
-
+  SendSocketMessage.FOR_COUNT(socket, count.list.length);
   refreshPublishTime(count, 15, true);
 };
 
@@ -76,17 +48,11 @@ export const close: IClose<void> = (socket) => {
   if (toDelete > -1) count.list.splice(toDelete, 1);
 };
 
-export const message: IMessage<Promise<void>> = async (socket, message) => {
+export const message: IMessage<void> = (socket, message) => {
   const data = JSON.parse(decode(message));
-
-  // Instead of "ponging" back, just publish the updated count
   if (data.message === 'ping') {
-
-    // Prevents spamming of count, allowing publish only every 15 seconds
     if (refreshPublishTime(count, 15)) {
-      socket.publish('count', JSON.stringify({
-        message: count.list.length
-      }));
+      SendSocketMessage.FOR_COUNT(socket, count.list.length);
     }
   }
 };
