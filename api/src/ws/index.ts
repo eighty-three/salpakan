@@ -1,13 +1,13 @@
 import uWS from 'uWebSockets.js';
-import { IGameStates } from '../game/types';
 import config from '@utils/config';
+import { IGameStates } from '../game/types';
 
 import * as mm from './matchmaking';
 import * as game from './game';
 import * as lobby from './lobby';
 import * as count from './count';
 import * as rematch from './rematch';
-import * as ingameCount from './ingameCount';
+import * as statusIndicator from './statusIndicator';
 
 const options = {
   key_file_name: '../../misc/privkey.pem',
@@ -56,14 +56,14 @@ wsApp.ws('/ws/lobby/:id', {
   close: lobby.close
 });
 
-wsApp.ws('/ws/game/count/:id', {
+wsApp.ws('/ws/game/status/:id', {
   compression: 1,
   maxPayloadLength: 1024,
   idleTimeout: 0,
-  upgrade: ingameCount.upgrade,
-  open: ingameCount.open,
-  close: ingameCount.close,
-  message: ingameCount.message
+  upgrade: statusIndicator.upgrade,
+  open: statusIndicator.open,
+  close: statusIndicator.close,
+  message: statusIndicator.message
 });
 
 wsApp.ws('/ws/game/:id', {
