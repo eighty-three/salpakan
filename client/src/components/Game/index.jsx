@@ -41,18 +41,16 @@ const Game = (props) =>{
 
   const [gameState, dispatch] = useReducer(GameStateReducer, initialState);
   const [connections, setConnections] = useState({ list: [], retry: true });
-
   const initialText = 'Connecting to the game...';
   const [text, setText] = useState(initialText);
-
   const moveRef = useRef();
   const vsRef = useRef();
-  const [delay, clearDelay] = useDelay(5);
+  const [statusPingDelay, clearStatusPingDelay] = useDelay(5);
+  const [botMoveDelay, clearBotMoveDelay] = useDelay(1.5);
 
   useEffect(() => {
     let gameSocket;
     let isMounted = true;
-
     if (state.ongoing) {
       gameSocket = new WS(`${WSGAME_URL}/${id}`);
 
@@ -62,6 +60,9 @@ const Game = (props) =>{
 
       gameSocket.onmessage = async (message) => {
         const res = JSON.parse(message.data);
+        clearBotMoveDelay();
+
+        if (res.bot) await botMoveDelay();
 
         /* attach sound file to play sound from component instead of importing
          * the sound each time
@@ -78,6 +79,7 @@ const Game = (props) =>{
          */
         if (isMounted) {
           dispatch({ type: 'onSocketClose' });
+          clearBotMoveDelay();
         }
       };
 
@@ -86,6 +88,7 @@ const Game = (props) =>{
     }
 
     return () => {
+      clearBotMoveDelay();
       isMounted = false;
 
       if (state.ongoing && gameSocket.readyState === 1) {
@@ -95,43 +98,43 @@ const Game = (props) =>{
   }, []);
 
   useEffect(() => {
-    let countSocket;
+    let statusIndicatorSocket;
     let isMounted = true;
     if (state.ongoing) {
-      countSocket = new WS(`${WSGAME_URL}/count/${id}`);
+      statusIndicatorSocket = new WS(`${WSGAME_URL}/status/${id}`);
 
-      countSocket.onmessage = async (message) => {
+      statusIndicatorSocket.onmessage = async (message) => {
         const res = JSON.parse(message.data);
-        clearDelay();
+        clearStatusPingDelay();
 
         if (res.connections.length !== connections.list.length) {
           setConnections({ list: res.connections, retry: !connections.retry });
         }
 
-        await delay();
+        await statusPingDelay();
 
-        countSocket.send(JSON.stringify({
+        statusIndicatorSocket.send(JSON.stringify({
           type: 'ping',
         }));
       };
 
-      countSocket.onclose = (message) => {
+      statusIndicatorSocket.onclose = (message) => {
         if (isMounted) {
           if (message.code > 4000) {
             setText(message.reason);
           }
 
-          clearDelay();
+          clearStatusPingDelay();
         }
       };
     }
 
     return () => {
-      clearDelay();
+      clearStatusPingDelay();
       isMounted = false;
 
-      if (state.ongoing && countSocket.readyState === 1) {
-        countSocket.close();
+      if (state.ongoing && statusIndicatorSocket.readyState === 1) {
+        statusIndicatorSocket.close();
       }
     };
 
