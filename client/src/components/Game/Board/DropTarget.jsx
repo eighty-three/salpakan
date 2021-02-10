@@ -30,26 +30,24 @@ const DropTarget = (props) => {
 
     const destination = `${String.fromCharCode(col+64)}${row}`;
     const origin = localStorage.getItem('coordinate');
+    const coordinates = { origin, destination };
 
     if (gameState.turn === undefined && !gameState.gameInfo.setup) {
       if (origin === destination || !checkIfWithinBounds(gameState.player, destination)) {
         dragState.setter({ type: 'revertPosition' });
 
       } else if (checkIfWithinBounds(gameState.player, destination)) {
-        dispatch({ type: 'onPieceSetup', payload: { origin, destination }, sound: { move }});
+        dispatch({ type: 'onPieceSetup', payload: coordinates, sound: { move }});
         dragState.setter({ type: 'hidePiece' });
       }
 
     } else if (gameState.player === gameState.turn) {
-      if (checkIfLegal(gameState.board, origin, destination)) {
+      if (checkIfLegal(gameState.board, coordinates)) {
         dispatch({ type: 'onPieceMove' });
 
         gameState.socket.send(JSON.stringify({
           type: 'move',
-          message: {
-            o: origin,
-            d: destination
-          }
+          message: coordinates
         }));
       }
     }

@@ -101,6 +101,7 @@ const Piece = (props) => {
 
       const origin = localStorage.getItem('coordinate');
       const destination = `${String.fromCharCode(col+64)}${row}`;
+      const coordinates = { origin, destination };
 
       if (gameState.turn === undefined && !gameState.gameInfo.setup) {
 
@@ -111,7 +112,7 @@ const Piece = (props) => {
           changePieceState({ type: 'revertPosition' });
 
         } else if (checkIfWithinBounds(gameState.player, destination)) {
-          dispatch({ type: 'onPieceSetup', payload: { origin, destination }, sound: { move }});
+          dispatch({ type: 'onPieceSetup', payload: coordinates, sound: { move }});
 
           /* Hide piece after setGameInfo so it won't go back to its
            * original position in that instant. useEffect's purpose is to
@@ -121,7 +122,7 @@ const Piece = (props) => {
           changePieceState({ type: 'hidePiece' });
         }
       } else if (gameState.player === gameState.turn) { // Only allow moves on player's turn
-        if (checkIfLegal(gameState.board, origin, destination)) {
+        if (checkIfLegal(gameState.board, coordinates)) {
 
           /* Set turn to null so that the timer for the player stops
            * counting down from his perspective while waiting for the
@@ -131,10 +132,7 @@ const Piece = (props) => {
 
           gameState.socket.send(JSON.stringify({
             type: 'move',
-            message: {
-              o: origin,
-              d: destination
-            }
+            messages: coordinates
           }));
         }
       }
