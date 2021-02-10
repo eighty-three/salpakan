@@ -61,12 +61,16 @@ export const getInitialBoardState = (player: TPlayer): IBoard => {
  *
  * @param {IBoard} b1 First board (from player 1)
  * @param {IBoard} b2 Second board (from player 2)
- * @returns {Object} An object with `b1` and `b2` (no values) combined, an object with `b1` (no values) and `b2` combined, and an object that contains `b1` and `b2` with both having no values
+ * @param {IGameStates} gameStates The object containing all rooms and their data
+ * @param {string} roomName id/url of the room
+ * @returns {void}
  */
 export const cleanBoards = (
   b1: IBoard,
-  b2: IBoard
-): { board1: IBoard, board2: IBoard, bothBoards: IBoard } => {
+  b2: IBoard,
+  gameStates: IGameStates,
+  roomName: string
+): void => {
   const cleanB1: IBoard = { ...b1 };
   const cleanB2: IBoard = { ...b2 };
   const bothBoards: IBoard = {};
@@ -81,7 +85,9 @@ export const cleanBoards = (
     cleanB1[key as TCoordinate] = { name: 'unknown' };
   }
 
-  return { board1: cleanB1, board2: cleanB2, bothBoards };
+  gameStates[roomName].board = (gameStates[roomName].bot) ? cleanB1: bothBoards;
+  gameStates[roomName].p1.board = cleanB1;
+  gameStates[roomName].p2.board = cleanB2;
 };
 
 /**
