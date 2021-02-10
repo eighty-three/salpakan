@@ -24,7 +24,6 @@ export const player1Board = {
   C3: { name: 'gen5', value: 14 }
 };
 
-
 export const player2Board = {
   A8: { name: 'spy', value: 99 },
   B8: { name: 'spy', value: 99 },
@@ -129,17 +128,16 @@ export const removeUnknownValues = (
  * checks two coordinates, e.g., `A1` and `B1`, to know if
  * movement between them is possible
  *
- * @board {IBoard} board The board of the player making the move
- * @param {TCoordinate} origin The coordinate where the move comes from
- * @param {TCoordinate} destination The coordinate where the move is going to
+ * @param {IBoard} board The board of the player making the move
+ * @param {object} coordinates The origin and destination of the move
  * @returns {boolean} true if legal, false otherwise
  */
 export const checkIfLegal = (
   board: IBoard,
-  origin: TCoordinate,
-  destination: TCoordinate
+  coordinates: { origin: TCoordinate, destination: TCoordinate }
 ): boolean => {
   try {
+    const { origin, destination } = coordinates;
     if (origin.length !== 2 || destination.length !== 2) return false;
 
     const originRow = origin.charCodeAt(0);
@@ -196,17 +194,17 @@ export const checkIfLegal = (
  * @param {IGameStates} gameState The object containing all rooms and their data
  * @param {string} roomName id/url of the room
  * @param {TPlayer} player The player who sent the move ('p1' or 'p2')
- * @param {TCoordinate} origin The coordinate where the move comes from
- * @param {TCoordinate} destination The coordinate where the move is going to
+ * @param {object} coordinates The origin and destination of the move
  * @returns {number} impossible (0), success (1), failure (2), or draw (3)
  */
 export const checkMove = (
   gameStates: IGameStates,
   roomName: string,
   player: TPlayer,
-  origin: TCoordinate,
-  destination: TCoordinate
+  coordinates: { origin: TCoordinate, destination: TCoordinate }
 ): number => {
+  const { origin, destination } = coordinates;
+
   const room = gameStates[roomName];
   const flag = room.flagOnLastRow;
   const lastRow = (player === 'p1') ? '8' : '1';

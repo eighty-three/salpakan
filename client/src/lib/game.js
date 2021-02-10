@@ -21,11 +21,10 @@ export const getGame = async (id) => {
  * pieces are owned by the correct player
  *
  * @param {IBoard} board The board of the player making the move
- * @param {TCoordinate} origin The coordinate where the move comes from
- * @param {TCoordinate} destination The coordinate where the move is going to
+ * @param {object} coordinates The origin and destination of the move
  * @returns {boolean} true if legal, false otherwise
  */
-export const checkIfLegal = (board, origin, destination) => {
+export const checkIfLegal = (board, { origin, destination }) => {
   try {
     if (origin.length !== 2 || destination.length !== 2) return false;
 
