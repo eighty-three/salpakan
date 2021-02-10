@@ -27,4 +27,7 @@ router.use('/game', gameRouter);
 import lobbyRouter from './lobby/router';
 router.use('/lobby', lobbyRouter);
 
+import botRouter from './bot/router';
+router.use('/bot', botRouter);
+
 export default router;
