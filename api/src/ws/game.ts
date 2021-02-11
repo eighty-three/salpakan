@@ -89,7 +89,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
       if (room.winner) await declareWinner(gameStates, socket.url, room.winner);
       SendSocketMessage.FOR_MOVE(socket, room, result, data.message);
 
-      if (room.bot) {
+      if (room.bot && !room.winner) {
         const botMove = getMove(room.p2.board);
         const botMoveResult = checkMove(gameStates, socket.url, 'p2', botMove);
         room.turn = 'p1';
