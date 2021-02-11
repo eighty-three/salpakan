@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-
+import styles from './index.module.scss';
+import buttonStyle from '@/styles/Buttons.module.scss';
 import IndividualForm from '@/components/CustomAuthForms/IndividualForm';
 import transForm from '@/components/CustomAuthForms/transForm';
+
+import useButton from '@/hooks/useButton';
 
 const propTypes = {
   forms: PropTypes.arrayOf(PropTypes.string),
@@ -29,15 +29,9 @@ const CustomAuthForms = (props) => {
     router
   } = props;
 
-  const [buttonState, setButtonState] = useState({ disabled: false, text: 'Submit' });
-
-  useEffect(() => {
-    setButtonState({ ...buttonState, text: title });
-  }, [title]);
-
+  const [buttonState, setButtonState] = useButton('Submit');
   const { register, handleSubmit } = useForm();
-
-  const revertStatus = () => setButtonState({ ...buttonState, text: title });
+  const revertText = () => setButtonState({ ...buttonState, text: 'Submit' });
 
   const onSubmit = async (data) => {
     let req;
@@ -56,8 +50,9 @@ const CustomAuthForms = (props) => {
         break;
     }
 
-    // Need to explicitly state that req exists for when signing up or logging in,
-    // aka cases whose successful "return values" are just redirects
+    /* Need to explicitly state that req exists for when signing up or logging in,
+     * aka cases whose successful "return values" are just redirects
+     */
     if (req && !req.error) {
       setButtonState({ disabled: false, text: req.message });
     } else if (req && req.error) {
@@ -66,29 +61,23 @@ const CustomAuthForms = (props) => {
   };
 
   return (
-    <>
-      {/* Override form:focus color */}
-      <style type="text/css">
-        {`
-        .form-control:focus {
-          border-color: rgba(130, 25, 25, 0.3);
-          box-shadow: 0 0 0 0.2rem rgba(130, 25, 25, 0.15);
-        }
-      `}
-      </style>
-
-      <div className={'w-75 mx-auto'}>
-        <Form className="mx-auto" onSubmit={handleSubmit(onSubmit)}>
-          {forms.map((form) => transForm(form)).map((formData) =>
-            <IndividualForm key={formData.id} {...formData} title={title} register={register} />
-          )}
-
-          <Button onBlur={revertStatus} variant="dark" type="submit" block disabled={buttonState.disabled}>
-            {buttonState.text}
-          </Button>
-        </Form>
+    <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
+      <p className={styles.title}>{title}</p>
+      <div className={styles.formGroups}>
+        {forms.map((form) => transForm(form)).map((formData) =>
+          <IndividualForm key={formData.id} {...formData} context={context} register={register} />
+        )}
       </div>
-    </>
+
+      <button
+        onBlur={revertText}
+        type={'submit'}
+        className={`${buttonStyle.button} ${buttonStyle.long}`}
+        disabled={buttonState.disabled}
+      >
+        {buttonState.text}
+      </button>
+    </form>
   );
 };
 
