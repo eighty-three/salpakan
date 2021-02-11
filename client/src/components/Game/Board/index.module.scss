@@ -20,6 +20,7 @@
     position: absolute;
     width: $square-width * 9;
     height: $square-width / 9 * 8 * 8;
+    box-shadow: 1px 0.5px 5px black;
   }
 
   .positionWrapper {
