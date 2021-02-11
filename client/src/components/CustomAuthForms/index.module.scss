@@ -1,0 +1,58 @@
+.container {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 25% 50% 25%;
+  grid-template-areas:
+    "title"
+    "formGroups"
+    "button";
+
+  margin: 3.5em auto;
+  max-width: 400px;
+  height: 400px;
+
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0.5px 0.5px 15px rgb(175, 175, 175);
+}
+
+.formGroups {
+  grid-area: formGroups;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 2em;
+  font-weight: bold;
+  color: rgb(130, 25, 25);
+  grid-area: title;
+  margin: 1em auto;
+}
+
+.form {
+  margin: 0 auto;
+  height: 40px;
+  width: 100%;
+  font-size: 1em;
+  padding: 0 0.5em;
+
+  border-radius: 5px;
+  border: thin solid rgba(0, 0, 0, 0.1);
+
+  &:focus {
+    outline-color: rgba(130, 25, 25, 0.5);
+  }
+}
+
+.label {
+  font-size: 0.8em;
+  color: gray;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin: 0.7em auto;
+  width: 300px;
+}
