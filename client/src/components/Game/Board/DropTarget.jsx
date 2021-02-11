@@ -28,8 +28,8 @@ const DropTarget = (props) => {
     const col = Math.ceil(x/sW);
     const row = Math.ceil(y/sH);
 
-    const destination = `${String.fromCharCode(col+64)}${row}`;
     const origin = localStorage.getItem('coordinate');
+    const destination = `${String.fromCharCode(col+64)}${row}`;
     const coordinates = { origin, destination };
 
     if (gameState.turn === undefined && !gameState.gameInfo.setup) {
