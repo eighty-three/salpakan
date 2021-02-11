@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 
 import styles from './Setup.module.css';
+import buttonStyle from '@/styles/Buttons.module.scss';
 import Countdown from './MatchClock/Countdown';
 
 import useButton from '@/hooks/useButton';
@@ -49,7 +50,11 @@ const Setup = () => {
           <>
             { gameState.gameInfo &&
               <>
-                <button className={styles.button} onClick={onClickFn} disabled={buttonState.disabled}>
+                <button
+                  className={`${buttonStyle.button} ${buttonStyle.long_s}`}
+                  onClick={onClickFn}
+                  disabled={buttonState.disabled}
+                >
                   {buttonState.text}
                 </button>
                 <div className={styles.clock}>
