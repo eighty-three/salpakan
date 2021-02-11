@@ -105,8 +105,10 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
     }
 
     case 'afk': {
-      delete gameStates[socket.url];
-      await deleteGame(socket.url);
+      if (!room.start) {
+        delete gameStates[socket.url];
+        await deleteGame(socket.url);
+      }
       break;
     }
 
