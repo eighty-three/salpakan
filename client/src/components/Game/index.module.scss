@@ -2,7 +2,7 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: 35px auto 35px auto;
+  grid-template-rows: 40px auto 40px auto;
   grid-template-areas:
     "p1"
     "board"
@@ -31,7 +31,7 @@
   margin: 0 auto;
 }
 
-@media (min-width: 576px) { .container { grid-template-rows: 60px auto 60px auto; } }
+@media (min-width: 576px) { .container { grid-template-rows: 70px auto 70px auto; } }
 
 @mixin styling($square-width) {
   .container {
