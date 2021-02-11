@@ -12,8 +12,8 @@
 
 .indicator {
   border-radius: 100%;
-  height: 100%;
-  width: 100%;
+  height: 5px;
+  width: 5px;
 }
 
 .indicatorContainer {
@@ -47,9 +47,16 @@
 }
 
 @media (min-width: 576px) {
+  .indicator {
+    border-radius: 100%;
+    height: 10px;
+    width: 10px;
+  }
+
   .indicatorContainer {
     height: 10px;
     width: 10px;
     margin: 10px;
   }
+
 }
