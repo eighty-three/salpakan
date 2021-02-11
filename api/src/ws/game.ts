@@ -125,5 +125,8 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
       SendSocketMessage.FOR_WINNER(socket, room);
       break;
     }
+
+    default:
+      break;
   }
 };
