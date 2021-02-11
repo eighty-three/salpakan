@@ -22,6 +22,14 @@ const FOR_MOVE = (
   result: number,
   coordinates: { origin: TCoordinate, destination: TCoordinate }
 ): void => {
+  /* Add the time delay from the bot move
+   * to the player to correct any discrepancies.
+   * Only do so past the first move
+   */
+  if (room.bot && room.p2.time !== 6000) {
+    room.p1.time = room.p1.time + 15;
+  }
+
   const gameInfo = getGameInfo(room);
 
   const message = (!room.winner)
