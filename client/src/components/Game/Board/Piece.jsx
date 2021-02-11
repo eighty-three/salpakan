@@ -110,7 +110,6 @@ const Piece = (props) => {
          */
         if (origin === destination || !checkIfWithinBounds(gameState.player, destination)) {
           changePieceState({ type: 'revertPosition' });
-
         } else if (checkIfWithinBounds(gameState.player, destination)) {
           dispatch({ type: 'onPieceSetup', payload: coordinates, sound: { move }});
 
@@ -132,7 +131,7 @@ const Piece = (props) => {
 
           gameState.socket.send(JSON.stringify({
             type: 'move',
-            messages: coordinates
+            message: coordinates
           }));
         }
       }
