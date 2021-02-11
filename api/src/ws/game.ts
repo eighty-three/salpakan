@@ -44,8 +44,13 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
    */
   if (!room || room.winner) return;
 
+  const player = (room.playerList.includes(socket.cn))
+    ? (socket.cn === room.p1.name) ? 'p1' : 'p2'
+    : null;
+  // Reject the message if the connection isn't from a player
+  if (!player) return;
+
   const data = JSON.parse(decode(message));
-  const player = (socket.cn === room.p1.name) ? 'p1' : 'p2';
   const opponent = (socket.cn === room.p1.name) ? 'p2' : 'p1';
 
   switch (data.type) {
