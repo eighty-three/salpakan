@@ -2,18 +2,6 @@ import { RequestHandler } from 'express';
 import * as account from './accountModel';
 import * as argon2 from 'argon2';
 
-export const checkExistingUsername: RequestHandler = async (req, res, next) => {
-  const { username } = req.body;
-
-  const user = await account.checkUsername(username);
-  if (!user) {
-    next();
-    return;
-  } else {
-    res.status(409).json({ error: 'Username already taken' });
-  }
-};
-
 export const checkPassword: RequestHandler = async (req, res, next) => {
   const { username, password } = req.body;
 
@@ -30,29 +18,4 @@ export const checkPassword: RequestHandler = async (req, res, next) => {
   } else {
     res.status(401).json({ error: 'Invalid password' });
   }
-};
-
-export const replaceExistingUsername: RequestHandler = async (req, res, next) => {
-  const { newUsername } = req.body;
-
-  const user = await account.checkUsername(newUsername);
-  if (!user) {
-    next();
-    return;
-  } else {
-    res.status(409).json({ error: 'Username already taken' });
-  }
-};
-
-export const checkIfUsernameExists: RequestHandler = async (req, res, next) => {
-  const { username } = req.body;
-
-  const user = await account.checkUsername(username);
-  if (!user) {
-    res.status(401).json({ error: 'Username not found' });
-    return;
-  }
-
-  next();
-  return;
 };
