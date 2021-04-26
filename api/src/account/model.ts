@@ -3,10 +3,19 @@ import { PreparedStatement as PS } from 'pg-promise';
 
 export const createAccount = async (
   username: string,
-  hash: string
+  hash: string,
+  session: string,
+  role: string
 ): Promise<void> => {
   const query = new PS({ name: 'create-account', text: '\
-    INSERT INTO accounts (username, password) VALUES ($1, $2)'
+    INSERT INTO accounts (username, password, session, role)\
+    VALUES ($1, $2, $3, $4)'
+  });
+
+  query.values = [username, hash, session, role];
+  await db.none(query);
+};
+
 export const changePassword = async (
   username: string,
   hash: string
