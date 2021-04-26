@@ -77,6 +77,7 @@ const CustomAuthForms = (props) => {
       >
         {buttonState.text}
       </button>
+      <a className={styles.helpText} href={'https://keepassxc.org'}>Use KeepassXC</a>
     </form>
   );
 };
