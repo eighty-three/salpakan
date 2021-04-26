@@ -35,7 +35,9 @@ const IndividualForm = (props) => {
             aria-describedby={`${id}_${context}`}
             id={`${id}_${context}`}
             name={id}
-            ref={register({ required: true })}
+            {...register(id, {
+              required: true
+            })}
           />
         ) : (
           <input
@@ -46,7 +48,9 @@ const IndividualForm = (props) => {
             aria-describedby={`${id}_${context}`}
             id={`${id}_${context}`}
             name={id}
-            ref={register({ required: true })}
+            {...register(id, {
+              required: true
+            })}
           />
         )
       }
