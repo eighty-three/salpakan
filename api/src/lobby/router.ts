@@ -8,7 +8,7 @@ import * as lobby from './controller';
 import * as lobbySchema from './schema';
 
 router.get('/create',
-  authToken.verifyCookie,
+  authToken.verifyToken,
   lobby.createLobby
 );
 

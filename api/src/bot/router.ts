@@ -6,7 +6,7 @@ import { authToken } from '@authMiddleware/index';
 import * as bot from './controller';
 
 router.get('/create',
-  authToken.verifyCookie,
+  authToken.verifyToken,
   bot.createBotGame
 );
 
