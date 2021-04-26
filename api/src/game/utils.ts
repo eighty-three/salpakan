@@ -92,7 +92,7 @@ export const cleanBoards = (
 
 /**
  * Receives the players' boards and removes the keys with a value of
- * { name: 'unknown' }, while also adding { owner: 'opponent' } to
+ * { name: 'unknown' }, while also adding { owner: 'loser' } to
  * the board of the loser.
  *
  * @param {IBoard} winnerBoard Board of the winner
@@ -122,7 +122,7 @@ export const removeUnknownValues = (
       fixedLoserBoard[key as TCoordinate] = {
         name,
         value,
-        owner: 'opponent'
+        owner: 'loser'
       };
     }
   }
