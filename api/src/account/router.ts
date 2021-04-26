@@ -8,27 +8,11 @@ import * as account from './controller';
 import * as accountSchema from './schema';
 
 
-router.post('/login',
-  validator(accountSchema.login, 'body'),
-  authToken.verifyExistingToken,
+router.post('/changePassword',
+  validator(accountSchema.changePassword, 'body'),
+  authToken.verifyToken,
   authAccount.checkPassword,
-  account.login
-);
-
-router.post('/signup',
-  validator(accountSchema.signup, 'body'),
-  authToken.verifyExistingToken,
-  authAccount.checkExistingUsername,
-  account.signup
-);
-
-router.post('/logout',
-  validator(accountSchema.logout, 'body'),
-  account.logout
-);
-
-router.get('/cookie',
-  account.getCookie
+  account.changePassword
 );
 
 export default router;
