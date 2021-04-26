@@ -1,8 +1,8 @@
-import { authCheck } from '@/lib/authCheck';
+import authCheck from '@/lib/token';
 
 const withAuthServerSideProps = (getServerSidePropsFunc, protect) => {
   return async (ctx) => {
-    const cookieValue = await authCheck(ctx);
+    const { username: cookieValue, role } = await authCheck(ctx);
     const username = (cookieValue && cookieValue[1] !== '=') ? cookieValue : null;
 
     if (protect ? (getServerSidePropsFunc && username) : getServerSidePropsFunc) {
@@ -10,7 +10,9 @@ const withAuthServerSideProps = (getServerSidePropsFunc, protect) => {
         props:
           {
             username,
-            data: await getServerSidePropsFunc(ctx, username)
+            role,
+            cookieValue,
+            data: await getServerSidePropsFunc({ ctx, username, role, cookieValue })
           }
       };
     }
@@ -19,11 +21,15 @@ const withAuthServerSideProps = (getServerSidePropsFunc, protect) => {
       props:
         {
           username,
+          role,
+          cookieValue,
           data:
             {
               props:
                 {
-                  username
+                  username,
+                  role,
+                  cookieValue
                 }
             }
         }
