@@ -1,15 +1,16 @@
 .container {
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: 25% 50% 25%;
+  grid-template-rows: 22.5% 45% 22.5% 10%;
   grid-template-areas:
     "title"
     "formGroups"
-    "button";
+    "button"
+    "helpText";
 
   margin: 3.5em auto;
-  max-width: 400px;
-  height: 400px;
+  max-width: 350px;
+  height: 450px;
 
   background-color: white;
   border-radius: 5px;
@@ -55,4 +56,13 @@
   flex-direction: column;
   margin: 0.7em auto;
   width: 300px;
+}
+
+.helpText {
+  grid-area: helpText;
+
+  font-size: 0.8em;
+  font-weight: bold;
+  color: rgb(130, 25, 25);
+  text-align: center;
 }
