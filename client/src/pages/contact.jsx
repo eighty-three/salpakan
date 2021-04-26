@@ -5,8 +5,7 @@ import PropTypes from 'prop-types';
 import styles from './contact.module.scss';
 
 import Layout, { siteTitle } from '@/components/Layout';
-
-import { lightAuthCheck } from '@/lib/authCheck';
+import withAuthServerSideProps from '@/components/AuthComponents/withAuthGSSP';
 
 const propTypes = {
   username: PropTypes.string
@@ -45,19 +44,7 @@ const Contact = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx) => {
-  const cookieValue = await lightAuthCheck(ctx);
-  const username = (cookieValue && cookieValue[1] !== '=') ? cookieValue : null;
-
-  return {
-    props:
-      {
-        username,
-        cookieValue
-      }
-  };
-};
+export const getServerSideProps = withAuthServerSideProps();
 
 Contact.propTypes = propTypes;
-
 export default Contact;

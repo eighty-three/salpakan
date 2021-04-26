@@ -6,9 +6,10 @@ import PropTypes from 'prop-types';
 import utilStyles from '@/styles/utilStyles.module.scss';
 import buttonStyle from '@/styles/Buttons.module.scss';
 import Layout, { siteTitle } from '@/components/Layout';
+import withAuthComponent from '@/components/AuthComponents/withAuth';
+import withAuthServerSideProps from '@/components/AuthComponents/withAuthGSSP';
 
 import useCookie from '@/hooks/useCookie';
-import { lightAuthCheck } from '@/lib/authCheck';
 
 import { getLobby, WSLOBBY_URL }  from '@/lib/lobby';
 import ws from 'ws';
@@ -130,10 +131,11 @@ const LobbyPage = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx) => {
-  const cookieValue = await lightAuthCheck(ctx);
-  const username = (cookieValue && cookieValue[1] !== '=') ? cookieValue : null;
-
+export const getServerSideProps = withAuthServerSideProps(async ({
+  ctx,
+  username,
+  cookieValue
+}) => {
   const lobbyId = ctx.params.id;
   const lobbyFound = await getLobby(lobbyId);
 
@@ -146,8 +148,7 @@ export const getServerSideProps = async (ctx) => {
         lobbyFound
       }
   };
-};
+});
 
 LobbyPage.propTypes = propTypes;
-
-export default LobbyPage;
+export default withAuthComponent(LobbyPage);

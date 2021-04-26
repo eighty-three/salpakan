@@ -5,8 +5,9 @@ import Head from 'next/head';
 import utilStyles from '@/styles/utilStyles.module.scss';
 import Layout, { siteTitle } from '@/components/Layout';
 import Game from '@/components/Game';
+import withAuthComponent from '@/components/AuthComponents/withAuth';
+import withAuthServerSideProps from '@/components/AuthComponents/withAuthGSSP';
 
-import { lightAuthCheck } from '@/lib/authCheck';
 import { getGame } from '@/lib/game';
 
 const propTypes = {
@@ -37,10 +38,11 @@ const GamePage = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx) => {
-  const cookieValue = await lightAuthCheck(ctx);
-  const username = (cookieValue && cookieValue[1] !== '=') ? cookieValue : null;
-
+export const getServerSideProps = withAuthServerSideProps(async ({
+  ctx,
+  username,
+  cookieValue
+}) => {
   const id = ctx.params.id;
   const state = await getGame(id);
 
@@ -53,8 +55,7 @@ export const getServerSideProps = async (ctx) => {
         state
       }
   };
-};
+});
 
 GamePage.propTypes = propTypes;
-
-export default GamePage;
+export default withAuthComponent(GamePage);
