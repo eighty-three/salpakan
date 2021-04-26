@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import ky from 'ky-universal';
 import { HOST } from '@/lib/host';
-const api = `${HOST}/api/account`;
+const api = `${HOST}/api/auth`;
 
 const getCookie = async () => {
   await ky.get(`${api}/cookie`);

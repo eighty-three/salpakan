@@ -4,10 +4,9 @@ import Head from 'next/head';
 import Layout, { siteTitle } from '@/components/Layout';
 import withAuthComponent from '@/components/AuthComponents/withAuth';
 import withAuthServerSideProps from '@/components/AuthComponents/withAuthGSSP';
-
 import CustomAuthForms from '@/components/CustomAuthForms';
 
-import { login } from '@/lib/account';
+import { login } from '@/lib/auth';
 
 const LoginPage = () => {
   return (

@@ -6,7 +6,7 @@ import styles from './index.module.css';
 
 import { siteTitle } from '@/components/Layout';
 
-import { logout } from '@/lib/account';
+import { logout } from '@/lib/auth';
 
 const propTypes = {
   loggedIn: PropTypes.bool,
