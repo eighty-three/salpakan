@@ -46,6 +46,7 @@ const Game = (props) =>{
   const moveRef = useRef();
   const vsRef = useRef();
   const [statusPingDelay, clearStatusPingDelay] = useDelay(5);
+  const [spectatorStatusPingDelay, clearSpectatorStatusPingDelay] = useDelay(15);
   const [botMoveDelay, clearBotMoveDelay] = useDelay(1.5);
 
   useEffect(() => {
@@ -106,13 +107,18 @@ const Game = (props) =>{
       statusIndicatorSocket.onmessage = async (message) => {
         const res = JSON.parse(message.data);
         clearStatusPingDelay();
+        clearSpectatorStatusPingDelay();
 
         if (res.connections.length !== connections.list.length) {
           setConnections({ list: res.connections, retry: !connections.retry });
         }
-
-        await statusPingDelay();
-
+        
+        if (gameState.player) {
+          await statusPingDelay();
+        } else {
+          await spectatorStatusPingDelay();
+        }
+          
         statusIndicatorSocket.send(JSON.stringify({
           type: 'ping',
         }));
