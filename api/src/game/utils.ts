@@ -76,13 +76,13 @@ export const cleanBoards = (
   const bothBoards: IBoard = {};
 
   for (const key in b1) {
-    bothBoards[key as TCoordinate] = { name: 'unknown' };
-    cleanB2[key as TCoordinate] = { name: 'unknown' };
+    bothBoards[key as TCoordinate] = { name: 'unknown', owner: 'p1' };
+    cleanB2[key as TCoordinate] = { name: 'unknown', owner: 'p1' };
   }
 
   for (const key in b2) {
-    bothBoards[key as TCoordinate] = { name: 'unknown' };
-    cleanB1[key as TCoordinate] = { name: 'unknown' };
+    bothBoards[key as TCoordinate] = { name: 'unknown', owner: 'p2' };
+    cleanB1[key as TCoordinate] = { name: 'unknown', owner: 'p2' };
   }
 
   gameStates[roomName].board = (gameStates[roomName].bot) ? cleanB1: bothBoards;
