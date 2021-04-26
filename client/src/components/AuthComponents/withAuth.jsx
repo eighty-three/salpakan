@@ -1,43 +1,57 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Router, { useRouter } from 'next/router';
 
 const RedirectComponentPropTypes = {
-  loggedIn: PropTypes.bool,
-  protectRoute: PropTypes.bool
+  redirectAction: PropTypes.string
 };
 
-const RedirectComponent = ({ loggedIn, protectRoute }) => {
+const RedirectComponent = ({ redirectAction }) => {
+  const [redirectState, setRedirectState] = useState({ newPath: null, text: null });
+  const prevPath = useRouter().pathname;
+
   useEffect(() => {
-    Router.replace(newPath);
+    switch (redirectAction) {
+      case 'loggedIn': {
+        setRedirectState({ newPath: '/', text: 'Already logged in' });
+        break;
+      }
+
+      case 'notAuthorized': {
+        setRedirectState({ newPath: '/', text: 'Not authorized' });
+        break;
+      }
+
+      case 'notAuthenticated': {
+        setRedirectState({ newPath: `/login?redirect=${prevPath}`, text: 'Not authenticated' });
+        break;
+      }
+    }
   }, []);
 
-  const prevPath = useRouter().pathname;
-  let newPath, loadingText;
-
-  if (loggedIn) {
-    newPath = '/';
-    loadingText = 'Already logged in';
-  } else if (protectRoute) {
-    newPath = `/login?redirect=${prevPath}`;
-    loadingText = 'Not authenticated';
-  }
+  useEffect(() => {
+    if (redirectState.newPath) Router.replace(redirectState.newPath);
+  }, [redirectState.newPath]);
 
   return (
-    <h1 className="text-center">{loadingText}</h1>
+    <h1>{redirectState.text}</h1>
   );
 };
 
 RedirectComponent.propTypes = RedirectComponentPropTypes;
 
-const withAuthComponent = (Component, redirectAction) => {
-  const Authenticated = ({ username, data }) => {
-    if (redirectAction === 'loggedIn' && username) {
-      return <RedirectComponent loggedIn/>;
-    } else if (!username) {
-      if (redirectAction === 'protectRoute') {
-        return <RedirectComponent protectRoute/>;
-      }
+const withAuthComponent = (Component, redirectAction, allowedRoles) => {
+  const Authenticated = ({ username, role, data }) => {
+    if (redirectAction === 'loggedIn') {
+      // if user is already logged in
+      if (username) return <RedirectComponent redirectAction={'loggedIn'} />;
+
+    } else if (redirectAction === 'protectRoute') {
+      // if payload has no username or role
+      if (!username || !role) return <RedirectComponent redirectAction={'notAuthenticated'} />;
+
+      // if payload has username and role but user doesn't have the required role
+      if (!allowedRoles.includes(role)) return <RedirectComponent redirectAction={'notAuthorized'} />;
     }
 
     return <Component {...data.props}/>;
@@ -45,6 +59,7 @@ const withAuthComponent = (Component, redirectAction) => {
 
   Authenticated.propTypes = {
     username: PropTypes.string,
+    role: PropTypes.string,
     data: PropTypes.shape({
       props: PropTypes.any
     })
