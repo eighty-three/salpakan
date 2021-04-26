@@ -1,7 +1,7 @@
 import Router from 'next/router';
 import ky from 'ky-universal';
 import { HOST } from '@/lib/host';
-const api = `${HOST}/api/account`;
+const api = `${HOST}/api/auth`;
 
 export const signup = async (data) => {
   try {
