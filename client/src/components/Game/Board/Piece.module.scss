@@ -31,12 +31,32 @@ $rows: 1, 2, 3, 4, 5, 6, 7, 8;
   cursor: grab;
 }
 
-.unknown {
-  background-color: rgb(60, 60, 60);
 .loser {
   background-color: rgb(100, 100, 100);
 }
 
+$stripe1: rgb(50, 50, 50);
+$stripe2: rgb(80, 80, 80);
+$stripe-size: 100/9 * 8 * 0.9%;
+
+.p1 {
+  background: repeating-linear-gradient(
+    to right,
+    $stripe1,
+    $stripe1 $stripe-size/4,
+    lighten($stripe2, 25%) $stripe-size/4,
+    lighten($stripe2, 25%) $stripe-size/2
+  );
+}
+
+.p2 {
+  background: repeating-linear-gradient(
+    to bottom,
+    $stripe1,
+    $stripe1 $stripe-size/4,
+    $stripe2 $stripe-size/4,
+    $stripe2 $stripe-size/2
+  );
 }
 
 .lastMove {
