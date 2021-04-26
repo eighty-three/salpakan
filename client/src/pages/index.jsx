@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 
 import styles from './index.module.css';
 import Layout, { siteTitle } from '@/components/Layout';
+import withAuthServerSideProps from '@/components/AuthComponents/withAuthGSSP';
+
 import FindMatch from '@/components/FindMatch';
 import CreatePrivateLobby from '@/components/CreatePrivateLobby';
 import PlayAgainstBot from '@/components/PlayAgainstBot';
 
 import useCookie from '@/hooks/useCookie';
 import useDelay from '@/hooks/useDelay';
-import { lightAuthCheck } from '@/lib/authCheck';
 
 import { WS_HOST } from '@/lib/host';
 import ws from 'ws';
@@ -74,19 +75,7 @@ const Home = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx) => {
-  const cookieValue = await lightAuthCheck(ctx);
-  const username = (cookieValue && cookieValue[1] !== '=') ? cookieValue : null;
-
-  return {
-    props:
-      {
-        username,
-        cookieValue
-      }
-  };
-};
+export const getServerSideProps = withAuthServerSideProps();
 
 Home.propTypes = propTypes;
-
 export default Home;
