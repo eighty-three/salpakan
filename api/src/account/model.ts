@@ -7,8 +7,14 @@ export const createAccount = async (
 ): Promise<void> => {
   const query = new PS({ name: 'create-account', text: '\
     INSERT INTO accounts (username, password) VALUES ($1, $2)'
+export const changePassword = async (
+  username: string,
+  hash: string
+): Promise<void> => {
+  const query = new PS({ name: 'change-password', text: '\
+    UPDATE accounts SET password=$1 WHERE username=$2'
   });
 
-  query.values = [username, hash];
+  query.values = [hash, username];
   await db.none(query);
 };
