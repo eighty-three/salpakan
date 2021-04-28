@@ -28,6 +28,7 @@ export interface IPlayer {
   name: string;
   board: IBoard;
   start: boolean;
+  pin: string|null;
 }
 
 export type IBoard = {

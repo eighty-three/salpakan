@@ -31,7 +31,7 @@ export interface IMessage<T> {
 
 import { TPlayer, IPlayer } from '../game/types';
 
-type TPartialPlayers = { [K in TPlayer]: Pick<IPlayer, 'name' | 'time'> };
+type TPartialPlayers = { [K in TPlayer]: Pick<IPlayer, 'name' | 'time' | 'pin'> };
 export interface IGameInfo extends TPartialPlayers {
   winner: string | null;
   connections: string[];
