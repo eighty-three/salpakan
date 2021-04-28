@@ -1,5 +1,8 @@
 import db from '@utils/db';
 import { PreparedStatement as PS } from 'pg-promise';
+import { customAlphabet } from 'nanoid';
+const nanoid = customAlphabet('1234567890ABCDEFGH', 5);
+
 import { IGameStates, IGame, IBoard, IName } from './types';
 import { getInitialBoardState, player2Board } from './utils';
 import { randomizeBoard } from './bot';
@@ -26,13 +29,15 @@ export const startGame = async (
       name: arr[0],
       board: getInitialBoardState('p1'),
       time: 6000, // 10 minutes
-      start: false
+      start: false,
+      pin: nanoid()
     },
     p2: {
       name: arr[1],
       board: (!bot) ? getInitialBoardState('p2') : randomizeBoard('p2', player2Board),
       time: 6000,
-      start: (!bot) ? false : true
+      start: (!bot) ? false : true,
+      pin: nanoid()
     },
     board: {},
     turn: 'p1',
