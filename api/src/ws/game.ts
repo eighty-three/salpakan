@@ -5,6 +5,7 @@ import { gameStates } from './index';
 import { cleanBoards, checkMove, checkIfLegal } from '../game/utils';
 import { deleteGame } from '../game/model';
 import { getMove } from '../game/bot';
+import { TPlayer } from '../game/types';
 import { decode, refreshTime, declareWinner, connectionHandler, handshakeHandler } from './utils';
 import SendSocketMessage from './socketMessages';
 import { IUpgrade, IOpen, IClose, IMessage, WS_RESPONSE_CODE } from './types';
@@ -47,11 +48,30 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
   const player = (room.playerList.includes(socket.cn))
     ? (socket.cn === room.p1.name) ? 'p1' : 'p2'
     : null;
-  // Reject the message if the connection isn't from a player
-  if (!player) return;
 
   const data = JSON.parse(decode(message));
   const opponent = (socket.cn === room.p1.name) ? 'p2' : 'p1';
+
+
+  // If it's a request to spectate the game
+  if (data.type === 'spectate') {
+    let success = false;
+    if (player) return; // disallow players from spectating
+    if (data.player !== 'p1' && data.player !== 'p2') return; // validate 'player'
+    const playerToSpectate = data.player as TPlayer;
+
+    if (String(data.pin).length !== 5) return; // validate 'pin'
+    if (data.pin === room[playerToSpectate].pin) {
+      success = true;
+      room.spectators[socket.cn] = playerToSpectate;
+    }
+
+    SendSocketMessage.FOR_SPECTATE(socket, room, success);
+    return;
+  }
+
+  // Reject the message if the connection isn't from a player
+  if (!player) return;
 
   switch (data.type) {
     case 'ready': {
