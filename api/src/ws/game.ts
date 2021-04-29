@@ -11,7 +11,14 @@ import SendSocketMessage from './socketMessages';
 import { IUpgrade, IOpen, IClose, IMessage, WS_RESPONSE_CODE } from './types';
 
 export const upgrade: IUpgrade<Promise<void>> = async (res, req, context) => {
-  const cn = await getUsername(req.getHeader('cookie'));
+  const user = await getUsername(req.getHeader('cookie'));
+
+  // get IP address (getRemoteAddress is unnecessary in deployment)
+  const IP = req.getHeader('y-real-ip') || decode(res.getRemoteAddress());
+
+  // if there is no cookie, use the IP address as identifier
+  const cn = user || IP;
+
   const url = req.getParameter(0);
 
   const checks = [(req.getHeader('origin') === config.CLIENT_HOST)];
