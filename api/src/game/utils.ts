@@ -85,7 +85,7 @@ export const cleanBoards = (
     cleanB1[key as TCoordinate] = { name: 'unknown', owner: 'p2' };
   }
 
-  gameStates[roomName].board = (gameStates[roomName].bot) ? cleanB1: bothBoards;
+  gameStates[roomName].board = bothBoards;
   gameStates[roomName].p1.board = cleanB1;
   gameStates[roomName].p2.board = cleanB2;
 };
