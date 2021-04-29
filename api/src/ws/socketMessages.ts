@@ -155,6 +155,23 @@ const FOR_SOCKET_OPEN = (
   }));
 };
 
+const FOR_SPECTATE = (
+  socket: WebSocket,
+  room: IRoom,
+  success: boolean
+): void => {
+  const spectator = room.spectators[socket.cn];
+  const board = (spectator && success) ? room[spectator].board : room.board;
+  const gameInfo = getGameInfo(room, spectator);
+
+  socket.send(JSON.stringify({
+    type: 'onSocketMessageSpectate',
+    success,
+    data: gameInfo,
+    board
+  }));
+};
+
 const FOR_SETUP_BUG = (
   socket: WebSocket,
   room: IRoom,
@@ -197,6 +214,7 @@ const SendSocketMessage = {
   FOR_TIME,
   FOR_STATUS_INDICATOR,
   FOR_SOCKET_OPEN,
+  FOR_SPECTATE,
   FOR_SETUP_BUG,
   FOR_MOVE_BUG,
   FOR_COUNT
