@@ -10,7 +10,13 @@ const GameStateReducer = (state, action) => {
 
       return {
         socket: state.socket,
-        gameInfo: { ...action.payload.data },
+        gameInfo: {
+          ...action.payload.data,
+          [state.player]: {
+            ...action.payload.data[state.player],
+            pin: state.gameInfo.pin
+          }
+        },
         board: { ...action.payload.board, ...state.board },
         turn: action.payload.turn,
         player: state.player
@@ -237,7 +243,13 @@ const GameStateReducer = (state, action) => {
 
       return {
         socket: state.socket,
-        gameInfo: { ...action.payload.data },
+        gameInfo: {
+          ...action.payload.data,
+          [state.player]: {
+            ...action.payload.data[state.player],
+            pin: state.gameInfo[state.player]?.pin
+          }
+        },
         board: { ...fixedBoard },
         turn: action.payload.turn,
         player: state.player
