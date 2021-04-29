@@ -149,6 +149,16 @@ const GameStateReducer = (state, action) => {
       };
     }
 
+    case 'onSocketMessageSpectate': {
+      if (!action.payload.success) return state;
+
+      return {
+        ...state,
+        gameInfo: { ...action.payload.data },
+        board: action.payload.board
+      };
+    }
+
     case 'onSocketMessageTime': {
       /* Because of the disparity in time in the server and the client,
        * even if the time has ran out for the user, while it triggers a
