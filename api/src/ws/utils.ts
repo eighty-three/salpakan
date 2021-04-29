@@ -105,7 +105,7 @@ export const connectionHandler = (
 
   if (!gameStates[roomName]) {
     response.code = WS_RESPONSE_CODE.GAME_NOT_FOUND;
-    response.reason= 'Game not found';
+    response.reason = 'Game not found';
   } else if (
     /* If the game is still in its setup phase and
      * the user isn't among the players
@@ -114,7 +114,7 @@ export const connectionHandler = (
     && !gameStates[roomName].playerList.includes(inList)
   ) {
     response.code = WS_RESPONSE_CODE.IN_SETUP;
-    response.reason= 'The game is currently in setup phase';
+    response.reason = 'The game is currently in setup phase';
   }
 
   return response;
