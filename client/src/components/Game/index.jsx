@@ -112,13 +112,13 @@ const Game = (props) =>{
         if (res.connections.length !== connections.list.length) {
           setConnections({ list: res.connections, retry: !connections.retry });
         }
-        
+
         if (gameState.player) {
           await statusPingDelay();
         } else {
           await spectatorStatusPingDelay();
         }
-          
+
         statusIndicatorSocket.send(JSON.stringify({
           type: 'ping',
         }));
