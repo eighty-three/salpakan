@@ -122,11 +122,14 @@ const FOR_SOCKET_OPEN = (
   const player = (room.playerList.includes(socket.cn))
     ? (socket.cn === room.p1.name) ? 'p1' : 'p2'
     : null;
-  const board = (player) ? room[player].board : room.board;
+  const spectator = room.spectators[socket.cn];
+
+  const user = player || spectator; // whoever opened the socket
+  const board = (user) ? room[user].board : room.board;
 
   let gameInfo, ongoingTurn;
   if (room.start) {
-    gameInfo = getGameInfo(room);
+    gameInfo = getGameInfo(room, user);
     ongoingTurn = room.turn;
 
     /* If spectator, it won't go to this branch because
@@ -137,7 +140,8 @@ const FOR_SOCKET_OPEN = (
   } else if (player) {
     gameInfo = {
       time: room.time - Math.floor(Date.now() / 100),
-      setup: (room[player].start)
+      setup: (room[player].start),
+      pin: room[player].pin
     };
     ongoingTurn = undefined;
   }
