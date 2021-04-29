@@ -1,0 +1,46 @@
+.form {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+
+.input {
+  height: 1.5em;
+  width: 100%;
+  margin: 0.25em auto;
+
+  font-size: 1em;
+  text-transform: uppercase;
+}
+
+.modalBG {
+  position: absolute;
+  z-index: 999;
+
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+
+  height: 100vh;
+  width: 100vw;
+
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+  position: absolute;
+  z-index: 999;
+
+  margin: auto;
+  left: 0;
+  right: 0;
+
+  height: 6em;
+  width: 10em;
+  padding: 0.25em;
+
+  background-color: white;
+  border-radius: 2px;
+  border: thin solid rgba(0, 0, 0, 0.7);
+}

@@ -1,10 +1,21 @@
 .container {
   height: 100%;
   display: grid;
-  grid-template-columns: 75% 25%;
+  grid-template-columns: 60% 25% 15%;
   grid-template-rows: 100%;
   grid-template-areas:
-    "info result"
+    "info pin result"
+}
+
+.pin {
+  grid-area: pin;
+  font-size: 0.8em;
+  padding: 0 0.25em;
+
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
 }
 
 .info {
@@ -30,4 +41,5 @@
   .info { font-size: 1.2em; }
   .result { font-size: 1.2em; }
   .winner { font-size: 1.2em; }
+  .pin { font-size: 1.2em; }
 }
