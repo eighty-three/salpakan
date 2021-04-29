@@ -10,8 +10,13 @@ export interface ICount {
   lastPublished: number;
 }
 
+interface ISpectators {
+  [key: string]: TPlayer;
+}
+
 export interface IRoom extends TPlayers {
   playerList: string[];
+  spectators: ISpectators
   board: IBoard;
   turn: TPlayer;
   start: boolean;

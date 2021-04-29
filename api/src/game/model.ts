@@ -46,6 +46,7 @@ export const startGame = async (
     winner: null,
     time: Math.floor(Date.now() / 100) + 1200, // 2 minutes setup time
     connections: { list: [], lastPublished: 0 },
+    spectators: {},
     bot: !!bot
   };
 
