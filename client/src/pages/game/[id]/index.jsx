@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 
@@ -22,11 +22,26 @@ const GamePage = (props) => {
     id,
     state
   } = props;
+  const [title, setTitle] = useState('');
+  const onFocus = () => setTitle(siteTitle);
+
+  useEffect(() => {
+    if (!document.hidden) {
+      setTitle(siteTitle);
+    } else {
+      setTitle('Match found!');
+    }
+
+    document.addEventListener('visibilitychange', onFocus);
+    return () => {
+      document.removeEventListener('visibilitychange', onFocus);
+    };
+  });
 
   return (
     <Layout username={username} >
       <Head>
-        <title>{siteTitle}</title>
+        <title>{title}</title>
       </Head>
       <section>
         { !state.error
