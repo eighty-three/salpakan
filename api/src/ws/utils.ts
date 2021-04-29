@@ -13,15 +13,17 @@ import { IGameInfo, IResponse, WS_RESPONSE_CODE, IHandshake } from './types';
 /* Refactored into its own function because
  * these properties are the most queried
  */
-export const getGameInfo = (room: IRoom): IGameInfo => {
+export const getGameInfo = (room: IRoom, player?: TPlayer|null): IGameInfo => {
   return {
     p1: {
       name: room.p1.name,
-      time: room.p1.time
+      time: room.p1.time,
+      pin: (player && player === 'p1') ? room.p1.pin : null
     },
     p2: {
       name: room.p2.name,
-      time: room.p2.time
+      time: room.p2.time,
+      pin: (player && player === 'p2') ? room.p2.pin : null
     },
     winner: room.winner,
     connections: room.connections.list,
