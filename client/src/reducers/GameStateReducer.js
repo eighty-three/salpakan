@@ -32,7 +32,8 @@ const GameStateReducer = (state, action) => {
         gameInfo: {
           p1: { name: action.payload.p1.name },
           p2: { name: action.payload.p2.name },
-          winner: action.payload.winner
+          winner: action.payload.winner,
+          positionHistory: action.payload.positionHistory
         },
         board: action.payload.board,
         turn: state.turn,
