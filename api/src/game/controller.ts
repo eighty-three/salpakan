@@ -17,7 +17,8 @@ export const getGame: RequestHandler = async (req, res) => {
         },
         p1: { name: gameState.player1 },
         p2: { name: gameState.player2 },
-        winner: gameState.winner
+        winner: gameState.winner,
+        positionHistory: gameState.position_history
       });
     }
   } else {
