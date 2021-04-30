@@ -18,6 +18,7 @@ import SoundContext from '@/contexts/SoundContext';
 
 import { WSGAME_URL }  from '@/lib/game';
 import ws from 'ws';
+import PositionHistory from './PositionHistory';
 const WS = global.WebSocket || ws;
 
 const propTypes = {
@@ -230,6 +231,9 @@ const Game = (props) =>{
         ) : (
           <h1 className={utilStyles.textCenter}>{text}</h1>
         )
+      }
+      { gameState.gameInfo?.positionHistory &&
+        <PositionHistory moves={gameState.gameInfo.positionHistory} />
       }
     </>
   );
