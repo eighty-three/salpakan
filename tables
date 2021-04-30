@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS games (
   player2 TEXT NOT NULL,
   ongoing BOOLEAN DEFAULT TRUE,
   winner TEXT,
-  expiry INT NOT NULL
+  expiry INT NOT NULL,
+  position_history TEXT[]
 );
 CREATE INDEX IF NOT EXISTS idx_games_name ON games(name);
 CREATE INDEX IF NOT EXISTS idx_games_expiry ON games(expiry);
