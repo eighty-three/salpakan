@@ -47,7 +47,8 @@ export const startGame = async (
     time: Math.floor(Date.now() / 100) + 1200, // 2 minutes setup time
     connections: { list: [], lastPublished: 0 },
     spectators: {},
-    bot: !!bot
+    bot: !!bot,
+    positionHistory: []
   };
 
   const expiry = Math.floor(Date.now() / 1000) + 7200; // 2 hours till game expire

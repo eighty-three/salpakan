@@ -25,7 +25,8 @@ export interface IRoom extends TPlayers {
   winner: string | null;
   connections: ICount;
   flagOnLastRow?: string;
-  bot: boolean
+  bot: boolean;
+  positionHistory: string[];
 }
 
 export interface IPlayer {
@@ -55,6 +56,7 @@ export interface IGame {
   player2: string;
   ongoing: boolean;
   winner: string;
+  position_history: string[];
 }
 
 export interface IName {
