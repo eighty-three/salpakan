@@ -48,7 +48,7 @@ export const declareWinner = async (
   const { fixedWinnerBoard, fixedLoserBoard } = removeUnknownValues(winnerBoard, loserBoard);
   gameStates[roomName].board = { ...fixedWinnerBoard, ...fixedLoserBoard };
 
-  await storeGame(roomName, fixedWinnerBoard, fixedLoserBoard, winner);
+  await storeGame(roomName, fixedWinnerBoard, fixedLoserBoard, winner, room.positionHistory);
 };
 
 export const refreshTime = (room: IRoom, player: TPlayer): void => {
