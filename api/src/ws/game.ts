@@ -117,6 +117,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
       refreshTime(room, player);
 
       const result = checkMove(gameStates, socket.url, player, data.message);
+      room.positionHistory.push(`${data.message.origin}${data.message.destination}`);
       room.turn = opponent;
       if (room.winner) await declareWinner(gameStates, socket.url, room.winner);
       SendSocketMessage.FOR_MOVE(socket, room, result, data.message);
@@ -124,6 +125,7 @@ export const message: IMessage<Promise<void>> = async (socket, message) => {
       if (room.bot && !room.winner) {
         const botMove = getMove(room.p2.board);
         const botMoveResult = checkMove(gameStates, socket.url, 'p2', botMove);
+        room.positionHistory.push(`${botMove.origin}${botMove.destination}`);
         room.turn = 'p1';
         if (room.winner) await declareWinner(gameStates, socket.url, room.winner);
         SendSocketMessage.FOR_BOT_MOVE(socket, room, botMoveResult, botMove);
