@@ -64,7 +64,7 @@ export const getGame = async (
   roomName: string
 ): Promise<IGame|null> => {
   const query = new PS({ name: 'get-game', text: '\
-    SELECT winner_board, loser_board, player1, player2, ongoing, winner \
+    SELECT winner_board, loser_board, player1, player2, ongoing, winner, position_history \
     FROM games WHERE name=$1 AND expiry > $2'
   });
 
@@ -78,15 +78,16 @@ export const storeGame = async (
   roomName: string,
   winnerBoard: IBoard,
   loserBoard: IBoard,
-  winner: string
+  winner: string,
+  positionHistory: string[]
 ): Promise<void> => {
   const query = new PS({ name: 'store-game', text: '\
     UPDATE games SET \
-      winner_board=$2, loser_board=$3, ongoing=$4, winner=$5 \
+      winner_board=$2, loser_board=$3, ongoing=$4, winner=$5, position_history=$6 \
     WHERE name=$1'
   });
 
-  query.values = [roomName, winnerBoard, loserBoard, false, winner];
+  query.values = [roomName, winnerBoard, loserBoard, false, winner, positionHistory];
   await db.none(query);
 };
 
