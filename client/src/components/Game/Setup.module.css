@@ -1,0 +1,29 @@
+.container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 30% 40% 20% 10%;
+  grid-template-rows: 100%;
+  align-items: center;
+  grid-template-areas:
+    ". button clock ."
+}
+
+.clock {
+  grid-area: clock;
+  margin: 0 auto;
+}
+
+.afk {
+  grid-column: 1/-1;
+  font-size: 0.75em;
+  text-align: center;
+
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+}
+
+@media (min-width: 576px) { 
+  .afk { font-size: 1.5em; }
+}

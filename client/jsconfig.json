@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["src/components/*"],
+      "@/pages/*": ["src/pages/*"],
+      "@/styles/*": ["src/styles/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/reducers/*": ["src/reducers/*"],
+      "@/contexts/*": ["src/contexts/*"],
+      "@/lib/*": ["src/lib/*"],
+      "@/sounds/*": ["public/sounds/*"]
+    }
+  }
+}

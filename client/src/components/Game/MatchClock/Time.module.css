@@ -1,0 +1,10 @@
+.time {
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+}
+
+@media (min-width: 576px) { .time { font-size: 1.5em; } }

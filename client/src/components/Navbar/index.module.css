@@ -1,0 +1,62 @@
+.container {
+  display: flex;
+}
+
+.loginContainer {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: flex-end;
+  align-content: center;
+}
+
+.loginContainer a {
+  color: black;
+  font-size: 0.6em;
+  margin-right: 1em;
+}
+
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+}
+
+.title, .title:hover {
+  color: rgb(130, 25, 25);
+	font-size: 1em;
+  font-weight: bold;
+  margin-left: 0.8em;
+}
+
+.links, .links:hover {
+  color: black;
+  font-size: 0.6em;
+  font-weight: bold;
+  margin-left: 0.8em;
+}
+
+
+.bar {
+  width: 100%;
+  border: thin solid rgb(140, 55, 55);
+  border-radius: 10px;
+}
+
+@media (min-width: 576px) { 
+  .loginContainer a { 
+    font-size: 1em;
+    margin-right: 1.5em;
+  }
+
+  .title, .title:hover { 
+    font-size: 1.5em;
+    margin-left: 1.5em;
+  }
+
+  .links, .links:hover {
+    font-size: 1em;
+    font-weight: bold;
+    margin-left: 1em;
+  }
+}

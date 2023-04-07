@@ -1,0 +1,43 @@
+CREATE EXTENSION IF NOT EXISTS citext;
+
+DO $$ BEGIN
+  CREATE TYPE roles AS ENUM ('user', 'mod', 'admin');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+CREATE TABLE IF NOT EXISTS accounts (
+  user_id SERIAL PRIMARY KEY,
+  username CITEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL,
+  session TEXT NOT NULL,
+  role roles NOT NULL DEFAULT 'user',
+  rating INT NOT NULL DEFAULT 1500,
+  date TIMESTAMP DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_accounts_username ON accounts(username);
+CREATE INDEX IF NOT EXISTS idx_accounts_password ON accounts(password);
+CREATE INDEX IF NOT EXISTS idx_accounts_session ON accounts(session);
+
+CREATE TABLE IF NOT EXISTS games (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  winner_board JSONB,
+  loser_board JSONB,
+  player1 TEXT NOT NULL,
+  player2 TEXT NOT NULL,
+  ongoing BOOLEAN DEFAULT TRUE,
+  winner TEXT,
+  expiry INT NOT NULL,
+  position_history TEXT[]
+);
+CREATE INDEX IF NOT EXISTS idx_games_name ON games(name);
+CREATE INDEX IF NOT EXISTS idx_games_expiry ON games(expiry);
+
+CREATE TABLE IF NOT EXISTS lobbies (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  expiry INT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_lobbies_name ON lobbies(name);
+CREATE INDEX IF NOT EXISTS idx_lobbies_expiry ON lobbies(expiry);

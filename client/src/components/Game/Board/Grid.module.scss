@@ -1,0 +1,16 @@
+.coord {
+  width: 100px / 9px * 1%;
+  height: 100px / 8px * 1%;
+}
+
+/* :nth-last-child is used because grid squares are
+ * inside the same div as other elements which makes
+ * counting from the top inconsistent
+ */
+.coord:nth-last-child(2n) {
+  background-color: rgb(240, 240, 240);
+}
+
+.coord:nth-last-child(2n+1) {
+  background-color: rgb(200, 200, 200);
+}

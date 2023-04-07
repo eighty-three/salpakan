@@ -1,0 +1,14 @@
+.top {
+  z-index: 99;
+}
+
+.target {
+  width: 100%;
+  height: 100%;
+  
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  position: absolute;
+  cursor: grab;
+}

@@ -1,0 +1,14 @@
+.countContainer {
+  padding-top: 1em;
+  height: 0.8em;
+}
+
+.count {
+  text-align: center;
+  font-size: 0.8em;
+}
+
+.count > span {
+  color: rgb(130, 25, 25);
+  font-weight: bold;
+}

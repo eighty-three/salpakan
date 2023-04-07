@@ -1,0 +1,7 @@
+*.swp
+/node_modules/
+/build/
+.env
+.test.env
+/coverage/
+*.DS_Store

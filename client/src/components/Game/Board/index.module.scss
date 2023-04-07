@@ -1,0 +1,69 @@
+@mixin styling($square-width) {
+  .board {
+    width: $square-width * 9;
+    height: $square-width / 9 * 8 * 8;
+    
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .placeholder {
+    width: $square-width * 9;
+    height: $square-width / 9 * 8 * 8;
+  }
+
+  .fillWrapper {
+    position: absolute;
+    width: $square-width * 9;
+    height: $square-width / 9 * 8 * 8;
+    box-shadow: 1px 0.5px 5px black;
+  }
+
+  .positionWrapper {
+    width: $square-width * 9;
+    height: $square-width / 9 * 8 * 8;
+  }
+}
+
+@media screen and (max-width: 9999px) {
+  @include styling($square-width: 100px);
+}
+
+@media screen and (max-width: 919px),
+       screen and (max-height: 879px) {
+  @include styling($square-width: 90px);
+}
+
+@media screen and (max-width: 829px),
+       screen and (max-height: 819px) {
+  @include styling($square-width: 80px);
+}
+@media screen and (max-width: 749px),
+       screen and (max-height: 739px) {
+  @include styling($square-width: 70px);
+}
+@media screen and (max-width: 659px),
+       screen and (max-height: 679px) {
+  @include styling($square-width: 60px);
+}
+
+@media screen and (max-width: 575px),
+       screen and (max-height: 599px) {
+  @include styling($square-width: 55px);
+}
+
+@media screen and (max-width: 509px) {
+  @include styling($square-width: 45px);
+}
+
+@media screen and (max-width: 409px) {
+  @include styling($square-width: 35px);
+}
+
+@media screen and (max-width: 319px) {
+  @include styling($square-width: 30px);
+}

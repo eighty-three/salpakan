@@ -1,0 +1,72 @@
+$columns: A, B, C, D, E, F, G, H, I;
+$rows: 1, 2, 3, 4, 5, 6, 7, 8;
+
+@for $i from 1 through length($columns) {
+  $column: nth($columns, $i);
+  $xa: ($i - 1) * 100%;
+  $xb: ($i - 1) * 11.111%;
+  $x: $xa + $xb + 5.55555%;
+
+  @each $row in $rows{
+    $ya: ($row - 1) * 100%;
+    $yb: ($row - 1) * 11.111%;
+    $y: $ya + $yb + 5.55555%;
+
+    .#{$column}#{$row} {
+      // I honestly have no idea how this worked
+      transform: translate(#{$x}, #{$y});
+    }
+  }
+}
+
+.piece {
+  position: absolute;
+  height: 100px / 8px * 0.9%;
+  width: 100px / 9px * 0.9%;
+
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-color: white;
+  border: thin solid black;
+  cursor: grab;
+}
+
+.loser {
+  background-color: rgb(100, 100, 100);
+}
+
+$stripe1: rgb(50, 50, 50);
+$stripe2: rgb(80, 80, 80);
+$stripe-size: 100/9 * 8 * 0.9%;
+
+.p1 {
+  background: repeating-linear-gradient(
+    to right,
+    $stripe1,
+    $stripe1 $stripe-size/4,
+    lighten($stripe2, 25%) $stripe-size/4,
+    lighten($stripe2, 25%) $stripe-size/2
+  );
+}
+
+.p2 {
+  background: repeating-linear-gradient(
+    to bottom,
+    $stripe1,
+    $stripe1 $stripe-size/4,
+    $stripe2 $stripe-size/4,
+    $stripe2 $stripe-size/2
+  );
+}
+
+.lastMove {
+  border: 2px solid rgb(130, 25, 25);
+}
+
+$pieces: flag, spy, private, sergeant, lt2, lt1, captain, major, ltcol, colonel, gen1, gen2, gen3, gen4, gen5;
+
+@each $piece in $pieces{
+  .#{$piece} {
+    background-image: url("/images/pieces/#{$piece}.png");
+  }
+}
